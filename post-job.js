@@ -1,15 +1,48 @@
 // Post Job functionality
 let currentUser = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeAuth();
-    if (!currentUser || currentUser.userType !== 'empresa') {
-        window.location.href = 'index.html';
-        return;
+function showSessionError(message) {
+    // Mostrar mensaje de error en pantalla
+    let errorDiv = document.getElementById('session-error');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'session-error';
+        errorDiv.style.background = '#ffdddd';
+        errorDiv.style.color = '#a00';
+        errorDiv.style.padding = '16px';
+        errorDiv.style.margin = '16px';
+        errorDiv.style.border = '1px solid #a00';
+        errorDiv.style.textAlign = 'center';
+        errorDiv.style.fontWeight = 'bold';
+        document.body.prepend(errorDiv);
     }
-    
-    initializeForm();
-    setupPreview();
+    errorDiv.textContent = message;
+}
+
+async function checkSessionAndInit() {
+    try {
+        const res = await fetch('backend/session_status.php', { credentials: 'include' });
+        const data = await res.json();
+        console.log('Respuesta de session_status.php:', data);
+        if (!data.loggedIn || !data.user || data.user.userType !== 'empresa') {
+            localStorage.removeItem('currentUser');
+            showSessionError('No tienes una sesión activa de empresa.');
+            return;
+        }
+        currentUser = data.user;
+        console.log('currentUser asignado:', currentUser);
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        initializeAuth();
+        initializeForm();
+        setupPreview();
+    } catch (err) {
+        console.error('Error al verificar sesión:', err);
+        showSessionError('Error de red o servidor al verificar sesión.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    checkSessionAndInit();
 });
 
 function initializeAuth() {
