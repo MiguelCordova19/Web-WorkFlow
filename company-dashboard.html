@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Empresa - Workflow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="company-dashboard.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>Consultoría de RRHH</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="company-dashboard.html" class="nav-link active">Mi Panel</a></li>
+                    <li><a href="post-job.html" class="nav-link">Publicar Empleo</a></li>
+                    <li><a href="candidates.html" class="nav-link">Candidatos</a></li>
+                </ul>
+                <div class="nav-actions" id="nav-actions">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="company-info">
+                    <div class="company-logo">
+                        <img id="company-logo" src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Logo de la empresa">
+                    </div>
+                    <div class="company-details">
+                        <h1 id="company-name">Nombre de la Empresa</h1>
+                        <p id="company-email">empresa@ejemplo.com</p>
+                        <span class="company-badge">Empresa Verificada</span>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='post-job.html'">Publicar Empleo</button>
+                    <button class="btn btn-outline" id="edit-company">Editar Perfil</button>
+                </div>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <h3 id="total-jobs">0</h3>
+                        <p>Empleos Publicados</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3 id="total-applications">0</h3>
+                        <p>Aplicaciones Recibidas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <h3 id="active-jobs">0</h3>
+                        <p>Empleos Activos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 id="hired-candidates">0</h3>
+                        <p>Candidatos Contratados</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="jobs">Mis Empleos</button>
+                    <button class="tab-btn" data-tab="applications">Aplicaciones</button>
+                    <button class="tab-btn" data-tab="analytics">Analíticas</button>
+                    <button class="tab-btn" data-tab="settings">Configuración</button>
+                </div>
+
+                <!-- Jobs Tab -->
+                <div class="tab-content active" id="jobs">
+                    <div class="jobs-header">
+                        <h3>Empleos Publicados</h3>
+                        <button class="btn btn-primary" onclick="window.location.href='post-job.html'">+ Nuevo Empleo</button>
+                    </div>
+                    <div id="company-jobs-list">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Applications Tab -->
+                <div class="tab-content" id="applications">
+                    <div class="applications-header">
+                        <h3>Aplicaciones Recibidas</h3>
+                        <div class="filter-controls">
+                            <select id="job-filter">
+                                <option value="">Todos los empleos</option>
+                            </select>
+                            <select id="status-filter">
+                                <option value="">Todos los estados</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="reviewing">En revisión</option>
+                                <option value="interview">Entrevista</option>
+                                <option value="accepted">Aceptado</option>
+                                <option value="rejected">Rechazado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="applications-list">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-content" id="analytics">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h4>Rendimiento de Empleos</h4>
+                            <div class="chart-placeholder">
+                                <p>📊 Gráfico de aplicaciones por empleo</p>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Fuentes de Candidatos</h4>
+                            <div class="chart-placeholder">
+                                <p>🥧 Gráfico de fuentes de tráfico</p>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Tiempo de Contratación</h4>
+                            <div class="metric">
+                                <span class="metric-value">15</span>
+                                <span class="metric-label">días promedio</span>
+                            </div>
+                        </div>
+                        <div class="analytics-card">
+                            <h4>Tasa de Conversión</h4>
+                            <div class="metric">
+                                <span class="metric-value">12%</span>
+                                <span class="metric-label">aplicaciones a entrevistas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings">
+                    <div class="settings-section">
+                        <h3>Información de la Empresa</h3>
+                        <form id="company-settings-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nombre de la Empresa</label>
+                                    <input type="text" id="company-name-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email de Contacto</label>
+                                    <input type="email" id="company-email-input" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Teléfono</label>
+                                    <input type="tel" id="company-phone">
+                                </div>
+                                <div class="form-group">
+                                    <label>Sitio Web</label>
+                                    <input type="url" id="company-website" placeholder="https://...">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Dirección</label>
+                                <input type="text" id="company-address" placeholder="Dirección completa">
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción de la Empresa</label>
+                                <textarea id="company-description" rows="4" placeholder="Describe tu empresa..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Industria</label>
+                                    <select id="company-industry">
+                                        <option value="">Selecciona una industria</option>
+                                        <option value="tecnologia">Tecnología</option>
+                                        <option value="finanzas">Finanzas</option>
+                                        <option value="salud">Salud</option>
+                                        <option value="educacion">Educación</option>
+                                        <option value="retail">Retail</option>
+                                        <option value="manufactura">Manufactura</option>
+                                        <option value="servicios">Servicios</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tamaño de la Empresa</label>
+                                    <select id="company-size">
+                                        <option value="">Selecciona el tamaño</option>
+                                        <option value="1-10">1-10 empleados</option>
+                                        <option value="11-50">11-50 empleados</option>
+                                        <option value="51-200">51-200 empleados</option>
+                                        <option value="201-500">201-500 empleados</option>
+                                        <option value="500+">500+ empleados</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Actions Modal -->
+    <div id="job-actions-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Acciones del Empleo</h2>
+            <div class="job-actions">
+                <button class="btn btn-outline" id="edit-job">Editar Empleo</button>
+                <button class="btn btn-outline" id="view-applications">Ver Aplicaciones</button>
+                <button class="btn btn-outline" id="pause-job">Pausar Empleo</button>
+                <button class="btn btn-danger" id="delete-job">Eliminar Empleo</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="company-dashboard.js"></script>
+</body>
+</html>

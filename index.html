@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow - Consultoría de Recursos Humanos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <!-- Bootstrap Select CSS y JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>WORLKFLOW</span>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="#empleos" class="nav-link">Empleos</a></li>
+                    <li><a href="#empresas" class="nav-link">Empresas</a></li>
+                    <li><a href="#servicios" class="nav-link">Servicios</a></li>
+                    <li><a href="#contacto" class="nav-link">Contacto</a></li>
+                </ul>
+                <div class="nav-actions" id="nav-actions">
+                    <button class="btn btn-outline" id="login-btn">Iniciar Sesión</button>
+                    <button class="btn btn-primary" id="register-btn">Registrarse</button>
+                </div>
+                <div class="nav-toggle" id="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Conectamos el talento con las oportunidades</h1>
+                <p>La plataforma líder en recursos humanos que une a los mejores profesionales con las empresas más innovadoras del mercado.</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">15,000+</span>
+                        <span class="stat-label">Empleos Activos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">8,500+</span>
+                        <span class="stat-label">Empresas Registradas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">120,000+</span>
+                        <span class="stat-label">Candidatos</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Profesionales trabajando">
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Search Section -->
+    <section id="empleos" class="job-search">
+        <div class="container">
+            <h2>Encuentra tu próximo empleo</h2>
+            <div class="search-bar">
+                <div class="search-inputs">
+                    <input type="text" id="job-title" placeholder="¿Qué trabajo buscas?">
+                    <select id="job-location" class="selectpicker" data-live-search="true" title="¿Dónde?">
+                        <option value="Lima">Lima</option>
+                        <option value="Arequipa">Arequipa</option>
+                        <option value="Trujillo">Trujillo</option>
+                        <option value="Cusco">Cusco</option>
+                        <option value="Piura">Piura</option>
+                        <option value="Chiclayo">Chiclayo</option>
+                        <option value="Iquitos">Iquitos</option>
+                        <option value="Tacna">Tacna</option>
+                        <option value="Huancayo">Huancayo</option>
+                        <option value="Puno">Puno</option>
+                        <option value="Chimbote">Chimbote</option>
+                        <option value="Juliaca">Juliaca</option>
+                        <option value="Sullana">Sullana</option>
+                        <option value="Ica">Ica</option>
+                        <option value="Ayacucho">Ayacucho</option>
+                    </select>
+                    <select id="job-category">
+                        <option value="">Todas las categorías</option>
+                        <option value="tecnologia">Tecnología</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="ventas">Ventas</option>
+                        <option value="finanzas">Finanzas</option>
+                        <option value="rrhh">Recursos Humanos</option>
+                        <option value="administracion">Administración</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary search-btn" id="search-btn">Buscar Empleos</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Categories -->
+    <section class="job-categories">
+        <div class="container">
+            <h2>Explora por categorías</h2>
+            <div class="categories-grid">
+                <div class="category-card" data-category="tecnologia">
+                    <div class="category-icon">💻</div>
+                    <h3>Tecnología</h3>
+                    <p>2,450 empleos disponibles</p>
+                </div>
+                <div class="category-card" data-category="marketing">
+                    <div class="category-icon">📈</div>
+                    <h3>Marketing</h3>
+                    <p>1,890 empleos disponibles</p>
+                </div>
+                <div class="category-card" data-category="ventas">
+                    <div class="category-icon">🤝</div>
+                    <h3>Ventas</h3>
+                    <p>3,210 empleos disponibles</p>
+                </div>
+                <div class="category-card" data-category="finanzas">
+                    <div class="category-icon">💰</div>
+                    <h3>Finanzas</h3>
+                    <p>1,650 empleos disponibles</p>
+                </div>
+                <div class="category-card" data-category="rrhh">
+                    <div class="category-icon">👥</div>
+                    <h3>Recursos Humanos</h3>
+                    <p>980 empleos disponibles</p>
+                </div>
+                <div class="category-card" data-category="administracion">
+                    <div class="category-icon">📊</div>
+                    <h3>Administración</h3>
+                    <p>2,120 empleos disponibles</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Listings -->
+    <section class="job-listings">
+        <div class="container">
+            <h2>Empleos destacados</h2>
+            <div class="jobs-grid" id="jobs-grid">
+                <!-- Jobs will be populated by JavaScript -->
+            </div>
+            <div class="pagination">
+                <button class="btn btn-outline" id="prev-page">Anterior</button>
+                <span id="page-info">Página 1 de 5</span>
+                <button class="btn btn-outline" id="next-page">Siguiente</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section id="empresas" class="companies">
+        <div class="container">
+            <div class="companies-header">
+                <div class="companies-content">
+                    <h2>¿Eres una empresa?</h2>
+                    <p>Encuentra el talento que necesitas para hacer crecer tu negocio. Nuestro equipo de expertos en recursos humanos te ayudará a encontrar a los candidatos perfectos.</p>
+                    <div class="company-benefits">
+                        <div class="benefit">
+                            <span class="benefit-icon">🎯</span>
+                            <span>Reclutamiento especializado</span>
+                        </div>
+                        <div class="benefit">
+                            <span class="benefit-icon">⚡</span>
+                            <span>Procesos ágiles</span>
+                        </div>
+                        <div class="benefit">
+                            <span class="benefit-icon">🔍</span>
+                            <span>Búsqueda activa de talento</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="company-register">Registra tu empresa</button>
+                </div>
+                <div class="companies-image">
+                    <img src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Equipo de trabajo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="services">
+        <div class="container">
+            <h2>Nuestros servicios</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🔍</div>
+                    <h3>Búsqueda y Selección</h3>
+                    <p>Identificamos y evaluamos a los mejores candidatos para tu empresa mediante procesos rigurosos y eficientes.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📋</div>
+                    <h3>Evaluación de Competencias</h3>
+                    <p>Realizamos evaluaciones técnicas y psicológicas para garantizar la mejor selección de talento.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎓</div>
+                    <h3>Capacitación y Desarrollo</h3>
+                    <p>Programas de formación personalizados para potenciar las habilidades de tu equipo de trabajo.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Consultoría en RRHH</h3>
+                    <p>Asesoramiento estratégico para optimizar la gestión del talento humano en tu organización.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💼</div>
+                    <h3>Outsourcing de RRHH</h3>
+                    <p>Gestión integral de recursos humanos para que te enfoques en tu core business.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🤝</div>
+                    <h3>Headhunting Ejecutivo</h3>
+                    <p>Búsqueda especializada de ejecutivos y directivos para posiciones estratégicas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>Lo que dicen nuestros clientes</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Workflow nos ayudó a encontrar el candidato perfecto para nuestro equipo de desarrollo. Su proceso es muy profesional y eficiente."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100" alt="María González">
+                        <div>
+                            <h4>María González</h4>
+                            <span>Directora de RRHH, TechCorp</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Gracias a Workflow conseguí el trabajo de mis sueños. Su equipo me acompañó durante todo el proceso de selección."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Carlos Rodríguez">
+                        <div>
+                            <h4>Carlos Rodríguez</h4>
+                            <span>Desarrollador Senior</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"La experiencia con Workflow ha sido excepcional. Nos ayudaron a estructurar mejor nuestro departamento de RRHH."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.pexels.com/photos/2381069/pexels-photo-2381069.jpeg?auto=compress&cs=tinysrgb&w=100" alt="Ana Martínez">
+                        <div>
+                            <h4>Ana Martínez</h4>
+                            <span>CEO, StartupInnovation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <h2>Ponte en contacto con nosotros</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Información de contacto</h3>
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <div>
+                            <h4>Dirección</h4>
+                            <p>Av. Corrientes 1234, Buenos Aires, Argentina</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <div>
+                            <h4>Teléfono</h4>
+                            <p>+54 11 4567-8900</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">✉️</span>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@workflow.com</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" name="phone" placeholder="Teléfono">
+                    </div>
+                    <div class="form-group">
+                        <select id="subject" name="subject" required>
+                            <option value="">Selecciona un tema</option>
+                            <option value="busco-empleo">Busco empleo</option>
+                            <option value="busco-candidatos">Busco candidatos</option>
+                            <option value="consultoria">Necesito consultoría</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="Mensaje" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Workflow</h3>
+                    <p>La plataforma líder en recursos humanos que conecta el talento con las mejores oportunidades laborales.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Para Candidatos</h4>
+                    <ul>
+                        <li><a href="#">Buscar empleos</a></li>
+                        <li><a href="#">Crear perfil</a></li>
+                        <li><a href="#">Consejos de carrera</a></li>
+                        <li><a href="#">Subir CV</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Para Empresas</h4>
+                    <ul>
+                        <li><a href="#">Publicar empleos</a></li>
+                        <li><a href="#">Buscar candidatos</a></li>
+                        <li><a href="#">Planes y precios</a></li>
+                        <li><a href="#">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Compañía</h4>
+                    <ul>
+                        <li><a href="#">Sobre nosotros</a></li>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Términos de uso</a></li>
+                        <li><a href="#">Política de privacidad</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Workflow. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                </div>
+                <div class="form-group">
+                    <select name="userType" required>
+                        <option value="">Tipo de usuario</option>
+                        <option value="candidato">Candidato</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            </form>
+            <div style="text-align:center; margin-top:1rem;">
+                <a href="recover-password.html" style="color:#2563eb; text-decoration:underline; font-size:0.98rem;">¿Olvidaste tu contraseña?</a>
+            </div>
+            <p class="auth-switch">¿No tienes cuenta? <a href="#" id="switch-to-register">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Nombre completo" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                </div>
+                <div class="form-group">
+                    <select name="userType" required>
+                        <option value="">Tipo de usuario</option>
+                        <option value="candidato">Candidato</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </form>
+            <p class="auth-switch">¿Ya tienes cuenta? <a href="#" id="switch-to-login">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+
+    <!-- Modal de registro de empresa -->
+    <div id="company-register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registro de Empresa</h2>
+            <form id="company-register-form">
+                <div class="form-group">
+                    <input type="text" name="company_name" placeholder="Nombre de la empresa" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="company_email" placeholder="Correo de la empresa" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="ruc" placeholder="RUC" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="website" placeholder="Sitio web">
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="phone" placeholder="Teléfono">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="location" placeholder="Ubicación (Ciudad, País)">
+                </div>
+                <div class="form-group">
+                    <textarea name="description" placeholder="Descripción de la empresa" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrar Empresa</button>
+            </form>
+            <p class="auth-switch">¿Ya tienes cuenta de empresa? <a href="#" id="switch-to-company-login">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+    document.getElementById('search-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const title = document.getElementById('job-title').value;
+        const location = document.getElementById('job-location').value;
+        const category = document.getElementById('job-category').value;
+        const params = new URLSearchParams({ title, location, category });
+        window.location.href = `search.html?${params.toString()}`;
+    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#job-location').selectpicker();
+        });
+    </script>
+</body>
+</html>
