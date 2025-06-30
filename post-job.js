@@ -188,7 +188,6 @@ function handleFormSubmit(e) {
     
     const formData = new FormData(e.target);
     const jobData = {
-        id: Date.now(),
         title: formData.get('title'),
         category: formData.get('category'),
         location: formData.get('location'),
@@ -208,16 +207,10 @@ function handleFormSubmit(e) {
         positions: parseInt(formData.get('positions')) || 1,
         applicationEmail: formData.get('applicationEmail'),
         requireCV: formData.get('requireCV') === 'on',
-        requireCoverLetter: formData.get('requireCoverLetter') === 'on',
-        companyId: currentUser.id,
-        companyName: currentUser.name,
-        status: 'active',
-        createdAt: new Date().toISOString(),
-        applications: 0,
-        views: 0
+        requireCoverLetter: formData.get('requireCoverLetter') === 'on'
     };
     
-    // Validate required fields
+    // Validar campos obligatorios
     const requiredFields = ['title', 'category', 'location', 'type', 'description', 'requirements', 'experienceLevel'];
     const missingFields = requiredFields.filter(field => !jobData[field]);
     
@@ -226,39 +219,35 @@ function handleFormSubmit(e) {
         return;
     }
     
-    // Show loading state
+    // Mostrar estado de carga
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.innerHTML = '<div class="loading"></div> Publicando...';
     submitBtn.disabled = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-        try {
-            // Save job to localStorage
-            const companyJobs = JSON.parse(localStorage.getItem(`company_jobs_${currentUser.id}`) || '[]');
-            companyJobs.push(jobData);
-            localStorage.setItem(`company_jobs_${currentUser.id}`, JSON.stringify(companyJobs));
-            
-            // Also save to global jobs list for search
-            const allJobs = JSON.parse(localStorage.getItem('all_jobs') || '[]');
-            allJobs.push(jobData);
-            localStorage.setItem('all_jobs', JSON.stringify(allJobs));
-            
-            // Show success message
+
+    // Enviar al backend
+    fetch('backend/post_job.php', {
+        method: 'POST',
+        body: new URLSearchParams(Object.entries(jobData)),
+        credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
             showSuccessMessage(jobData);
-            
-            // Reset form
             e.target.reset();
             updatePreview();
-            
-        } catch (error) {
-            showMessage('Error al publicar el empleo. Inténtalo de nuevo.', 'error');
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
+        } else {
+            showMessage(data.message || 'Error al publicar el empleo. Inténtalo de nuevo.', 'error');
         }
-    }, 2000);
+    })
+    .catch(() => {
+        showMessage('Error de red al publicar el empleo.', 'error');
+    })
+    .finally(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
 }
 
 function showSuccessMessage(jobData) {
@@ -310,6 +299,10 @@ function saveDraft() {
 
 // Load draft on page load
 function loadDraft() {
+    if (!currentUser || !currentUser.id) {
+        // No hay usuario, no cargar borrador
+        return;
+    }
     const draft = localStorage.getItem(`job_draft_${currentUser.id}`);
     if (draft) {
         const draftData = JSON.parse(draft);
