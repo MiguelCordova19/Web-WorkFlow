@@ -529,4 +529,110 @@ body {
     background: #ef4444;
     color: #fff;
     border-color: #ef4444;
+}
+
+/* Estilos para el panel de detalles de empleo mejorado */
+.job-details-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    padding: 32px 32px 24px 32px;
+    margin: 16px 0;
+    border: 1px solid #eee;
+}
+.job-details-header {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+}
+.job-details-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.job-details-company-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+.job-details-location {
+    color: #b94a00;
+    font-size: 1rem;
+}
+.job-details-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 0;
+}
+.badge {
+    background: #fff7d6;
+    color: #b94a00;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 1px solid #ffe6a0;
+}
+.job-details-section {
+    margin-bottom: 22px;
+}
+.job-details-section h4 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.details-list {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.details-list li {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1rem;
+}
+.details-icon {
+    font-size: 1.1em;
+    margin-right: 4px;
+}
+.skills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+.skill-chip {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-radius: 16px;
+    padding: 4px 14px;
+    font-size: 0.98rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+.row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+.col {
+    flex: 1 1 180px;
+    min-width: 160px;
+    margin-bottom: 8px;
+}
+@media (max-width: 700px) {
+    .job-details-card {
+        padding: 16px 6px 12px 6px;
+    }
+    .row {
+        flex-direction: column;
+        gap: 8px;
+    }
 } 

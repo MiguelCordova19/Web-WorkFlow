@@ -14,91 +14,7 @@ const companyRegisterBtn = document.getElementById('company-register');
 // Authentication State
 // let currentUser = null;
 
-// Sample job data
-const jobsData = [
-    {
-        id: 1,
-        title: "Desarrollador Full Stack",
-        company: "TechCorp Perú SAC",
-        location: "Lima, Perú",
-        salary: "S/ 8,000 - S/ 12,000",
-        type: "Tiempo completo",
-        category: "tecnologia",
-        posted: "Hace 2 días"
-    },
-    {
-        id: 2,
-        title: "Especialista en Marketing Digital",
-        company: "MarketingPro Perú",
-        location: "Arequipa, Perú",
-        salary: "S/ 5,000 - S/ 7,500",
-        type: "Tiempo completo",
-        category: "marketing",
-        posted: "Hace 1 día"
-    },
-    {
-        id: 3,
-        title: "Gerente de Ventas",
-        company: "VentasMax Perú",
-        location: "Trujillo, Perú",
-        salary: "S/ 10,000 - S/ 15,000",
-        type: "Tiempo completo",
-        category: "ventas",
-        posted: "Hace 3 días"
-    },
-    {
-        id: 4,
-        title: "Analista Financiero Senior",
-        company: "FinanzasCorp Perú",
-        location: "Cusco, Perú",
-        salary: "S/ 6,500 - S/ 9,000",
-        type: "Tiempo completo",
-        category: "finanzas",
-        posted: "Hace 1 semana"
-    },
-    {
-        id: 5,
-        title: "Consultor de Recursos Humanos",
-        company: "RH Solutions",
-        location: "Mendoza, Argentina",
-        salary: "$65,000 - $95,000",
-        type: "Tiempo completo",
-        category: "rrhh",
-        posted: "Hace 5 días"
-    },
-    {
-        id: 6,
-        title: "Asistente Administrativo",
-        company: "AdminPro",
-        location: "La Plata, Argentina",
-        salary: "$40,000 - $60,000",
-        type: "Medio tiempo",
-        category: "administracion",
-        posted: "Hace 4 días"
-    },
-    {
-        id: 7,
-        title: "Desarrollador Frontend React",
-        company: "StartupTech",
-        location: "Buenos Aires, Argentina",
-        salary: "$70,000 - $110,000",
-        type: "Tiempo completo",
-        category: "tecnologia",
-        posted: "Hace 2 días"
-    },
-    {
-        id: 8,
-        title: "Especialista en SEO",
-        company: "DigitalGrow",
-        location: "Buenos Aires, Argentina",
-        salary: "$55,000 - $80,000",
-        type: "Tiempo completo",
-        category: "marketing",
-        posted: "Hace 1 día"
-    }
-];
-
-let currentJobs = [...jobsData];
+let currentJobs = [];
 let currentPage = 1;
 const jobsPerPage = 5;
 
@@ -153,7 +69,27 @@ document.querySelectorAll('.close').forEach(closeBtn => {
     });
 });
 
-// Job Search Functionality
+// Nueva función para cargar empleos desde la base de datos
+async function loadJobsFromBackend() {
+    try {
+        const res = await fetch('backend/get_jobs.php');
+        const data = await res.json();
+        if (data.success) {
+            currentJobs = data.jobs;
+            renderJobs(currentJobs);
+        } else {
+            jobsGrid.innerHTML = '<p class="text-center">No se pudieron cargar los empleos.</p>';
+        }
+    } catch (err) {
+        jobsGrid.innerHTML = '<p class="text-center">Error de conexión al cargar empleos.</p>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadJobsFromBackend();
+});
+
+// Modifica renderJobs para usar los campos del backend
 function renderJobs(jobs) {
     const startIndex = (currentPage - 1) * jobsPerPage;
     const endIndex = startIndex + jobsPerPage;
@@ -172,13 +108,13 @@ function renderJobs(jobs) {
         jobCard.innerHTML = `
             <div class="job-info">
                 <h3 class="job-title">${job.title}</h3>
-                <div class="job-company">${job.company}</div>
-                <div class="job-location">📍 ${job.location}</div>
-                <div class="job-posted">${job.posted}</div>
+                <div class="job-company">${job.company_name || ''}</div>
+                <div class="job-location">📍 ${job.location || ''}</div>
+                <div class="job-posted">${job.created_at ? new Date(job.created_at).toLocaleDateString() : ''}</div>
             </div>
             <div class="job-meta">
-                <div class="job-salary">${job.salary}</div>
-                <div class="job-type">${job.type}</div>
+                <div class="job-salary">${job.salary_min && job.salary_max ? `${job.currency || ''} ${job.salary_min} - ${job.salary_max}` : ''}</div>
+                <div class="job-type">${job.type || ''}</div>
                 <button class="btn btn-primary apply-btn" data-jobid="${job.id}">Inicia sesión para aplicar</button>
             </div>
         `;
@@ -216,7 +152,7 @@ searchBtn.addEventListener('click', () => {
     const jobLocation = document.getElementById('job-location').value.toLowerCase();
     const jobCategory = document.getElementById('job-category').value;
 
-    let filteredJobs = jobsData.filter(job => {
+    let filteredJobs = currentJobs.filter(job => {
         const titleMatch = !jobTitle || job.title.toLowerCase().includes(jobTitle);
         const locationMatch = !jobLocation || job.location.toLowerCase().includes(jobLocation);
         const categoryMatch = !jobCategory || job.category === jobCategory;
@@ -238,7 +174,7 @@ categoryCards.forEach(card => {
         const category = card.dataset.category;
         document.getElementById('job-category').value = category;
         
-        const filteredJobs = jobsData.filter(job => job.category === category);
+        const filteredJobs = currentJobs.filter(job => job.category === category);
         currentJobs = filteredJobs;
         currentPage = 1;
         renderJobs(currentJobs);
