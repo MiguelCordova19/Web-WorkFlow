@@ -21,7 +21,7 @@
             <div class="nav-container">
                 <div class="nav-brand">
                     <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-                    <span>ConsultorÃ­a de RRHH</span>
+                    <span>Consultoría de RRHH</span>
                 </div>
                 <ul class="nav-menu">
                     <li><a href="../index.html" class="nav-link">Inicio</a></li>
@@ -62,7 +62,7 @@
                     <button class="tab-btn" data-tab="applications">Mis Aplicaciones</button>
                     <button class="tab-btn" data-tab="favorites">Favoritos</button>
                     <button class="tab-btn" data-tab="cv">Mi CV</button>
-                    <button class="tab-btn" data-tab="settings">ConfiguraciÃ³n</button>
+                    <button class="tab-btn" data-tab="settings">Configuración</button>
                 </div>
 
                 <!-- Overview Tab -->
@@ -76,7 +76,7 @@
                         <div class="overview-card">
                             <h3>En Proceso</h3>
                             <div class="stat-number" id="pending-applications">0</div>
-                            <p>Aplicaciones en revisiÃ³n</p>
+                            <p>Aplicaciones en revisión</p>
                         </div>
                         <div class="overview-card">
                             <h3>Entrevistas</h3>
@@ -127,19 +127,19 @@
                 <!-- CV Tab -->
                 <div class="tab-content" id="cv">
                     <div class="cv-section">
-                        <h3>Mi CurrÃ­culum Vitae</h3>
+                        <h3>Mi Currículum Vitae</h3>
                         <div class="cv-upload">
                             <div class="upload-area" id="cv-upload-area">
-                                <div class="upload-icon">ðŸ“„</div>
+                                <div class="upload-icon"></div>
                                 <h4>Sube tu CV</h4>
-                                <p>Arrastra y suelta tu archivo aquÃ­ o haz clic para seleccionar</p>
+                                <p>Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
                                 <input type="file" id="cv-file" accept=".pdf,.doc,.docx" hidden>
                                 <button class="btn btn-primary" onclick="document.getElementById('cv-file').click()">Seleccionar Archivo</button>
                             </div>
                         </div>
                         <div class="cv-builder">
                             <h4>Crear CV</h4>
-                            <p>Â¿No tienes un CV? Usa nuestro constructor gratuito</p>
+                            <p>¿No tienes un CV? Usa nuestro constructor gratuito</p>
                             <button class="btn btn-outline" id="cv-builder-btn">Crear CV</button>
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                                 <textarea class="form-control" id="cv-experiencia" rows="3" required></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="cv-educacion">EducaciÃ³n</label>
+                                <label for="cv-educacion">Educación</label>
                                 <textarea class="form-control" id="cv-educacion" rows="2" required></textarea>
                             </div>
                             <div class="form-group">
@@ -179,7 +179,7 @@
                 <!-- Settings Tab -->
                 <div class="tab-content" id="settings">
                     <div class="settings-section">
-                        <h3>ConfiguraciÃ³n de la Cuenta</h3>
+                        <h3>Configuración de la Cuenta</h3>
                         <form id="settings-form">
                             <div class="form-group">
                                 <label>Nombre Completo</label>
@@ -190,23 +190,19 @@
                                 <input type="email" id="settings-email" name="email" required>
                             </div>
                             <div class="form-group">
-                                <label>TelÃ©fono</label>
+                                <label>Teléfono</label>
                                 <input type="tel" id="settings-phone" name="phone">
                             </div>
                             <div class="form-group">
-                                <label>UbicaciÃ³n</label>
+                                <label>Ubicación</label>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="text" id="settings-location" name="location" placeholder="Ciudad, PaÃ­s" readonly style="flex:1; cursor:pointer; background:#f8fafc;">
+                                    <input type="text" id="settings-location" name="location" placeholder="Ciudad, País" readonly style="flex:1; cursor:pointer; background:#f8fafc;">
                                     <button type="button" class="btn btn-outline" id="open-city-modal">Seleccionar ciudad</button>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>BiografÃ­a</label>
-                                <textarea id="settings-bio" name="bio" rows="4" placeholder="CuÃ©ntanos sobre ti..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Cambiar ContraseÃ±a</label>
-                                <input type="password" id="settings-password" name="password" placeholder="Nueva contraseÃ±a (opcional)">
+                                <label>Biografía</label>
+                                <textarea id="settings-bio" name="bio" rows="4" placeholder="Cuéntanos sobre ti..."></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </form>

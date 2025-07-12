@@ -4,10 +4,11 @@ let currentUser = null;
 // Initialize profile page
 window.addEventListener('DOMContentLoaded', async function() {
     try {
-        const res = await fetch('backend/session_status.php', { credentials: 'include' });
+        // Ajusta la ruta para acceder correctamente desde html/
+        const res = await fetch('../backend/session_status.php', { credentials: 'include' });
         const data = await res.json();
         if (!data.loggedIn || !data.user) {
-            window.location.href = 'index.html';
+            window.location.href = '../index.html';
             return;
         }
         currentUser = data.user;
@@ -65,7 +66,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         }
         // --- Fin lógica constructor de CV ---
     } catch (e) {
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';
     }
 });
 

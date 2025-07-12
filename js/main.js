@@ -509,3 +509,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('backend/session_status.php')
+        .then(res => res.json())
+        .then(data => {
+            const loginBtn = document.getElementById('login-btn');
+            const registerBtn = document.getElementById('register-btn');
+            const navActions = document.getElementById('nav-actions');
+            if (!navActions) return;
+
+            // Limpia acciones previas
+            navActions.innerHTML = '';
+
+            if (data.loggedIn && data.user) {
+                // Oculta botones de login y registro
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (registerBtn) registerBtn.style.display = 'none';
+
+                // Muestra botón de perfil o panel según tipo
+                let profileBtn = document.createElement('button');
+                profileBtn.className = 'btn btn-primary';
+                if (data.user.userType === 'empresa') {
+                    profileBtn.textContent = 'Mi Panel';
+                    profileBtn.onclick = () => window.location.href = 'html/company-dashboard.html';
+                } else {
+                    profileBtn.textContent = 'Mi Perfil';
+                    profileBtn.onclick = () => window.location.href = 'html/profile.html';
+                }
+                navActions.appendChild(profileBtn);
+
+                // Botón de cerrar sesión
+                let logoutBtn = document.createElement('button');
+                logoutBtn.className = 'btn btn-outline';
+                logoutBtn.textContent = 'Cerrar Sesión';
+                logoutBtn.onclick = () => {
+                    fetch('backend/logout.php').then(() => window.location.reload());
+                };
+                navActions.appendChild(logoutBtn);
+            } else {
+                // Si no está logueado, muestra los botones normales
+                if (loginBtn) {
+                    loginBtn.style.display = '';
+                    navActions.appendChild(loginBtn);
+                }
+                if (registerBtn) {
+                    registerBtn.style.display = '';
+                    navActions.appendChild(registerBtn);
+                }
+            }
+        });
+});
