@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultados de Tests</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/resultados-tests.css">
+</head>
+<body style="background: #f8fafc;">
+  <div class="resultados-container">
+    <h1 class="resultados-title">Resultados de Tests</h1>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="logica">LÃ³gica</button>
+      <button class="tab-btn" data-tab="programacion">ProgramaciÃ³n</button>
+      <button class="tab-btn" data-tab="matematicas">MatemÃ¡ticas</button>
+    </div>
+    <div class="tab-content" id="tab-logica">
+      <table>
+        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
+        <tbody id="tabla-logica"></tbody>
+      </table>
+    </div>
+    <div class="tab-content" id="tab-programacion" style="display:none;">
+      <table>
+        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
+        <tbody id="tabla-programacion"></tbody>
+      </table>
+    </div>
+    <div class="tab-content" id="tab-matematicas" style="display:none;">
+      <table>
+        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
+        <tbody id="tabla-matematicas"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="../js/resultados-tests.js"></script>
+</body>
+</html> 
+

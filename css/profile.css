@@ -1,12 +1,26 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-color-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --accent-color: #fbbf24;
+    --success-color: #059669;
+    --danger-color: #dc2626;
+    --background-color: #f8fafc;
+    --white: #ffffff;
+    --black: #1e293b;
+    --border-color: #e2e8f0;
+    --text-color: #333;
+}
+
 /* Profile Specific Styles */
 .profile-section {
     padding: 120px 0 80px;
     min-height: 100vh;
-    background: #f8fafc;
+    background: var(--background-color);
 }
 
 .profile-header {
-    background: white;
+    background: var(--white);
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -26,7 +40,7 @@
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #2563eb;
+    border: 4px solid var(--primary-color);
     margin-bottom: 1rem;
 }
 
@@ -36,18 +50,18 @@
 }
 
 .profile-info h1 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .profile-info p {
-    color: #64748b;
+    color: var(--secondary-color);
     margin-bottom: 0.5rem;
 }
 
 .profile-badge {
-    background: #2563eb;
-    color: white;
+    background: var(--primary-color);
+    color: var(--white);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -61,7 +75,7 @@
 }
 
 .profile-content {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     overflow: hidden;
@@ -69,7 +83,7 @@
 
 .profile-tabs {
     display: flex;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .tab-btn {
@@ -77,16 +91,16 @@
     padding: 1rem 2rem;
     border: none;
     background: transparent;
-    color: #64748b;
+    color: var(--secondary-color);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .tab-btn.active {
-    color: #2563eb;
-    border-bottom: 3px solid #2563eb;
-    background: #f8fafc;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    background: var(--background-color);
 }
 
 .tab-content {
@@ -107,15 +121,15 @@
 }
 
 .overview-card {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
     text-align: center;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid var(--primary-color);
 }
 
 .overview-card h3 {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -123,24 +137,24 @@
 .overview-card .stat-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
 }
 
 .overview-card p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.8rem;
 }
 
 .recent-activity {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
 }
 
 .recent-activity h3 {
     margin-bottom: 1rem;
-    color: #1e293b;
+    color: var(--black);
 }
 
 .activity-item {
@@ -148,7 +162,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: white;
+    background: var(--white);
     border-radius: 8px;
     margin-bottom: 1rem;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -180,12 +194,12 @@
 }
 
 .activity-content h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.25rem;
 }
 
 .activity-content p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
@@ -210,26 +224,26 @@
 
 .filter-btn {
     padding: 0.5rem 1rem;
-    border: 2px solid #e2e8f0;
-    background: white;
-    color: #64748b;
+    border: 2px solid var(--border-color);
+    background: var(--white);
+    color: var(--secondary-color);
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .filter-btn.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
 }
 
 .application-card {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 1rem;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid var(--primary-color);
     transition: box-shadow 0.2s, transform 0.2s, background 0.2s, border 0.2s;
     cursor: pointer;
 }
@@ -238,12 +252,12 @@
     box-shadow: 0 8px 32px rgba(37,99,235,0.12);
     transform: translateY(-2px) scale(1.02);
     background: #e0e7ff;
-    border-left: 4px solid #1d4ed8;
+    border-left: 4px solid var(--primary-color-dark);
 }
 
 .application-card.selected {
     background: #dbeafe;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid var(--primary-color);
     box-shadow: 0 8px 32px rgba(37,99,235,0.18);
 }
 
@@ -255,12 +269,12 @@
 }
 
 .application-info h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .application-info p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
@@ -278,12 +292,12 @@
 
 .status-interview {
     background: #dbeafe;
-    color: #1d4ed8;
+    color: var(--primary-color-dark);
 }
 
 .status-rejected {
     background: #fee2e2;
-    color: #dc2626;
+    color: var(--danger-color);
 }
 
 .status-accepted {
@@ -302,22 +316,22 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--secondary-color);
 }
 
 .timeline-step.completed {
-    color: #059669;
+    color: var(--success-color);
 }
 
 .timeline-step.current {
-    color: #2563eb;
+    color: var(--primary-color);
     font-weight: 600;
 }
 
 /* CV Tab */
 .cv-section h3 {
     margin-bottom: 2rem;
-    color: #1e293b;
+    color: var(--black);
 }
 
 .cv-upload {
@@ -325,7 +339,7 @@
 }
 
 .upload-area {
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed var(--border-color);
     border-radius: 10px;
     padding: 3rem;
     text-align: center;
@@ -334,12 +348,12 @@
 }
 
 .upload-area:hover {
-    border-color: #2563eb;
-    background: #f8fafc;
+    border-color: var(--primary-color);
+    background: var(--background-color);
 }
 
 .upload-area.dragover {
-    border-color: #2563eb;
+    border-color: var(--primary-color);
     background: #dbeafe;
 }
 
@@ -349,29 +363,29 @@
 }
 
 .upload-area h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .upload-area p {
-    color: #64748b;
+    color: var(--secondary-color);
     margin-bottom: 1.5rem;
 }
 
 .cv-builder {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 2rem;
     border-radius: 10px;
     text-align: center;
 }
 
 .cv-builder h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .cv-builder p {
-    color: #64748b;
+    color: var(--secondary-color);
     margin-bottom: 1.5rem;
 }
 
@@ -382,7 +396,7 @@
 
 .settings-section h3 {
     margin-bottom: 2rem;
-    color: #1e293b;
+    color: var(--black);
 }
 
 .form-group {
@@ -392,7 +406,7 @@
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #374151;
+    color: var(--text-color);
     font-weight: 600;
 }
 
@@ -400,7 +414,7 @@
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
 }
@@ -408,12 +422,12 @@
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--primary-color);
 }
 
 .notification-settings h3 {
     margin-bottom: 2rem;
-    color: #1e293b;
+    color: var(--black);
 }
 
 .notification-item {
@@ -421,18 +435,18 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: #f8fafc;
+    background: var(--background-color);
     border-radius: 8px;
     margin-bottom: 1rem;
 }
 
 .notification-item h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.25rem;
 }
 
 .notification-item p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
@@ -475,7 +489,7 @@
 }
 
 input:checked + .slider {
-    background-color: #2563eb;
+    background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
@@ -524,6 +538,6 @@ input:checked + .slider:before {
 }
 
 .nav-link.active {
-    color: #2563eb;
+    color: var(--primary-color);
     font-weight: 600;
 }

@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publicar Empleo - Workflow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="post-job.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/post-job.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
 </head>
 <body>
     <!-- Header -->
@@ -15,11 +15,11 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-brand">
-                    <img src="img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-                    <span>Consultoría de RRHH</span>
+                    <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>ConsultorÃ­a de RRHH</span>
                 </div>
                 <ul class="nav-menu">
-                    <li><a href="index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
                     <li><a href="company-dashboard.html" class="nav-link">Mi Panel</a></li>
                     <li><a href="post-job.html" class="nav-link active">Publicar Empleo</a></li>
                     <li><a href="candidates.html" class="nav-link">Candidatos</a></li>
@@ -44,32 +44,32 @@
                     <form id="post-job-form">
                         <!-- Basic Information -->
                         <div class="form-section">
-                            <h3>Información Básica</h3>
+                            <h3>InformaciÃ³n BÃ¡sica</h3>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="job-title">Título del Empleo *</label>
+                                    <label for="job-title">TÃ­tulo del Empleo *</label>
                                     <input type="text" id="job-title" name="title" required placeholder="ej. Desarrollador Full Stack Senior">
                                 </div>
                                 <div class="form-group">
-                                    <label for="job-category">Categoría *</label>
+                                    <label for="job-category">CategorÃ­a *</label>
                                     <select id="job-category" name="category" required>
-                                        <option value="">Selecciona una categoría</option>
-                                        <option value="tecnologia">Tecnología</option>
+                                        <option value="">Selecciona una categorÃ­a</option>
+                                        <option value="tecnologia">TecnologÃ­a</option>
                                         <option value="marketing">Marketing</option>
                                         <option value="ventas">Ventas</option>
                                         <option value="finanzas">Finanzas</option>
                                         <option value="rrhh">Recursos Humanos</option>
-                                        <option value="administracion">Administración</option>
-                                        <option value="diseno">Diseño</option>
-                                        <option value="ingenieria">Ingeniería</option>
+                                        <option value="administracion">AdministraciÃ³n</option>
+                                        <option value="diseno">DiseÃ±o</option>
+                                        <option value="ingenieria">IngenierÃ­a</option>
                                         <option value="salud">Salud</option>
-                                        <option value="educacion">Educación</option>
+                                        <option value="educacion">EducaciÃ³n</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="job-location">Ubicación *</label>
+                                    <label for="job-location">UbicaciÃ³n *</label>
                                     <input type="text" id="job-location" name="location" required placeholder="ej. Buenos Aires, Argentina">
                                 </div>
                                 <div class="form-group">
@@ -80,7 +80,7 @@
                                         <option value="medio-tiempo">Medio Tiempo</option>
                                         <option value="freelance">Freelance</option>
                                         <option value="remoto">Remoto</option>
-                                        <option value="hibrido">Híbrido</option>
+                                        <option value="hibrido">HÃ­brido</option>
                                     </select>
                                 </div>
                             </div>
@@ -88,31 +88,31 @@
 
                         <!-- Job Description -->
                         <div class="form-section">
-                            <h3>Descripción del Empleo</h3>
+                            <h3>DescripciÃ³n del Empleo</h3>
                             <div class="form-group">
-                                <label for="job-description">Descripción *</label>
-                                <textarea id="job-description" name="description" rows="6" required placeholder="Describe las responsabilidades principales, el ambiente de trabajo y lo que hace especial a esta posición..."></textarea>
+                                <label for="job-description">DescripciÃ³n *</label>
+                                <textarea id="job-description" name="description" rows="6" required placeholder="Describe las responsabilidades principales, el ambiente de trabajo y lo que hace especial a esta posiciÃ³n..."></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="job-requirements">Requisitos *</label>
-                                <textarea id="job-requirements" name="requirements" rows="5" required placeholder="Lista los requisitos técnicos, experiencia necesaria, habilidades blandas, etc..."></textarea>
+                                <textarea id="job-requirements" name="requirements" rows="5" required placeholder="Lista los requisitos tÃ©cnicos, experiencia necesaria, habilidades blandas, etc..."></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="job-benefits">Beneficios</label>
-                                <textarea id="job-benefits" name="benefits" rows="4" placeholder="Describe los beneficios que ofreces: seguro médico, vacaciones, trabajo remoto, etc..."></textarea>
+                                <textarea id="job-benefits" name="benefits" rows="4" placeholder="Describe los beneficios que ofreces: seguro mÃ©dico, vacaciones, trabajo remoto, etc..."></textarea>
                             </div>
                         </div>
 
                         <!-- Compensation -->
                         <div class="form-section">
-                            <h3>Compensación</h3>
+                            <h3>CompensaciÃ³n</h3>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="salary-min">Salario Mínimo</label>
+                                    <label for="salary-min">Salario MÃ­nimo</label>
                                     <input type="number" id="salary-min" name="salaryMin" placeholder="50000">
                                 </div>
                                 <div class="form-group">
-                                    <label for="salary-max">Salario Máximo</label>
+                                    <label for="salary-max">Salario MÃ¡ximo</label>
                                     <input type="number" id="salary-max" name="salaryMax" placeholder="80000">
                                 </div>
                             </div>
@@ -121,11 +121,11 @@
                                     <label for="salary-currency">Moneda</label>
                                     <select id="salary-currency" name="currency">
                                         <option value="PEN">Soles (PEN)</option>
-                                        <option value="USD">Dólares (USD)</option>
+                                        <option value="USD">DÃ³lares (USD)</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="salary-period">Período</label>
+                                    <label for="salary-period">PerÃ­odo</label>
                                     <select id="salary-period" name="period">
                                         <option value="anual">Anual</option>
                                         <option value="mensual">Mensual</option>
@@ -150,10 +150,10 @@
                                     <label for="experience-level">Nivel de Experiencia *</label>
                                     <select id="experience-level" name="experienceLevel" required>
                                         <option value="">Selecciona el nivel</option>
-                                        <option value="junior">Junior (0-2 años)</option>
-                                        <option value="semi-senior">Semi Senior (2-5 años)</option>
-                                        <option value="senior">Senior (5+ años)</option>
-                                        <option value="lead">Lead/Manager (8+ años)</option>
+                                        <option value="junior">Junior (0-2 aÃ±os)</option>
+                                        <option value="semi-senior">Semi Senior (2-5 aÃ±os)</option>
+                                        <option value="senior">Senior (5+ aÃ±os)</option>
+                                        <option value="lead">Lead/Manager (8+ aÃ±os)</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -168,17 +168,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="skills">Habilidades Técnicas</label>
+                                <label for="skills">Habilidades TÃ©cnicas</label>
                                 <input type="text" id="skills" name="skills" placeholder="JavaScript, React, Node.js, Python... (separadas por comas)">
                             </div>
                         </div>
 
                         <!-- Application Settings -->
                         <div class="form-section">
-                            <h3>Configuración de Aplicaciones</h3>
+                            <h3>ConfiguraciÃ³n de Aplicaciones</h3>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="application-deadline">Fecha Límite</label>
+                                    <label for="application-deadline">Fecha LÃ­mite</label>
                                     <input type="date" id="application-deadline" name="deadline">
                                 </div>
                                 <div class="form-group">
@@ -201,7 +201,7 @@
                                 <label class="checkbox-label">
                                     <input type="checkbox" id="require-cover-letter" name="requireCoverLetter">
                                     <span class="checkmark"></span>
-                                    Requerir carta de presentación
+                                    Requerir carta de presentaciÃ³n
                                 </label>
                             </div>
                         </div>
@@ -219,20 +219,20 @@
                     <h3>Vista Previa</h3>
                     <div class="preview-card">
                         <div class="preview-header">
-                            <h4 id="preview-title">Título del Empleo</h4>
+                            <h4 id="preview-title">TÃ­tulo del Empleo</h4>
                             <span id="preview-company">Tu Empresa</span>
                         </div>
                         <div class="preview-meta">
-                            <span id="preview-location">📍 Ubicación</span>
-                            <span id="preview-type">⏰ Tipo</span>
-                            <span id="preview-salary">💰 Salario</span>
+                            <span id="preview-location">ðŸ“ UbicaciÃ³n</span>
+                            <span id="preview-type">â° Tipo</span>
+                            <span id="preview-salary">ðŸ’° Salario</span>
                         </div>
                         <div class="preview-description">
-                            <p id="preview-desc">La descripción aparecerá aquí...</p>
+                            <p id="preview-desc">La descripciÃ³n aparecerÃ¡ aquÃ­...</p>
                         </div>
                         <div class="preview-requirements">
                             <h5>Requisitos:</h5>
-                            <p id="preview-req">Los requisitos aparecerán aquí...</p>
+                            <p id="preview-req">Los requisitos aparecerÃ¡n aquÃ­...</p>
                         </div>
                         <div class="preview-skills" id="preview-skills-section" style="display: none;">
                             <h5>Habilidades:</h5>
@@ -244,7 +244,8 @@
         </div>
     </section>
 
-    <script src="auth.js"></script>
-    <script src="post-job.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/post-job.js"></script>
 </body>
 </html>
+

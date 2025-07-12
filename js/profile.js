@@ -46,6 +46,24 @@ window.addEventListener('DOMContentLoaded', async function() {
         locationInput.addEventListener('click', function() {
             openCityBtn.click();
         });
+        // --- Lógica para el constructor de CV ---
+        const btnCrearCV = document.getElementById('cv-builder-btn');
+        const seccionCV = document.getElementById('cv');
+        const seccionConstructor = document.getElementById('constructor-cv');
+        const btnVolverCV = document.getElementById('volver-cv');
+        if (btnCrearCV && seccionCV && seccionConstructor) {
+            btnCrearCV.addEventListener('click', function() {
+                seccionCV.style.display = 'none';
+                seccionConstructor.style.display = 'block';
+            });
+        }
+        if (btnVolverCV && seccionCV && seccionConstructor) {
+            btnVolverCV.addEventListener('click', function() {
+                seccionConstructor.style.display = 'none';
+                seccionCV.style.display = 'block';
+            });
+        }
+        // --- Fin lógica constructor de CV ---
     } catch (e) {
         window.location.href = 'index.html';
     }

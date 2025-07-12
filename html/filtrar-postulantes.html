@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Filtrar Postulantes</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/filtrar-postulantes.css">
+</head>
+<body style="background: #f8fafc;">
+  <header class="header">
+    <nav class="nav">
+      <div class="nav-container">
+        <div class="nav-brand">
+          <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+            <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+            <span>WORLKFLOW</span>
+          </a>
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
+          <li><a href="index.html#empleos" class="nav-link">Empleos</a></li>
+          <li><a href="index.html#empresas" class="nav-link">Empresas</a></li>
+          <li><a href="index.html#servicios" class="nav-link">Servicios</a></li>
+          <li><a href="index.html#contacto" class="nav-link">Contacto</a></li>
+        </ul>
+        <div style="margin-left:auto;">
+          <a href="company-dashboard.html" class="btn btn-primary" style="padding: 0.7em 2em; border-radius: 8px; font-weight: 600; text-decoration: none; background: #2563eb; color: #fff; transition: background 0.2s;">Ir a Perfil de Empresa</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="postulantes-container">
+    <h1 class="postulantes-title">Filtro de Postulantes</h1>
+    <div class="postulantes-box">
+      <section>
+        <h2 class="postulantes-subtitle">Filtrar Candidatos</h2>
+        <form id="form-filtro" novalidate action="resultados-postulantes.html" method="get">
+          <label>Experiencia (aÃ±os):<input type="number" name="experiencia" min="1" required></label><br>
+          <label>Estudios:<input type="text" name="estudios" required></label><br>
+          <label>Habilidades:<input type="text" name="habilidades" placeholder="Ej: JavaScript, PHP" required></label><br>
+          <button type="submit">Buscar</button>
+        </form>
+        <style>
+        .input-error {
+          border: 2px solid #ff9800 !important;
+          animation: shake 0.25s linear 1;
+        }
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(-4px); }
+          50% { transform: translateX(4px); }
+          75% { transform: translateX(-4px); }
+          100% { transform: translateX(0); }
+        }
+        .custom-tooltip {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: #fff;
+          color: #222;
+          border: 1.5px solid #d1d5db;
+          border-radius: 7px;
+          padding: 7px 16px;
+          font-size: 1rem;
+          position: absolute;
+          z-index: 10;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+          margin-top: 8px;
+          animation: fadeInTooltip 0.3s;
+          font-family: 'Segoe UI', Arial, sans-serif;
+          font-weight: 400;
+          transition: opacity 0.4s, transform 0.4s;
+        }
+        .custom-tooltip.hide {
+          opacity: 0;
+          transform: translateY(-12px);
+        }
+        .custom-tooltip .icon {
+          background: #ff9800;
+          color: #fff;
+          border-radius: 4px;
+          padding: 2px 6px 2px 6px;
+          font-size: 1.1em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .custom-tooltip::before {
+          content: '';
+          position: absolute;
+          top: -10px;
+          left: 24px;
+          width: 0;
+          height: 0;
+          border-left: 8px solid transparent;
+          border-right: 8px solid transparent;
+          border-bottom: 10px solid #fff;
+          filter: drop-shadow(0 -1px 1px #d1d5db);
+        }
+        @keyframes fadeInTooltip {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        </style>
+      </section>
+      <section>
+        <div id="resultados-postulantes"></div>
+      </section>
+    </div>
+  </div>
+  <script src="../js/filtrar-postulantes.js"></script>
+  <script>
+  document.getElementById('form-filtro').addEventListener('submit', function(e) {
+    let valid = true;
+    // Elimina tooltips previos
+    document.querySelectorAll('.custom-tooltip').forEach(t => t.remove());
+    this.querySelectorAll('input').forEach(input => {
+      input.classList.remove('input-error');
+      if (!input.value.trim()) {
+        valid = false;
+        input.classList.add('input-error');
+        // Crea tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'custom-tooltip';
+        tooltip.innerHTML = '<span class="icon">&#9888;</span> Completa este campo';
+        input.parentNode.style.position = 'relative';
+        input.parentNode.appendChild(tooltip);
+        setTimeout(() => {
+          tooltip.classList.add('hide');
+          setTimeout(() => { tooltip.remove(); input.classList.remove('input-error'); }, 400);
+        }, 4000);
+      }
+    });
+    if (!valid) {
+      e.preventDefault();
+    }
+  });
+  </script>
+</body>
+</html> 
+

@@ -16,6 +16,48 @@ window.addEventListener('DOMContentLoaded', async function() {
         initializeTabs();
         loadCompanyJobs();
         loadApplications();
+        // --- Lógica para el formulario de vacantes ---
+        const jobForm = document.getElementById('job-form');
+        if (jobForm) {
+            jobForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Validar campos
+                const title = document.getElementById('job-title').value.trim();
+                const location = document.getElementById('job-location').value.trim();
+                const salary = document.getElementById('job-salary').value.trim();
+                const type = document.getElementById('job-type').value;
+                const benefits = document.getElementById('job-benefits').value.trim();
+                const description = document.getElementById('job-description').value.trim();
+                if (!title || !location || !salary || !type || !description) {
+                    alert('Por favor, completa todos los campos obligatorios.');
+                    return;
+                }
+                // Crear objeto de vacante
+                const newJob = {
+                    id: Date.now(),
+                    title,
+                    location,
+                    salary,
+                    type,
+                    benefits,
+                    description,
+                    status: 'active',
+                    createdAt: new Date().toISOString(),
+                    applications: 0,
+                    views: 0
+                };
+                // Guardar en localStorage
+                companyJobs.unshift(newJob);
+                localStorage.setItem(`company_jobs_${currentCompany.id}`, JSON.stringify(companyJobs));
+                // Limpiar formulario
+                jobForm.reset();
+                // Actualizar lista
+                loadCompanyJobs();
+                // Mensaje de éxito
+                alert('Vacante publicada exitosamente.');
+            });
+        }
+        // --- Fin lógica formulario vacantes ---
     } catch (e) {
         window.location.href = 'index.html';
     }
@@ -120,6 +162,9 @@ function loadCompanyJobs() {
                     <div class="label">En Proceso</div>
                 </div>
             </div>
+            <div style="margin-top: 1rem; text-align: right;">
+                <button class="btn btn-outline-primary" onclick="window.location.href='gestionar-postulantes.html'">Gestionar Postulantes</button>
+            </div>
         </div>
     `).join('');
 }
@@ -134,9 +179,21 @@ function loadApplications() {
     
     // Mock applications data
     const mockApplications = [];
+    const experienciaEjemplo = ['1 año', '2 años', '3 años', '5 años'];
+    const estudiosEjemplo = ['Licenciatura', 'Maestría', 'Ingeniería', 'Técnico'];
+    const habilidadesEjemplo = [
+        ['JavaScript', 'Trabajo en equipo'],
+        ['Python', 'Liderazgo'],
+        ['SQL', 'Comunicación'],
+        ['Java', 'Resolución de problemas'],
+        ['React', 'Creatividad']
+    ];
     companyJobs.forEach(job => {
         const applicationCount = job.applications || 0;
         for (let i = 0; i < applicationCount; i++) {
+            const exp = experienciaEjemplo[i % experienciaEjemplo.length];
+            const edu = estudiosEjemplo[i % estudiosEjemplo.length];
+            const skills = habilidadesEjemplo[i % habilidadesEjemplo.length];
             mockApplications.push({
                 id: Date.now() + Math.random(),
                 jobId: job.id,
@@ -144,7 +201,10 @@ function loadApplications() {
                 candidateName: `Candidato ${i + 1}`,
                 candidateEmail: `candidato${i + 1}@email.com`,
                 appliedDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-                status: ['pending', 'reviewing', 'interview', 'accepted', 'rejected'][Math.floor(Math.random() * 5)]
+                status: ['pending', 'reviewing', 'interview', 'accepted', 'rejected'][Math.floor(Math.random() * 5)],
+                experiencia: exp,
+                estudios: edu,
+                habilidades: skills
             });
         }
     });
@@ -185,21 +245,36 @@ function loadApplications() {
     // Add filter functionality
     document.getElementById('job-filter').addEventListener('change', filterApplications);
     document.getElementById('status-filter').addEventListener('change', filterApplications);
+    document.getElementById('filter-experience').addEventListener('input', filterApplications);
+    document.getElementById('filter-education').addEventListener('input', filterApplications);
+    document.getElementById('filter-skills').addEventListener('input', filterApplications);
     
     function filterApplications() {
         const jobFilter = document.getElementById('job-filter').value;
         const statusFilter = document.getElementById('status-filter').value;
-        
+        const expFilter = document.getElementById('filter-experience').value.trim().toLowerCase();
+        const eduFilter = document.getElementById('filter-education').value.trim().toLowerCase();
+        const skillsFilter = document.getElementById('filter-skills').value.trim().toLowerCase();
+
         let filteredApplications = mockApplications;
-        
+
         if (jobFilter) {
             filteredApplications = filteredApplications.filter(app => app.jobId == jobFilter);
         }
-        
         if (statusFilter) {
             filteredApplications = filteredApplications.filter(app => app.status === statusFilter);
         }
-        
+        if (expFilter) {
+            filteredApplications = filteredApplications.filter(app => app.experiencia.toLowerCase().includes(expFilter));
+        }
+        if (eduFilter) {
+            filteredApplications = filteredApplications.filter(app => app.estudios.toLowerCase().includes(eduFilter));
+        }
+        if (skillsFilter) {
+            filteredApplications = filteredApplications.filter(app =>
+                app.habilidades.some(skill => skill.toLowerCase().includes(skillsFilter))
+            );
+        }
         renderApplications(filteredApplications);
     }
 }

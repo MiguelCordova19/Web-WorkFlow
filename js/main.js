@@ -12,23 +12,28 @@ const contactForm = document.getElementById('contact-form');
 const companyRegisterBtn = document.getElementById('company-register');
 
 // Authentication State
-// let currentUser = null;
+let currentUser = null;
 
 let currentJobs = [];
 let currentPage = 1;
 const jobsPerPage = 5;
 
 // Authentication Functions
-// function initializeAuth() { ... }
-// function updateAuthUI() { ... }
-// function registerUser(userData) { ... }
-// function loginUser(email, password) { ... }
-// function logout() { ... }
-
-// Navigation Toggle
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+function initializeAuth() { 
+    // Initialize authentication state
+}
+function updateAuthUI() { 
+    // Update UI based on auth state
+}
+function registerUser(userData) { 
+    // Register new user
+}
+function loginUser(email, password) { 
+    // Login user
+}
+function logout() { 
+    // Logout user
+}
 
 // Modal Functions
 function openModal(modal) {
@@ -248,14 +253,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    updateNavActions({ name: data.name || 'Usuario', userType: data.userType });
                     closeModal(loginModal);
                     showMessage('¡Bienvenido! Has iniciado sesión.', 'success');
                     // Redirigir según tipo
                     if (data.userType === 'empresa') {
-                        window.location.href = 'company-dashboard.html';
+                        window.location.href = 'html/company-dashboard.html';
                     } else {
-                        window.location.href = 'profile.html';
+                        window.location.href = 'html/profile.html';
                     }
                 } else {
                     showMessage(data.message || 'Error al iniciar sesión', 'danger');
@@ -452,11 +456,6 @@ renderJobs = function(jobs) {
     setTimeout(enhanceJobCards, 100);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize authentication
-    // initializeAuth();
-});
-
 // Función para mostrar mensajes flotantes
 function showMessage(message, type = 'info') {
     const messageEl = document.createElement('div');
@@ -479,89 +478,34 @@ function showMessage(message, type = 'info') {
     }, 3000);
 }
 
-// Función para actualizar el navbar según el usuario logueado
-function updateNavActions(user) {
-    const navActions = document.getElementById('nav-actions');
-    if (!navActions) return;
-    if (user) {
-        navActions.innerHTML = `
-            <div class="user-menu">
-                <span class="user-greeting">Hola, ${user.name}</span>
-                <button class="btn btn-outline" id="profile-btn">Mi Perfil</button>
-                <button class="btn btn-primary" id="logout-btn">Cerrar Sesión</button>
-            </div>
-        `;
-        document.getElementById('profile-btn').addEventListener('click', () => {
-            if (user.userType === 'empresa') {
-                window.location.href = 'company-dashboard.html';
-            } else {
-                window.location.href = 'profile.html';
-            }
+// --- Menú hamburguesa responsivo universal ---
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
         });
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            await fetch('backend/logout.php', { method: 'POST', credentials: 'include' });
-            window.location.reload();
-        });
-    } else {
-        navActions.innerHTML = `
-            <button class="btn btn-outline" id="login-btn">Iniciar Sesión</button>
-            <button class="btn btn-primary" id="register-btn">Registrarse</button>
-        `;
-        document.getElementById('login-btn').addEventListener('click', () => openModal(loginModal));
-        document.getElementById('register-btn').addEventListener('click', () => openModal(registerModal));
-    }
-}
-
-// Al cargar la página, consultar el estado de sesión
-window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const res = await fetch('backend/session_status.php', { credentials: 'include' });
-        const data = await res.json();
-        if (data.loggedIn) {
-            updateNavActions(data.user);
-        } else {
-            updateNavActions(null);
-        }
-    } catch (e) {
-        updateNavActions(null);
-    }
-});
-
-// Obtener el modal y formulario de empresa
-const companyRegisterModal = document.getElementById('company-register-modal');
-const companyRegisterForm = document.getElementById('company-register-form');
-
-// Botón para abrir el modal de empresa
-if (companyRegisterBtn) {
-    companyRegisterBtn.addEventListener('click', () => openModal(companyRegisterModal));
-}
-
-// Cerrar modal de empresa al hacer click en la X o fuera del modal
-companyRegisterModal.querySelector('.close').addEventListener('click', () => closeModal(companyRegisterModal));
-window.addEventListener('click', (e) => {
-    if (e.target === companyRegisterModal) closeModal(companyRegisterModal);
-});
-
-// Enviar formulario de registro de empresa
-if (companyRegisterForm) {
-    companyRegisterForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(companyRegisterForm);
-        try {
-            const res = await fetch('backend/register_company.php', {
-                method: 'POST',
-                body: formData
+        // Cerrar menú al hacer click en un enlace
+        navMenu.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    navMenu.classList.remove('active');
+                    navToggle.classList.remove('active');
+                }
             });
-            const data = await res.json();
-            if (data.success) {
-                showMessage('Empresa registrada exitosamente. Ahora puedes iniciar sesión.', 'success');
-                companyRegisterForm.reset();
-                closeModal(companyRegisterModal);
-            } else {
-                showMessage(data.message || 'Error al registrar empresa', 'danger');
+        });
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
+                if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                    navToggle.classList.remove('active');
+                }
             }
-        } catch (err) {
-            showMessage('Error de conexión con el servidor', 'danger');
-        }
-    });
-}
+        });
+    }
+});

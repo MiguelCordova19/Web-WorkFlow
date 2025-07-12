@@ -1,12 +1,26 @@
+:root {
+    --primary-color: #2563eb;
+    --primary-color-dark: #1d4ed8;
+    --secondary-color: #64748b;
+    --accent-color: #fbbf24;
+    --success-color: #059669;
+    --danger-color: #dc2626;
+    --background-color: #f8fafc;
+    --white: #ffffff;
+    --black: #1e293b;
+    --border-color: #e2e8f0;
+    --text-color: #333;
+}
+
 /* Company Dashboard Styles */
 .dashboard-section {
     padding: 120px 0 80px;
     min-height: 100vh;
-    background: #f8fafc;
+    background: var(--background-color);
 }
 
 .dashboard-header {
-    background: white;
+    background: var(--white);
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -27,22 +41,22 @@
     height: 80px;
     border-radius: 10px;
     object-fit: cover;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color);
 }
 
 .company-details h1 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .company-details p {
-    color: #64748b;
+    color: var(--secondary-color);
     margin-bottom: 0.5rem;
 }
 
 .company-badge {
-    background: #059669;
-    color: white;
+    background: var(--success-color);
+    color: var(--white);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -62,7 +76,7 @@
 }
 
 .stat-card {
-    background: white;
+    background: var(--white);
     padding: 1.5rem;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -78,24 +92,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f1f5f9;
+    background: var(--border-color);
     border-radius: 10px;
 }
 
 .stat-info h3 {
     font-size: 2rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--primary-color);
     margin-bottom: 0.25rem;
 }
 
 .stat-info p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
 .dashboard-content {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     overflow: hidden;
@@ -103,7 +117,7 @@
 
 .dashboard-tabs {
     display: flex;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .tab-btn {
@@ -111,16 +125,16 @@
     padding: 1rem 2rem;
     border: none;
     background: transparent;
-    color: #64748b;
+    color: var(--secondary-color);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .tab-btn.active {
-    color: #2563eb;
-    border-bottom: 3px solid #2563eb;
-    background: #f8fafc;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    background: var(--background-color);
 }
 
 .tab-content {
@@ -141,11 +155,11 @@
 }
 
 .job-item {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 1rem;
-    border-left: 4px solid #2563eb;
+    border-left: 4px solid var(--primary-color);
 }
 
 .job-header {
@@ -156,7 +170,7 @@
 }
 
 .job-info h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.5rem;
 }
 
@@ -164,7 +178,7 @@
     display: flex;
     gap: 1rem;
     font-size: 0.9rem;
-    color: #64748b;
+    color: var(--secondary-color);
 }
 
 .job-status {
@@ -202,18 +216,18 @@
 .job-stat .number {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--primary-color);
 }
 
 .job-stat .label {
     font-size: 0.8rem;
-    color: #64748b;
+    color: var(--secondary-color);
 }
 
 .job-actions-btn {
     background: none;
     border: none;
-    color: #64748b;
+    color: var(--secondary-color);
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 5px;
@@ -221,8 +235,8 @@
 }
 
 .job-actions-btn:hover {
-    background: #f1f5f9;
-    color: #2563eb;
+    background: var(--border-color);
+    color: var(--primary-color);
 }
 
 /* Applications Tab */
@@ -240,13 +254,13 @@
 
 .filter-controls select {
     padding: 0.5rem 1rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    background: white;
+    background: var(--white);
 }
 
 .application-item {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 1rem;
@@ -265,21 +279,21 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #e2e8f0;
+    background: var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    color: #64748b;
+    color: var(--secondary-color);
 }
 
 .applicant-details h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 0.25rem;
 }
 
 .applicant-details p {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
@@ -294,8 +308,8 @@
 }
 
 .btn-success {
-    background: #059669;
-    color: white;
+    background: var(--success-color);
+    color: var(--white);
 }
 
 .btn-success:hover {
@@ -303,8 +317,8 @@
 }
 
 .btn-danger {
-    background: #dc2626;
-    color: white;
+    background: var(--danger-color);
+    color: var(--white);
 }
 
 .btn-danger:hover {
@@ -319,25 +333,25 @@
 }
 
 .analytics-card {
-    background: #f8fafc;
+    background: var(--background-color);
     padding: 1.5rem;
     border-radius: 10px;
     text-align: center;
 }
 
 .analytics-card h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 1rem;
 }
 
 .chart-placeholder {
     height: 200px;
-    background: #e2e8f0;
+    background: var(--border-color);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 2rem;
 }
 
@@ -351,18 +365,18 @@
 .metric-value {
     font-size: 3rem;
     font-weight: 700;
-    color: #2563eb;
+    color: var(--primary-color);
 }
 
 .metric-label {
-    color: #64748b;
+    color: var(--secondary-color);
     font-size: 0.9rem;
 }
 
 /* Settings Tab */
 .settings-section h3 {
     margin-bottom: 2rem;
-    color: #1e293b;
+    color: var(--black);
 }
 
 .form-row {
@@ -378,7 +392,7 @@
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #374151;
+    color: var(--text-color);
     font-weight: 600;
 }
 
@@ -387,7 +401,7 @@
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
 }
@@ -396,7 +410,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--primary-color);
 }
 
 /* Job Actions Modal */
@@ -415,11 +429,11 @@
 .empty-state {
     text-align: center;
     padding: 3rem;
-    color: #64748b;
+    color: var(--secondary-color);
 }
 
 .empty-state h4 {
-    color: #1e293b;
+    color: var(--black);
     margin-bottom: 1rem;
 }
 

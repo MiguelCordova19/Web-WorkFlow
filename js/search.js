@@ -367,4 +367,49 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentJobs.length > 0) {
         selectJob(currentJobs[0].id);
     }
+
+    // --- Menú hamburguesa responsivo universal ---
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navActions = document.getElementById('nav-actions');
+    const closeMenu = document.getElementById('close-menu');
+
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
+            if (window.innerWidth <= 768 && navActions) {
+                navActions.style.display = navMenu.classList.contains('active') ? 'flex' : 'none';
+            }
+        });
+        // Cerrar menú al hacer click en un enlace
+        navMenu.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768 && navActions) {
+                    navMenu.classList.remove('active');
+                    navActions.style.display = 'none';
+                    navToggle.classList.remove('active');
+                }
+            });
+        });
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
+                if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && (!navActions || !navActions.contains(e.target))) {
+                    navMenu.classList.remove('active');
+                    if (navActions) navActions.style.display = 'none';
+                    navToggle.classList.remove('active');
+                }
+            }
+        });
+        // Cerrar menú al hacer click en la X
+        if (closeMenu) {
+            closeMenu.addEventListener('click', function(e) {
+                navMenu.classList.remove('active');
+                if (navActions) navActions.style.display = 'none';
+                navToggle.classList.remove('active');
+            });
+        }
+    }
 }); 

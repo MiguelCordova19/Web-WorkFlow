@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Empresa - Workflow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="company-dashboard.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/company-dashboard.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
 </head>
 <body>
     <!-- Header -->
@@ -15,11 +15,11 @@
         <nav class="nav">
             <div class="nav-container">
                 <div class="nav-brand">
-                    <img src="img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-                    <span>Consultoría de RRHH</span>
+                    <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>ConsultorÃ­a de RRHH</span>
                 </div>
                 <ul class="nav-menu">
-                    <li><a href="index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
                     <li><a href="company-dashboard.html" class="nav-link active">Mi Panel</a></li>
                     <li><a href="post-job.html" class="nav-link">Publicar Empleo</a></li>
                     <li><a href="candidates.html" class="nav-link">Candidatos</a></li>
@@ -48,33 +48,35 @@
                 <div class="dashboard-actions">
                     <button class="btn btn-primary" onclick="window.location.href='post-job.html'">Publicar Empleo</button>
                     <button class="btn btn-outline" id="edit-company">Editar Perfil</button>
+                    <button class="btn btn-info" onclick="window.location.href='asignar-test.html'">Asignar Test</button>
+                    <button class="btn btn-success" onclick="window.location.href='resultados-tests.html'">Ver Resultados de Tests</button>
                 </div>
             </div>
 
             <div class="dashboard-stats">
                 <div class="stat-card">
-                    <div class="stat-icon">📋</div>
+                    <div class="stat-icon">ðŸ“‹</div>
                     <div class="stat-info">
                         <h3 id="total-jobs">0</h3>
                         <p>Empleos Publicados</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">👥</div>
+                    <div class="stat-icon">ðŸ‘¥</div>
                     <div class="stat-info">
                         <h3 id="total-applications">0</h3>
                         <p>Aplicaciones Recibidas</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon">ðŸ“ˆ</div>
                     <div class="stat-info">
                         <h3 id="active-jobs">0</h3>
                         <p>Empleos Activos</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">✅</div>
+                    <div class="stat-icon">âœ…</div>
                     <div class="stat-info">
                         <h3 id="hired-candidates">0</h3>
                         <p>Candidatos Contratados</p>
@@ -86,8 +88,9 @@
                 <div class="dashboard-tabs">
                     <button class="tab-btn active" data-tab="jobs">Mis Empleos</button>
                     <button class="tab-btn" data-tab="applications">Aplicaciones</button>
-                    <button class="tab-btn" data-tab="analytics">Analíticas</button>
-                    <button class="tab-btn" data-tab="settings">Configuración</button>
+                    <button class="tab-btn" data-tab="analytics">AnalÃ­ticas</button>
+                    <button class="tab-btn" data-tab="settings">ConfiguraciÃ³n</button>
+                    <button class="tab-btn" data-tab="tests">Tests de Habilidades</button>
                 </div>
 
                 <!-- Jobs Tab -->
@@ -96,6 +99,43 @@
                         <h3>Empleos Publicados</h3>
                         <button class="btn btn-primary" onclick="window.location.href='post-job.html'">+ Nuevo Empleo</button>
                     </div>
+                    <!-- Formulario para publicar nueva vacante -->
+                    <form id="job-form" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="job-title" class="form-label">Cargo</label>
+                                <input type="text" class="form-control" id="job-title" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="job-location" class="form-label">UbicaciÃ³n</label>
+                                <input type="text" class="form-control" id="job-location" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="job-salary" class="form-label">Salario</label>
+                                <input type="text" class="form-control" id="job-salary" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="job-type" class="form-label">Tipo de Contrato</label>
+                                <select class="form-select" id="job-type" required>
+                                    <option value="">Selecciona...</option>
+                                    <option value="Tiempo completo">Tiempo completo</option>
+                                    <option value="Medio tiempo">Medio tiempo</option>
+                                    <option value="Temporal">Temporal</option>
+                                    <option value="PrÃ¡cticas">PrÃ¡cticas</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="job-benefits" class="form-label">Beneficios</label>
+                                <input type="text" class="form-control" id="job-benefits" placeholder="Ej: Seguro mÃ©dico, home office, etc.">
+                            </div>
+                            <div class="col-12">
+                                <label for="job-description" class="form-label">DescripciÃ³n</label>
+                                <textarea class="form-control" id="job-description" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success mt-3">Publicar Vacante</button>
+                    </form>
+                    <!-- Fin del formulario -->
                     <div id="company-jobs-list">
                         <!-- Will be populated by JavaScript -->
                     </div>
@@ -112,11 +152,14 @@
                             <select id="status-filter">
                                 <option value="">Todos los estados</option>
                                 <option value="pending">Pendiente</option>
-                                <option value="reviewing">En revisión</option>
+                                <option value="reviewing">En revisiÃ³n</option>
                                 <option value="interview">Entrevista</option>
                                 <option value="accepted">Aceptado</option>
                                 <option value="rejected">Rechazado</option>
                             </select>
+                            <input type="text" id="filter-experience" class="form-control" placeholder="Experiencia (ej: 2 aÃ±os)">
+                            <input type="text" id="filter-education" class="form-control" placeholder="Estudios (ej: Licenciatura)">
+                            <input type="text" id="filter-skills" class="form-control" placeholder="Habilidades (ej: JavaScript, Liderazgo)">
                         </div>
                     </div>
                     <div id="applications-list">
@@ -130,24 +173,24 @@
                         <div class="analytics-card">
                             <h4>Rendimiento de Empleos</h4>
                             <div class="chart-placeholder">
-                                <p>📊 Gráfico de aplicaciones por empleo</p>
+                                <p>ðŸ“Š GrÃ¡fico de aplicaciones por empleo</p>
                             </div>
                         </div>
                         <div class="analytics-card">
                             <h4>Fuentes de Candidatos</h4>
                             <div class="chart-placeholder">
-                                <p>🥧 Gráfico de fuentes de tráfico</p>
+                                <p>ðŸ¥§ GrÃ¡fico de fuentes de trÃ¡fico</p>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <h4>Tiempo de Contratación</h4>
+                            <h4>Tiempo de ContrataciÃ³n</h4>
                             <div class="metric">
                                 <span class="metric-value">15</span>
-                                <span class="metric-label">días promedio</span>
+                                <span class="metric-label">dÃ­as promedio</span>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <h4>Tasa de Conversión</h4>
+                            <h4>Tasa de ConversiÃ³n</h4>
                             <div class="metric">
                                 <span class="metric-value">12%</span>
                                 <span class="metric-label">aplicaciones a entrevistas</span>
@@ -159,7 +202,7 @@
                 <!-- Settings Tab -->
                 <div class="tab-content" id="settings">
                     <div class="settings-section">
-                        <h3>Información de la Empresa</h3>
+                        <h3>InformaciÃ³n de la Empresa</h3>
                         <form id="company-settings-form">
                             <div class="form-row">
                                 <div class="form-group">
@@ -173,7 +216,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>Teléfono</label>
+                                    <label>TelÃ©fono</label>
                                     <input type="tel" id="company-phone">
                                 </div>
                                 <div class="form-group">
@@ -182,11 +225,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>Dirección</label>
-                                <input type="text" id="company-address" placeholder="Dirección completa">
+                                <label>DirecciÃ³n</label>
+                                <input type="text" id="company-address" placeholder="DirecciÃ³n completa">
                             </div>
                             <div class="form-group">
-                                <label>Descripción de la Empresa</label>
+                                <label>DescripciÃ³n de la Empresa</label>
                                 <textarea id="company-description" rows="4" placeholder="Describe tu empresa..."></textarea>
                             </div>
                             <div class="form-row">
@@ -194,10 +237,10 @@
                                     <label>Industria</label>
                                     <select id="company-industry">
                                         <option value="">Selecciona una industria</option>
-                                        <option value="tecnologia">Tecnología</option>
+                                        <option value="tecnologia">TecnologÃ­a</option>
                                         <option value="finanzas">Finanzas</option>
                                         <option value="salud">Salud</option>
-                                        <option value="educacion">Educación</option>
+                                        <option value="educacion">EducaciÃ³n</option>
                                         <option value="retail">Retail</option>
                                         <option value="manufactura">Manufactura</option>
                                         <option value="servicios">Servicios</option>
@@ -205,9 +248,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Tamaño de la Empresa</label>
+                                    <label>TamaÃ±o de la Empresa</label>
                                     <select id="company-size">
-                                        <option value="">Selecciona el tamaño</option>
+                                        <option value="">Selecciona el tamaÃ±o</option>
                                         <option value="1-10">1-10 empleados</option>
                                         <option value="11-50">11-50 empleados</option>
                                         <option value="51-200">51-200 empleados</option>
@@ -218,6 +261,17 @@
                             </div>
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </form>
+                    </div>
+                </div>
+
+                <!-- Tests Tab -->
+                <div class="tab-content" id="tests">
+                    <div class="tests-header">
+                        <h3>Tests de Habilidades</h3>
+                        <p>Asigna y revisa tests de habilidades para tus candidatos.</p>
+                    </div>
+                    <div id="tests-management">
+                        <!-- AquÃ­ irÃ¡ la gestiÃ³n de tests -->
                     </div>
                 </div>
             </div>
@@ -238,7 +292,8 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script src="company-dashboard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/company-dashboard.js"></script>
 </body>
 </html>
+

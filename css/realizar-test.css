@@ -1,0 +1,79 @@
+.test-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.test-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+.test-box {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(30,41,59,0.08);
+  padding: 2.5rem 2rem;
+  max-width: 600px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.test-user {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #2563eb;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+form label {
+  font-weight: 500;
+  color: #333;
+}
+
+form input, form select {
+  width: 100%;
+  padding: 0.7em;
+  margin-top: 0.3em;
+  margin-bottom: 1.2em;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+form input:focus, form select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+}
+
+button[type="submit"] {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.8em 2em;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+button[type="submit"]:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+#resultado-test {
+  margin-top: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  color: #059669;
+} 

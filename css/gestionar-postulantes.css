@@ -1,0 +1,228 @@
+h1, h2 {
+  color: #2c3e50;
+}
+form {
+  background: #f9f9f9;
+  padding: 1em;
+  border-radius: 8px;
+  margin-bottom: 2em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+label {
+  display: block;
+  margin-bottom: 0.5em;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.2em;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.7em 1.5em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#lista-vacantes {
+  margin-top: 1em;
+}
+
+.postulantes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.postulantes-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.postulantes-box {
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(30,41,59,0.10);
+  padding: 2.5rem 2rem;
+  max-width: 900px;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.postulantes-subtitle {
+  text-align: center;
+  font-size: 1.4rem;
+  color: #2563eb;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+form label {
+  font-weight: 500;
+  color: #333;
+}
+
+form input, form select {
+  width: 100%;
+  padding: 0.7em;
+  margin-top: 0.3em;
+  margin-bottom: 1.2em;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+form input:focus, form select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+}
+
+button[type="submit"] {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.8em 2em;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+button[type="submit"]:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+#lista-postulantes {
+  overflow-x: auto;
+}
+
+.tabla-postulantes {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30,41,59,0.06);
+  margin-top: 1em;
+}
+.tabla-postulantes th, .tabla-postulantes td {
+  padding: 0.9em 0.5em;
+  text-align: center;
+}
+.tabla-postulantes th {
+  background: #f1f5f9;
+  color: #2563eb;
+  font-size: 1.08rem;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.tabla-postulantes tr {
+  transition: background 0.2s;
+}
+.tabla-postulantes tr:hover {
+  background: #f8fafc;
+}
+.tabla-postulantes td {
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 1rem;
+}
+.tabla-postulantes td[colspan] {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  background: #fff;
+}
+
+.badge-estado {
+  display: inline-block;
+  padding: 0.3em 1em;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+}
+.badge-activo {
+  background: #d1fae5;
+  color: #059669;
+}
+.badge-rechazado {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.badge-pendiente {
+  background: #e5e7eb;
+  color: #64748b;
+}
+
+.badge-test {
+  display: inline-block;
+  padding: 0.3em 0.8em;
+  border-radius: 10px;
+  font-size: 0.93em;
+  font-weight: 600;
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.badge-test.programacion {
+  background: #fef9c3;
+  color: #b45309;
+}
+.badge-test.matematicas {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.accion-btn {
+  padding: 0.4em 1em;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 0 0.2em;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(30,41,59,0.05);
+}
+.accion-aceptar {
+  background: #059669;
+  color: #fff;
+}
+.accion-aceptar:hover {
+  background: #047857;
+  transform: translateY(-2px);
+}
+.accion-rechazar {
+  background: #dc2626;
+  color: #fff;
+}
+.accion-rechazar:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 700px) {
+  .postulantes-box {
+    padding: 1.2rem 0.3rem;
+    max-width: 99vw;
+  }
+  .tabla-postulantes th, .tabla-postulantes td {
+    font-size: 0.95rem;
+    padding: 0.6em 0.2em;
+  }
+} 

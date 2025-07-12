@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Test de MatemÃ¡ticas</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/realizar-test.css">
+</head>
+<body style="background: #f8fafc;">
+  <div class="test-container">
+    <h1 class="test-title">Test de MatemÃ¡ticas</h1>
+    <div class="test-box">
+      <div class="test-user">Candidato: <span id="nombre-candidato"></span></div>
+      <form id="form-matematicas">
+        <label>1. Â¿CuÃ¡nto es 7 x 8?
+          <input type="text" name="respuesta1" required>
+        </label><br>
+        <label>2. Â¿CuÃ¡l es la raÃ­z cuadrada de 81?
+          <input type="text" name="respuesta2" required>
+        </label><br>
+        <label>3. Â¿CuÃ¡nto es 15 + 27?
+          <input type="text" name="respuesta3" required>
+        </label><br>
+        <label>4. Â¿CuÃ¡nto es 100 dividido entre 4?
+          <input type="text" name="respuesta4" required>
+        </label><br>
+        <label>5. Â¿CuÃ¡nto es 9 al cuadrado?
+          <input type="text" name="respuesta5" required>
+        </label><br>
+        <button type="submit" id="btn-enviar-matematicas">Enviar Respuestas</button>
+      </form>
+      <div id="resultado-test"></div>
+      <button id="ver-resultado-matematicas" style="display:none; margin-top:10px;">Ver resultados detallados</button>
+    </div>
+  </div>
+  <script src="../js/realizar-test-matematicas.js"></script>
+</body>
+</html> 
+

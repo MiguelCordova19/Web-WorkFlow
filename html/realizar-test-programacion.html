@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Test de ProgramaciÃ³n</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/realizar-test.css">
+</head>
+<body style="background: #f8fafc;">
+  <div class="test-container">
+    <h1 class="test-title">Test de ProgramaciÃ³n</h1>
+    <div class="test-box">
+      <div class="test-user">Candidato: <span id="nombre-candidato"></span></div>
+      <form id="form-programacion">
+        <label>1. Â¿QuÃ© imprime el siguiente cÃ³digo en JavaScript? <br> <code>console.log(2 + '2');</code>
+          <input type="text" name="respuesta1" required>
+        </label><br>
+        <label>2. Â¿QuÃ© es una variable?
+          <input type="text" name="respuesta2" required>
+        </label><br>
+        <label>3. Â¿QuÃ© significa HTML?
+          <input type="text" name="respuesta3" required>
+        </label><br>
+        <label>4. Â¿CuÃ¡l es el resultado de 3 === '3' en JavaScript?
+          <input type="text" name="respuesta4" required>
+        </label><br>
+        <label>5. Â¿Para quÃ© sirve un bucle (loop) en programaciÃ³n?
+          <input type="text" name="respuesta5" required>
+        </label><br>
+        <button type="submit" id="btn-enviar-programacion">Enviar Respuestas</button>
+      </form>
+      <div id="resultado-test"></div>
+      <button id="ver-resultado-programacion" style="display:none; margin-top:10px;">Ver resultados detallados</button>
+    </div>
+  </div>
+  <script src="../js/realizar-test-programacion.js"></script>
+</body>
+</html> 
+

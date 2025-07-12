@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultados Test de MatemÃ¡ticas</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/resultados-tests.css">
+  <style>
+    .resultados-box {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(30,41,59,0.10);
+      padding: 2.5rem 2rem;
+      max-width: 500px;
+      width: 100%;
+      margin: 2rem auto;
+      text-align: center;
+    }
+    .resultados-title {
+      color: #2563eb;
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+    }
+    .resultados-puntaje {
+      font-size: 1.5rem;
+      color: #059669;
+      margin-bottom: 1.2rem;
+      font-weight: 600;
+    }
+    .resultados-detalle {
+      text-align: left;
+      margin: 1.5rem 0;
+      font-size: 1.1rem;
+    }
+    .resultados-candidato {
+      color: #1e293b;
+      font-size: 1.1rem;
+      margin-bottom: 0.7rem;
+    }
+    .btn-volver {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 0.7em 2em;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+      margin-top: 1.2rem;
+    }
+    .btn-volver:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body style="background: #f8fafc;">
+  <div class="resultados-box">
+    <div class="resultados-title">Resultados - Test de MatemÃ¡ticas</div>
+    <div id="resultados-matematicas"></div>
+    <a href="../index.html" class="btn-volver">Volver al inicio</a>
+  </div>
+  <script>
+    const data = JSON.parse(localStorage.getItem('resultados_matematicas'));
+    if (data) {
+      document.getElementById('resultados-matematicas').innerHTML =
+        `<div class='resultados-candidato'><strong>Candidato:</strong> ${data.nombre || 'N/A'}</div>` +
+        `<div class='resultados-puntaje'><strong>Puntaje:</strong> ${data.puntaje}/5</div>` +
+        `<div class='resultados-detalle'>${data.detalles}</div>`;
+    } else {
+      document.getElementById('resultados-matematicas').innerHTML = 'No hay resultados para mostrar.';
+    }
+  </script>
+</body>
+</html> 
+
