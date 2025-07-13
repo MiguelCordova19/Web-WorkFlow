@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         console.log('Current user:', currentUser);
         
         // Check user type and redirect if necessary
-        if (currentUser.userType === 'empresa') {
+        if (currentUser.userType && currentUser.userType.toLowerCase() === 'empresa') {
             // Redirect to company dashboard
             window.location.href = 'company-dashboard.html';
             return;
@@ -33,9 +33,12 @@ window.addEventListener('DOMContentLoaded', async function() {
         await loadApplications();
         loadRecentActivity();
         initializeModals();
+        await loadFavorites(); // <-- Cargar favoritos reales
+        await loadUserTests(); // <-- Cargar tests al inicio
+        renderCVSection(); // <-- Mostrar CV si existe
     } catch (e) {
         console.error('Error loading profile:', e);
-        window.location.href = '../index.html';
+        // window.location.href = '../index.html'; // Desactivado temporalmente para depuración
     }
 });
 
@@ -546,9 +549,112 @@ function showMessage(message, type = 'info') {
     }
 }
 
+// FAVORITOS
+let userFavorites = [];
+async function loadFavorites() {
+    try {
+        const res = await fetch('../backend/get_user_favorites.php', { credentials: 'include' });
+        const data = await res.json();
+        if (data.success) {
+            userFavorites = data.favorites;
+            renderFavorites();
+        } else {
+            userFavorites = [];
+            renderFavorites();
+        }
+    } catch (e) {
+        userFavorites = [];
+        renderFavorites();
+    }
+}
+
+function renderFavorites() {
+    const favoritesList = document.getElementById('favorites-list');
+    if (!favoritesList) return;
+    if (!userFavorites || userFavorites.length === 0) {
+        favoritesList.innerHTML = `
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 text-muted">No hay favoritos</h5>
+                    <p class="text-muted">Aún no has guardado ningún empleo como favorito</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    favoritesList.innerHTML = userFavorites.map(job => `
+        <div class="col-lg-6 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="mb-1">${job.title}</h6>
+                    <small class="text-muted">${job.company_name}</small>
+                    <div class="mt-2">
+                        <span class="badge bg-info">${job.location}</span>
+                        <span class="badge bg-success">${job.salary || 'A convenir'}</span>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm mt-3" onclick="removeFavorite(${job.id})">
+                        <i class="bi bi-trash"></i> Quitar de Favoritos
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function removeFavorite(jobId) {
+    fetch('../backend/remove_favorite.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ job_id: jobId })
+    }).then(() => loadFavorites());
+}
+
+function isFavorite(jobId) {
+    return userFavorites.some(job => job.id == jobId);
+}
+
+// TESTS: ya se cargan al inicio, pero también al cambiar de tab
 function initializeTabs() {
-    // Los tabs ahora se manejan automáticamente con Bootstrap
-    console.log('✅ Tabs inicializados con Bootstrap');
+    // Bootstrap tabs
+    const tabs = document.querySelectorAll('#profileTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (event) {
+            if (event.target.id === 'tests-tab') {
+                loadUserTests();
+            }
+            if (event.target.id === 'favorites-tab') {
+                loadFavorites();
+            }
+            if (event.target.id === 'cv-tab') {
+                renderCVSection();
+            }
+        });
+    });
+}
+
+// CV: mostrar enlace de descarga si existe
+function renderCVSection() {
+    const cvTab = document.getElementById('cv');
+    if (!cvTab) return;
+    const cvInfo = currentUser.cv;
+    let downloadHtml = '';
+    if (cvInfo) {
+        downloadHtml = `
+            <div class="alert alert-success mt-3">
+                <i class="bi bi-file-earmark-arrow-down"></i> Tienes un CV subido.
+                <a href="${cvInfo}" class="btn btn-success btn-sm ms-2" target="_blank">
+                    <i class="bi bi-download"></i> Descargar CV
+                </a>
+            </div>
+        `;
+    }
+    // Insertar antes del formulario de subida
+    const uploadSection = cvTab.querySelector('.row');
+    if (uploadSection) {
+        uploadSection.insertAdjacentHTML('beforebegin', downloadHtml);
+    }
 }
 
 function initializeFileUpload() {
@@ -664,63 +770,26 @@ function loadRecentActivity() {
     `).join('');
 }
 
-function renderFavorites() {
-    // Implementar renderizado de favoritos
-    const favoritesList = document.getElementById('favorites-list');
-    if (!favoritesList) return;
-    
-    favoritesList.innerHTML = `
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
-                <h5 class="mt-3 text-muted">No hay favoritos</h5>
-                <p class="text-muted">Aún no has guardado ningún empleo como favorito</p>
-            </div>
-        </div>
-    `;
-}
-
-function removeFavorite(jobId) {
-    // Implementar lógica para remover favorito
-    console.log('Removiendo favorito:', jobId);
-    showMessage('Favorito removido', 'success');
-}
-
-function isFavorite(jobId) {
-    // Implementar lógica para verificar si es favorito
-    return false;
-}
-
-// Tests functionality
 async function loadUserTests() {
     try {
-        console.log('🔄 Cargando tests del usuario...');
-        
-        const response = await fetch('../backend/get_user_tests.php', {
-            credentials: 'include'
-        });
-        
+        const response = await fetch('../backend/get_user_tests.php', { credentials: 'include' });
         const data = await response.json();
-        
         if (data.success) {
-            console.log('✅ Tests cargados:', data.tests.length);
             renderUserTests(data.tests);
         } else {
-            console.error('❌ Error cargando tests:', data.message);
-            showMessage('Error cargando tests: ' + data.message, 'error');
+            renderUserTests([]);
+            showMessage('No se pudieron cargar los tests: ' + (data.message || ''), 'error');
         }
     } catch (error) {
-        console.error('❌ Error de conexión:', error);
+        renderUserTests([]);
         showMessage('Error de conexión al cargar tests', 'error');
     }
 }
 
 function renderUserTests(tests) {
     const testsList = document.getElementById('user-tests-list');
-    
     if (!testsList) return;
-    
-    if (tests.length === 0) {
+    if (!tests || tests.length === 0) {
         testsList.innerHTML = `
             <div class="text-center py-5">
                 <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
@@ -730,14 +799,10 @@ function renderUserTests(tests) {
         `;
         return;
     }
-    
     let html = '';
     tests.forEach(test => {
         const statusBadge = getTestStatusBadge(test.status);
-        const dueDateText = test.due_date ? 
-            `Fecha límite: ${formatDate(test.due_date)}` : 
-            'Sin fecha límite';
-        
+        const dueDateText = test.due_date ? `Fecha límite: ${formatDate(test.due_date)}` : 'Sin fecha límite';
         html += `
             <div class="card mb-3">
                 <div class="card-body">
@@ -748,31 +813,30 @@ function renderUserTests(tests) {
                             <div class="d-flex gap-2 mb-2">
                                 ${statusBadge}
                                 <span class="badge bg-info">${test.questions_count} preguntas</span>
-                                <span class="badge bg-secondary">${test.time_limit} minutos</span>
+                                <span class="badge bg-secondary">${dueDateText}</span>
                             </div>
-                            <small class="text-muted">${dueDateText}</small>
                         </div>
                         <div class="col-md-4 text-end">
-                            ${getTestActionButton(test)}
+                            <button class="btn btn-primary btn-sm" onclick="startTest(${test.test_id}, ${test.assignment_id})">
+                                <i class="bi bi-play"></i> Iniciar
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
     });
-    
     testsList.innerHTML = html;
 }
 
 function getTestStatusBadge(status) {
-    const badges = {
-        'assigned': '<span class="badge bg-warning">Asignado</span>',
-        'in_progress': '<span class="badge bg-info">En Progreso</span>',
+    const map = {
+        'assigned': '<span class="badge bg-warning text-dark">Asignado</span>',
+        'in_progress': '<span class="badge bg-primary">En progreso</span>',
         'completed': '<span class="badge bg-success">Completado</span>',
-        'expired': '<span class="badge bg-secondary">Expirado</span>'
+        'expired': '<span class="badge bg-danger">Expirado</span>'
     };
-    
-    return badges[status] || '<span class="badge bg-secondary">Desconocido</span>';
+    return map[status] || `<span class="badge bg-secondary">${status}</span>`;
 }
 
 function getTestActionButton(test) {
@@ -811,56 +875,19 @@ function startTest(testId, assignmentId) {
 }
 
 function continueTest(testId, assignmentId) {
-    window.location.href = `realizar-test-habilidades.html?test_id=${testId}&assignment_id=${assignmentId}`;
+    window.location.href = `realizar-test-habilidades.html?test_id=${testId}&assignment_id=${assignmentId}`
 }
 
-function viewTestResults(assignmentId) {
-    // Mostrar resultados revisados del test al usuario
-    fetch(`../backend/get_my_test_results.php?assignment_id=${assignmentId}`, { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.success) {
-                showMessage('Error al cargar resultados: ' + data.message, 'error');
-                return;
-            }
-            let html = `<h5>${data.assignment.test_title}</h5>`;
-            html += `<p class='text-muted'>${data.assignment.test_description || ''}</p>`;
-            html += `<div class='mb-2'><strong>Estado:</strong> <span class='badge bg-${data.assignment.status === 'completed' ? 'success' : data.assignment.status === 'expired' ? 'secondary' : 'info'}'>${data.assignment.status}</span></div>`;
-            html += `<div class='mb-2'><strong>Puntaje total:</strong> ${data.assignment.total_score !== null ? data.assignment.total_score + ' / ' + data.assignment.max_score : 'N/A'}</div>`;
-            if (data.assignment.completed_at) {
-                html += `<div class='mb-2'><strong>Fecha completado:</strong> ${formatDate(data.assignment.completed_at)}</div>`;
-            }
-            html += `<hr><h6>Preguntas y revisión</h6>`;
-            data.questions.forEach((q, idx) => {
-                html += `<div class='mb-3 p-2 border rounded'>`;
-                html += `<strong>Pregunta ${idx + 1}:</strong> ${q.question_text}<br>`;
-                html += `<span class='badge bg-secondary'>${q.points} pts</span><br>`;
-                html += `<strong>Tu respuesta:</strong> <div class='bg-light p-2 rounded mb-2'>${q.answer_text ? q.answer_text : '<em>No respondida</em>'}</div>`;
-                html += `<strong>Puntaje recibido:</strong> ${q.points_earned !== null ? q.points_earned + ' / ' + q.points : 'N/A'}<br>`;
-                html += `<strong>Comentario de la empresa:</strong> <div class='bg-white border p-2 rounded mb-2'>${q.reviewer_notes ? q.reviewer_notes : '<em>Sin comentario</em>'}</div>`;
-                html += `</div>`;
-            });
-            document.getElementById('userTestResultsBody').innerHTML = html;
-            const modal = new bootstrap.Modal(document.getElementById('userTestResultsModal'), {
-                backdrop: false,
-                keyboard: true
-            });
-            modal.show();
-        })
-        .catch(() => showMessage('Error de red al cargar resultados', 'error'));
-}
-
-function refreshTests() {
-    loadUserTests();
-    showMessage('Tests actualizados', 'success');
-}
-
-// Load tests when tests tab is shown
-document.addEventListener('DOMContentLoaded', function() {
-    const testsTab = document.getElementById('tests-tab');
-    if (testsTab) {
-        testsTab.addEventListener('shown.bs.tab', function() {
-            loadUserTests();
-        });
+// Función dummy para evitar error si no está definida
+if (typeof loadUserTests !== 'function') {
+    function loadUserTests() {
+        // No-op temporal
     }
-});
+}
+
+// Función dummy para evitar error si no está definida
+if (typeof refreshTests !== 'function') {
+    function refreshTests() {
+        // No-op temporal
+    }
+}

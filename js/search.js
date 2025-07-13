@@ -32,7 +32,7 @@ function filterJobs(jobs, { title, location, category }) {
 // Nueva función para cargar empleos desde la base de datos
 async function loadJobsFromBackendAndSearch() {
     try {
-        const res = await fetch('backend/get_jobs.php');
+        const res = await fetch('/backend/get_jobs.php');
         const data = await res.json();
         if (data.success) {
             currentJobs = data.jobs;
