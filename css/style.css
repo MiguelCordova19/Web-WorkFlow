@@ -113,6 +113,101 @@ body {
     font-weight: 600;
 }
 
+/* Dropdown Menu Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-toggle:hover {
+    background: var(--primary-color-dark);
+    transform: translateY(-2px);
+}
+
+.dropdown-toggle::after {
+    content: '▼';
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-toggle.active::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text-color);
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+.dropdown-item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.dropdown-item:last-child {
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.dropdown-item.logout {
+    color: var(--danger-color);
+}
+
+.dropdown-item.logout:hover {
+    background-color: #fef2f2;
+    color: var(--danger-color);
+}
+
 .nav-toggle {
     display: flex !important;
     flex-direction: column;
@@ -673,6 +768,50 @@ body {
     resize: vertical;
 }
 
+/* Estilos para el modal de aplicación */
+#job-application-info {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+#job-application-info h4 {
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+#job-application-info p {
+    color: var(--secondary-color);
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.form-actions .btn {
+    min-width: 120px;
+}
+
+/* Estilos para labels en el modal */
+.modal-content label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--black);
+}
+
+.modal-content .form-group {
+    margin-bottom: 1.5rem;
+}
+
 /* Footer */
 .footer {
     background: var(--black);
@@ -849,6 +988,17 @@ body {
     }
 }
 
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 /* Loading Spinner */
 .loading {
     display: inline-block;
@@ -1002,6 +1152,27 @@ body {
     }
     .user-greeting {
         font-size: 0.9rem;
+    }
+    
+    /* Responsive dropdown styles */
+    .dropdown {
+        width: 100%;
+        max-width: 350px;
+    }
+    
+    .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        right: 0;
+        left: 0;
+        min-width: 100%;
+        margin-top: 0.3rem;
     }
     .side-link {
         font-size: 1.35rem;

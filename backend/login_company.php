@@ -1,9 +1,14 @@
 <?php
+// Configuración flexible de cookies para desarrollo y producción
+$domain = $_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false 
+    ? null 
+    : '.workflow.estuclan.com';
+
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '.workflow.estuclan.com',
-    'secure' => true,
+    'domain' => $domain,
+    'secure' => $_SERVER['HTTPS'] === 'on',
     'httponly' => true,
     'samesite' => 'Lax'
 ]);
@@ -32,7 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['company_website'] = $website;
             $_SESSION['company_location'] = $location;
             $_SESSION['company_description'] = $description;
-            echo json_encode(['success' => true, 'message' => 'Login de empresa exitoso', 'userType' => 'empresa', 'name' => $company_name, 'email' => $company_email_db, 'phone' => $phone, 'website' => $website, 'location' => $location, 'description' => $description]);
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Login de empresa exitoso', 
+                'userType' => 'empresa', 
+                'name' => $company_name, 
+                'email' => $company_email_db, 
+                'phone' => $phone, 
+                'website' => $website, 
+                'location' => $location, 
+                'description' => $description
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta']);
         }

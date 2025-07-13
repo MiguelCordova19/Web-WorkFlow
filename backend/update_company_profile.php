@@ -3,37 +3,63 @@ session_start();
 require_once 'db.php';
 header('Content-Type: application/json');
 
+// Log para depuración
+error_log("update_company_profile.php - Método: " . $_SERVER['REQUEST_METHOD']);
+error_log("update_company_profile.php - Sesión: " . print_r($_SESSION, true));
+
 if (!isset($_SESSION['company_id'])) {
+    error_log("update_company_profile.php - No hay company_id en sesión");
     echo json_encode(['success' => false, 'message' => 'No autenticado como empresa']);
     exit;
 }
 
 $companyId = $_SESSION['company_id'];
+error_log("update_company_profile.php - Company ID: " . $companyId);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Consultar datos de la empresa
-    $stmt = $conn->prepare('SELECT company_name, company_email, phone, website, location, description FROM companies WHERE id = ?');
-    $stmt->bind_param('i', $companyId);
-    $stmt->execute();
-    $stmt->store_result();
-    if ($stmt->num_rows === 1) {
-        $stmt->bind_result($name, $email, $phone, $website, $location, $description);
-        $stmt->fetch();
-        echo json_encode([
-            'success' => true,
-            'company' => [
+    try {
+        $stmt = $conn->prepare('SELECT company_name, company_email, phone, website, location, description FROM companies WHERE id = ?');
+        if (!$stmt) {
+            error_log("update_company_profile.php - Error preparando consulta: " . $conn->error);
+            echo json_encode(['success' => false, 'message' => 'Error preparando consulta']);
+            exit;
+        }
+        
+        $stmt->bind_param('i', $companyId);
+        $stmt->execute();
+        $stmt->store_result();
+        
+        error_log("update_company_profile.php - Filas encontradas: " . $stmt->num_rows);
+        
+        if ($stmt->num_rows === 1) {
+            $stmt->bind_result($name, $email, $phone, $website, $location, $description);
+            $stmt->fetch();
+            
+            $companyData = [
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
                 'website' => $website,
                 'location' => $location,
                 'description' => $description
-            ]
-        ]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Empresa no encontrada']);
+            ];
+            
+            error_log("update_company_profile.php - Datos de empresa: " . print_r($companyData, true));
+            
+            echo json_encode([
+                'success' => true,
+                'company' => $companyData
+            ]);
+        } else {
+            error_log("update_company_profile.php - Empresa no encontrada con ID: " . $companyId);
+            echo json_encode(['success' => false, 'message' => 'Empresa no encontrada']);
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        error_log("update_company_profile.php - Excepción: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error en consulta: ' . $e->getMessage()]);
     }
-    $stmt->close();
     exit;
 }
 
@@ -44,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $website = trim($_POST['website'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $description = trim($_POST['description'] ?? '');
+
+    error_log("update_company_profile.php - Datos recibidos: " . print_r($_POST, true));
 
     // Validar email único si se cambia
     if ($email && $email !== $_SESSION['company_email']) {
@@ -58,21 +86,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
     }
 
-    $stmt = $conn->prepare('UPDATE companies SET company_name=?, company_email=?, phone=?, website=?, location=?, description=? WHERE id=?');
-    $stmt->bind_param('ssssssi', $name, $email, $phone, $website, $location, $description, $companyId);
-    if ($stmt->execute()) {
-        // Actualizar sesión
-        $_SESSION['company_name'] = $name;
-        $_SESSION['company_email'] = $email;
-        $_SESSION['company_phone'] = $phone;
-        $_SESSION['company_website'] = $website;
-        $_SESSION['company_location'] = $location;
-        $_SESSION['company_description'] = $description;
-        echo json_encode(['success' => true, 'message' => 'Perfil de empresa actualizado correctamente']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar: ' . $conn->error]);
+    try {
+        $stmt = $conn->prepare('UPDATE companies SET company_name=?, company_email=?, phone=?, website=?, location=?, description=? WHERE id=?');
+        if (!$stmt) {
+            error_log("update_company_profile.php - Error preparando UPDATE: " . $conn->error);
+            echo json_encode(['success' => false, 'message' => 'Error preparando actualización']);
+            exit;
+        }
+        
+        $stmt->bind_param('ssssssi', $name, $email, $phone, $website, $location, $description, $companyId);
+        
+        if ($stmt->execute()) {
+            // Actualizar sesión
+            $_SESSION['company_name'] = $name;
+            $_SESSION['company_email'] = $email;
+            $_SESSION['company_phone'] = $phone;
+            $_SESSION['company_website'] = $website;
+            $_SESSION['company_location'] = $location;
+            $_SESSION['company_description'] = $description;
+            
+            error_log("update_company_profile.php - Perfil actualizado exitosamente");
+            echo json_encode(['success' => true, 'message' => 'Perfil de empresa actualizado correctamente']);
+        } else {
+            error_log("update_company_profile.php - Error ejecutando UPDATE: " . $stmt->error);
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar: ' . $stmt->error]);
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        error_log("update_company_profile.php - Excepción en UPDATE: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error al actualizar: ' . $e->getMessage()]);
     }
-    $stmt->close();
     exit;
 }
 

@@ -1,6 +1,7 @@
 <?php
 // Configuración de la base de datos
 
+// Configuración local para desarrollo
 define('DB_HOST', 'localhost');
 define('DB_PORT', '3306');
 define('DB_USER', 'may21esd_workflowadmin');

@@ -21,7 +21,7 @@ function showSessionError(message) {
 
 async function checkSessionAndInit() {
     try {
-        const res = await fetch('backend/session_status.php', { credentials: 'include' });
+        const res = await fetch('../backend/session_status.php', { credentials: 'include' });
         const data = await res.json();
         console.log('Respuesta de session_status.php:', data);
         if (!data.loggedIn || !data.user || data.user.userType !== 'empresa') {
@@ -226,7 +226,7 @@ function handleFormSubmit(e) {
     submitBtn.disabled = true;
 
     // Enviar al backend
-    fetch('backend/post_job.php', {
+    fetch('../backend/post_job.php', {
         method: 'POST',
         body: new URLSearchParams(Object.entries(jobData)),
         credentials: 'include'

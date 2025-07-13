@@ -26,15 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $salaryMax = $_POST['salaryMax'] !== '' ? floatval($_POST['salaryMax']) : null;
     $currency = trim($_POST['currency'] ?? 'ARS');
     $period = trim($_POST['period'] ?? 'mensual');
-    $negotiable = isset($_POST['negotiable']) && $_POST['negotiable'] === 'true' ? 1 : 0;
+    $negotiable = isset($_POST['negotiable']) ? 1 : 0;
     $experienceLevel = trim($_POST['experienceLevel'] ?? '');
     $educationLevel = trim($_POST['educationLevel'] ?? '');
     $skills = trim($_POST['skills'] ?? '');
     $deadline = trim($_POST['deadline'] ?? null);
     $positions = intval($_POST['positions'] ?? 1);
     $applicationEmail = trim($_POST['applicationEmail'] ?? '');
-    $requireCV = isset($_POST['requireCV']) && $_POST['requireCV'] === 'true' ? 1 : 0;
-    $requireCoverLetter = isset($_POST['requireCoverLetter']) && $_POST['requireCoverLetter'] === 'true' ? 1 : 0;
+    $requireCV = isset($_POST['requireCV']) ? 1 : 0;
+    $requireCoverLetter = isset($_POST['requireCoverLetter']) ? 1 : 0;
     $companyId = $_SESSION['company_id'];
     $status = 'active';
     $createdAt = date('Y-m-d H:i:s');
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Empleo publicado exitosamente']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error al publicar empleo: ' . $conn->error]);
+        echo json_encode(['success' => false, 'message' => 'Error al publicar empleo: ' . $stmt->error]);
     }
     $stmt->close();
     exit;

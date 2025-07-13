@@ -16,7 +16,7 @@
             <div class="nav-container">
                 <div class="nav-brand">
                     <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-                    <span>ConsultorÃ­a de RRHH</span>
+                    <span>Consultoría de RRHH</span>
                 </div>
                 <ul class="nav-menu">
                     <li><a href="../index.html" class="nav-link">Inicio</a></li>
@@ -50,33 +50,34 @@
                     <button class="btn btn-outline" id="edit-company">Editar Perfil</button>
                     <button class="btn btn-info" onclick="window.location.href='asignar-test.html'">Asignar Test</button>
                     <button class="btn btn-success" onclick="window.location.href='resultados-tests.html'">Ver Resultados de Tests</button>
+                    <button class="btn btn-secondary" onclick="reloadCompanyData()">🔄 Recargar Datos</button>
                 </div>
             </div>
 
             <div class="dashboard-stats">
                 <div class="stat-card">
-                    <div class="stat-icon">ðŸ“‹</div>
+                    <div class="stat-icon">📋</div>
                     <div class="stat-info">
                         <h3 id="total-jobs">0</h3>
                         <p>Empleos Publicados</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">ðŸ‘¥</div>
+                    <div class="stat-icon">📝</div>
                     <div class="stat-info">
                         <h3 id="total-applications">0</h3>
                         <p>Aplicaciones Recibidas</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">ðŸ“ˆ</div>
+                    <div class="stat-icon">✅</div>
                     <div class="stat-info">
                         <h3 id="active-jobs">0</h3>
                         <p>Empleos Activos</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">âœ…</div>
+                    <div class="stat-icon">👥</div>
                     <div class="stat-info">
                         <h3 id="hired-candidates">0</h3>
                         <p>Candidatos Contratados</p>
@@ -88,54 +89,24 @@
                 <div class="dashboard-tabs">
                     <button class="tab-btn active" data-tab="jobs">Mis Empleos</button>
                     <button class="tab-btn" data-tab="applications">Aplicaciones</button>
-                    <button class="tab-btn" data-tab="analytics">AnalÃ­ticas</button>
-                    <button class="tab-btn" data-tab="settings">ConfiguraciÃ³n</button>
+                    <button class="tab-btn" data-tab="analytics">Analíticas</button>
+                    <button class="tab-btn" data-tab="settings">Configuración</button>
                     <button class="tab-btn" data-tab="tests">Tests de Habilidades</button>
                 </div>
 
                 <!-- Jobs Tab -->
                 <div class="tab-content active" id="jobs">
                     <div class="jobs-header">
-                        <h3>Empleos Publicados</h3>
-                        <button class="btn btn-primary" onclick="window.location.href='post-job.html'">+ Nuevo Empleo</button>
-                    </div>
-                    <!-- Formulario para publicar nueva vacante -->
-                    <form id="job-form" class="mb-4">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="job-title" class="form-label">Cargo</label>
-                                <input type="text" class="form-control" id="job-title" required>
+                        <h3>Mis Empleos Publicados</h3>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div class="realtime-status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Actualizando cada 5s</span>
                             </div>
-                            <div class="col-md-6">
-                                <label for="job-location" class="form-label">UbicaciÃ³n</label>
-                                <input type="text" class="form-control" id="job-location" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="job-salary" class="form-label">Salario</label>
-                                <input type="text" class="form-control" id="job-salary" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="job-type" class="form-label">Tipo de Contrato</label>
-                                <select class="form-select" id="job-type" required>
-                                    <option value="">Selecciona...</option>
-                                    <option value="Tiempo completo">Tiempo completo</option>
-                                    <option value="Medio tiempo">Medio tiempo</option>
-                                    <option value="Temporal">Temporal</option>
-                                    <option value="PrÃ¡cticas">PrÃ¡cticas</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label for="job-benefits" class="form-label">Beneficios</label>
-                                <input type="text" class="form-control" id="job-benefits" placeholder="Ej: Seguro mÃ©dico, home office, etc.">
-                            </div>
-                            <div class="col-12">
-                                <label for="job-description" class="form-label">DescripciÃ³n</label>
-                                <textarea class="form-control" id="job-description" rows="3" required></textarea>
-                            </div>
+                            <button class="btn btn-outline-secondary" onclick="testStatistics()">🔄 Probar Estadísticas</button>
+                            <button class="btn btn-primary" onclick="window.location.href='post-job.html'">+ Nuevo Empleo</button>
                         </div>
-                        <button type="submit" class="btn btn-success mt-3">Publicar Vacante</button>
-                    </form>
-                    <!-- Fin del formulario -->
+                    </div>
                     <div id="company-jobs-list">
                         <!-- Will be populated by JavaScript -->
                     </div>
@@ -152,12 +123,12 @@
                             <select id="status-filter">
                                 <option value="">Todos los estados</option>
                                 <option value="pending">Pendiente</option>
-                                <option value="reviewing">En revisiÃ³n</option>
+                                <option value="reviewing">En revisión</option>
                                 <option value="interview">Entrevista</option>
                                 <option value="accepted">Aceptado</option>
                                 <option value="rejected">Rechazado</option>
                             </select>
-                            <input type="text" id="filter-experience" class="form-control" placeholder="Experiencia (ej: 2 aÃ±os)">
+                            <input type="text" id="filter-experience" class="form-control" placeholder="Experiencia (ej: 2 años)">
                             <input type="text" id="filter-education" class="form-control" placeholder="Estudios (ej: Licenciatura)">
                             <input type="text" id="filter-skills" class="form-control" placeholder="Habilidades (ej: JavaScript, Liderazgo)">
                         </div>
@@ -173,24 +144,24 @@
                         <div class="analytics-card">
                             <h4>Rendimiento de Empleos</h4>
                             <div class="chart-placeholder">
-                                <p>ðŸ“Š GrÃ¡fico de aplicaciones por empleo</p>
+                                <p>📊 Gráfico de aplicaciones por empleo</p>
                             </div>
                         </div>
                         <div class="analytics-card">
                             <h4>Fuentes de Candidatos</h4>
                             <div class="chart-placeholder">
-                                <p>ðŸ¥§ GrÃ¡fico de fuentes de trÃ¡fico</p>
+                                <p>📈 Gráfico de fuentes de tráfico</p>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <h4>Tiempo de ContrataciÃ³n</h4>
+                            <h4>Tiempo de Contratación</h4>
                             <div class="metric">
                                 <span class="metric-value">15</span>
-                                <span class="metric-label">dÃ­as promedio</span>
+                                <span class="metric-label">días promedio</span>
                             </div>
                         </div>
                         <div class="analytics-card">
-                            <h4>Tasa de ConversiÃ³n</h4>
+                            <h4>Tasa de Conversión</h4>
                             <div class="metric">
                                 <span class="metric-value">12%</span>
                                 <span class="metric-label">aplicaciones a entrevistas</span>
@@ -202,7 +173,7 @@
                 <!-- Settings Tab -->
                 <div class="tab-content" id="settings">
                     <div class="settings-section">
-                        <h3>InformaciÃ³n de la Empresa</h3>
+                        <h3>Información de la Empresa</h3>
                         <form id="company-settings-form">
                             <div class="form-row">
                                 <div class="form-group">
@@ -216,7 +187,7 @@
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>TelÃ©fono</label>
+                                    <label>Teléfono</label>
                                     <input type="tel" id="company-phone">
                                 </div>
                                 <div class="form-group">
@@ -225,11 +196,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label>DirecciÃ³n</label>
-                                <input type="text" id="company-address" placeholder="DirecciÃ³n completa">
+                                <label>Dirección</label>
+                                <input type="text" id="company-address" placeholder="Dirección completa">
                             </div>
                             <div class="form-group">
-                                <label>DescripciÃ³n de la Empresa</label>
+                                <label>Descripción de la Empresa</label>
                                 <textarea id="company-description" rows="4" placeholder="Describe tu empresa..."></textarea>
                             </div>
                             <div class="form-row">
@@ -237,10 +208,10 @@
                                     <label>Industria</label>
                                     <select id="company-industry">
                                         <option value="">Selecciona una industria</option>
-                                        <option value="tecnologia">TecnologÃ­a</option>
+                                        <option value="tecnologia">Tecnología</option>
                                         <option value="finanzas">Finanzas</option>
                                         <option value="salud">Salud</option>
-                                        <option value="educacion">EducaciÃ³n</option>
+                                        <option value="educacion">Educación</option>
                                         <option value="retail">Retail</option>
                                         <option value="manufactura">Manufactura</option>
                                         <option value="servicios">Servicios</option>
@@ -248,9 +219,9 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>TamaÃ±o de la Empresa</label>
+                                    <label>Tamaño de la Empresa</label>
                                     <select id="company-size">
-                                        <option value="">Selecciona el tamaÃ±o</option>
+                                        <option value="">Selecciona el tamaño</option>
                                         <option value="1-10">1-10 empleados</option>
                                         <option value="11-50">11-50 empleados</option>
                                         <option value="51-200">51-200 empleados</option>
@@ -271,7 +242,7 @@
                         <p>Asigna y revisa tests de habilidades para tus candidatos.</p>
                     </div>
                     <div id="tests-management">
-                        <!-- AquÃ­ irÃ¡ la gestiÃ³n de tests -->
+                        <!-- Aquí irá la gestión de tests -->
                     </div>
                 </div>
             </div>

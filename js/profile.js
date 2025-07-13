@@ -495,7 +495,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e) =>
     e.preventDefault();
     const formData = new FormData(e.target);
     try {
-        const res = await fetch('backend/update_profile.php', {
+        const res = await fetch('../backend/update_profile.php', {
             method: 'POST',
             body: formData,
             credentials: 'include'
@@ -504,7 +504,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e) =>
         if (data.success) {
             showMessage('Perfil actualizado correctamente', 'success');
             // Volver a consultar la sesión para refrescar los datos
-            const sessionRes = await fetch('backend/session_status.php', { credentials: 'include' });
+            const sessionRes = await fetch('../backend/session_status.php', { credentials: 'include' });
             const sessionData = await sessionRes.json();
             if (sessionData.loggedIn && sessionData.user) {
                 currentUser = sessionData.user;

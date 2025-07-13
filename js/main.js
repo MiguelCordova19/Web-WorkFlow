@@ -19,18 +19,64 @@ let currentPage = 1;
 const jobsPerPage = 5;
 
 // Authentication Functions
-function initializeAuth() { 
-    // Initialize authentication state
+async function initializeAuth() { 
+    try {
+        const res = await fetch('backend/session_status.php', { credentials: 'include' });
+        const data = await res.json();
+        
+        if (data.loggedIn && data.user) {
+            currentUser = data.user;
+            console.log('✅ Usuario autenticado:', currentUser);
+        } else {
+            currentUser = null;
+            console.log('❌ No hay usuario autenticado');
+        }
+        
+        updateAuthUI();
+    } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        currentUser = null;
+        updateAuthUI();
+    }
 }
+
 function updateAuthUI() { 
-    // Update UI based on auth state
+    // Actualizar botones de login/register en el navbar
+    const loginBtn = document.getElementById('login-btn');
+    const registerBtn = document.getElementById('register-btn');
+    const userMenu = document.getElementById('user-menu');
+    const userDropdown = document.getElementById('user-dropdown');
+    
+    if (currentUser) {
+        // Usuario logueado
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (registerBtn) registerBtn.style.display = 'none';
+        if (userMenu) userMenu.style.display = 'block';
+        if (userDropdown) {
+            const userName = userDropdown.querySelector('.user-name');
+            if (userName) userName.textContent = currentUser.name || currentUser.email;
+        }
+    } else {
+        // Usuario no logueado
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (registerBtn) registerBtn.style.display = 'block';
+        if (userMenu) userMenu.style.display = 'none';
+    }
+    
+    // Re-renderizar empleos para actualizar botones de aplicar
+    if (currentJobs.length > 0) {
+        renderJobs(currentJobs);
+    }
 }
+
 function registerUser(userData) { 
     // Register new user
 }
+
 function loginUser(email, password) { 
     // Login user
 }
+
 function logout() { 
     // Logout user
 }
@@ -47,7 +93,10 @@ function closeModal(modal) {
 }
 
 // Modal Event Listeners
-companyRegisterBtn.addEventListener('click', () => openModal(registerModal));
+companyRegisterBtn.addEventListener('click', () => {
+    const companyRegisterModal = document.getElementById('company-register-modal');
+    openModal(companyRegisterModal);
+});
 
 // Agregar listeners para los botones de login y registro del navbar
 if (loginBtn) {
@@ -64,6 +113,14 @@ window.addEventListener('click', (e) => {
     }
     if (e.target === registerModal) {
         closeModal(registerModal);
+    }
+    const companyRegisterModal = document.getElementById('company-register-modal');
+    if (companyRegisterModal && e.target === companyRegisterModal) {
+        closeModal(companyRegisterModal);
+    }
+    const applicationModal = document.getElementById('application-modal');
+    if (applicationModal && e.target === applicationModal) {
+        closeModal(applicationModal);
     }
 });
 
@@ -90,8 +147,18 @@ async function loadJobsFromBackend() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Inicializar autenticación primero
+    await initializeAuth();
+    
+    // Luego cargar empleos
     loadJobsFromBackend();
+    
+    // Event listener para el formulario de aplicación
+    const applicationForm = document.getElementById('job-application-form');
+    if (applicationForm) {
+        applicationForm.addEventListener('submit', handleApplicationSubmit);
+    }
 });
 
 // Modifica renderJobs para usar los campos del backend
@@ -110,6 +177,20 @@ function renderJobs(jobs) {
     jobsToShow.forEach(job => {
         const jobCard = document.createElement('div');
         jobCard.className = 'job-card fade-in-up';
+        
+        // Determinar el texto y acción del botón según el estado de autenticación
+        let buttonText, buttonAction;
+        
+        if (currentUser) {
+            // Usuario logueado - mostrar botón de aplicar
+            buttonText = '📝 Aplicar Ahora';
+            buttonAction = 'apply';
+        } else {
+            // Usuario no logueado - mostrar botón de login
+            buttonText = '🔐 Inicia sesión para aplicar';
+            buttonAction = 'login';
+        }
+        
         jobCard.innerHTML = `
             <div class="job-info">
                 <h3 class="job-title">${job.title}</h3>
@@ -120,7 +201,7 @@ function renderJobs(jobs) {
             <div class="job-meta">
                 <div class="job-salary">${job.salary_min && job.salary_max ? `${job.currency || ''} ${job.salary_min} - ${job.salary_max}` : ''}</div>
                 <div class="job-type">${job.type || ''}</div>
-                <button class="btn btn-primary apply-btn" data-jobid="${job.id}">Inicia sesión para aplicar</button>
+                <button class="btn btn-primary apply-btn" data-jobid="${job.id}" data-action="${buttonAction}">${buttonText}</button>
             </div>
         `;
         jobsGrid.appendChild(jobCard);
@@ -129,11 +210,108 @@ function renderJobs(jobs) {
     // Asignar evento a los botones de aplicar
     document.querySelectorAll('.apply-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            openModal(loginModal);
+            const action = this.getAttribute('data-action');
+            const jobId = this.getAttribute('data-jobid');
+            
+            if (action === 'login') {
+                // Usuario no logueado - abrir modal de login
+                openModal(loginModal);
+            } else if (action === 'apply') {
+                // Usuario logueado - procesar aplicación
+                handleJobApplication(jobId);
+            }
         });
     });
 
     updatePagination(jobs.length);
+}
+
+// Función para manejar la aplicación a un empleo
+function handleJobApplication(jobId) {
+    if (!currentUser) {
+        openModal(loginModal);
+        return;
+    }
+    
+    console.log(`📝 Usuario ${currentUser.name} aplicando al empleo ${jobId}`);
+    
+    // Buscar la información del empleo
+    const job = currentJobs.find(j => j.id == jobId);
+    if (!job) {
+        showMessage('Error: No se encontró información del empleo', 'error');
+        return;
+    }
+    
+    // Llenar la información del empleo en el modal
+    document.getElementById('application-job-title').textContent = job.title;
+    document.getElementById('application-job-company').textContent = job.company_name || 'Empresa no especificada';
+    document.getElementById('application-job-location').textContent = `📍 ${job.location || 'Ubicación no especificada'}`;
+    document.getElementById('application-job-id').value = jobId;
+    
+    // Limpiar el formulario
+    document.getElementById('job-application-form').reset();
+    
+    // Abrir el modal de aplicación
+    openModal(document.getElementById('application-modal'));
+}
+
+// Función para manejar el envío del formulario de aplicación
+async function handleApplicationSubmit(e) {
+    e.preventDefault();
+    
+    if (!currentUser) {
+        showMessage('Debes iniciar sesión para aplicar', 'error');
+        return;
+    }
+    
+    const formData = new FormData(e.target);
+    const applicationData = {
+        job_id: formData.get('job_id'),
+        cover_letter: formData.get('cover_letter'),
+        expected_salary: formData.get('expected_salary'),
+        availability: formData.get('availability'),
+        additional_info: formData.get('additional_info')
+    };
+    
+    // Validar campos obligatorios
+    if (!applicationData.cover_letter.trim()) {
+        showMessage('La carta de presentación es obligatoria', 'error');
+        return;
+    }
+    
+    try {
+        console.log('📤 Enviando aplicación:', applicationData);
+        
+        const response = await fetch('backend/apply_job.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(applicationData),
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showMessage(data.message, 'success');
+            closeModal(document.getElementById('application-modal'));
+            
+            // Opcional: actualizar la UI para mostrar que ya aplicó
+            const applyBtn = document.querySelector(`[data-jobid="${applicationData.job_id}"]`);
+            if (applyBtn) {
+                applyBtn.textContent = '✅ Ya Aplicaste';
+                applyBtn.disabled = true;
+                applyBtn.style.backgroundColor = '#059669';
+            }
+        } else {
+            showMessage(data.message, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error enviando aplicación:', error);
+        showMessage('Error al enviar la aplicación. Intenta nuevamente.', 'error');
+    }
 }
 
 function updatePagination(totalJobs) {
@@ -302,6 +480,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // --- REGISTRO DE EMPRESA ---
+    const companyRegisterForm = document.getElementById('company-register-form');
+    if (companyRegisterForm) {
+        companyRegisterForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(companyRegisterForm);
+            try {
+                const res = await fetch('backend/register_company.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showMessage('Registro de empresa exitoso. Ahora puedes iniciar sesión.', 'success');
+                    // Cerrar modal de registro de empresa y abrir login
+                    document.getElementById('company-register-modal').style.display = 'none';
+                    document.getElementById('login-modal').style.display = 'block';
+                } else {
+                    showMessage(data.message || 'Error al registrar empresa', 'danger');
+                }
+            } catch (err) {
+                showMessage('Error de conexión con el servidor', 'danger');
+            }
+        });
+    }
 });
 
 // Smooth Scrolling for Navigation Links
@@ -460,7 +664,7 @@ renderJobs = function(jobs) {
 function showMessage(message, type = 'info') {
     const messageEl = document.createElement('div');
     messageEl.className = `message message-${type}`;
-    messageEl.textContent = message;
+    messageEl.innerHTML = message;
     messageEl.style.position = 'fixed';
     messageEl.style.top = '30px';
     messageEl.style.left = '50%';
@@ -472,9 +676,13 @@ function showMessage(message, type = 'info') {
     messageEl.style.color = '#fff';
     messageEl.style.fontWeight = 'bold';
     messageEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+    messageEl.style.animation = 'slideIn 0.3s ease';
     document.body.appendChild(messageEl);
     setTimeout(() => {
-        messageEl.remove();
+        messageEl.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            messageEl.remove();
+        }, 300);
     }, 3000);
 }
 
@@ -527,26 +735,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loginBtn) loginBtn.style.display = 'none';
                 if (registerBtn) registerBtn.style.display = 'none';
 
-                // Muestra botón de perfil o panel según tipo
-                let profileBtn = document.createElement('button');
-                profileBtn.className = 'btn btn-primary';
-                if (data.user.userType === 'empresa') {
-                    profileBtn.textContent = 'Mi Panel';
-                    profileBtn.onclick = () => window.location.href = 'html/company-dashboard.html';
-                } else {
-                    profileBtn.textContent = 'Mi Perfil';
-                    profileBtn.onclick = () => window.location.href = 'html/profile.html';
-                }
-                navActions.appendChild(profileBtn);
-
-                // Botón de cerrar sesión
-                let logoutBtn = document.createElement('button');
-                logoutBtn.className = 'btn btn-outline';
-                logoutBtn.textContent = 'Cerrar Sesión';
-                logoutBtn.onclick = () => {
+                // Crea el menú desplegable
+                const dropdown = document.createElement('div');
+                dropdown.className = 'dropdown';
+                
+                const dropdownToggle = document.createElement('button');
+                dropdownToggle.className = 'dropdown-toggle';
+                dropdownToggle.textContent = data.user.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
+                
+                const dropdownMenu = document.createElement('div');
+                dropdownMenu.className = 'dropdown-menu';
+                
+                // Opción de perfil/panel
+                const profileItem = document.createElement('button');
+                profileItem.className = 'dropdown-item';
+                profileItem.textContent = data.user.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
+                profileItem.onclick = () => {
+                    if (data.user.userType === 'empresa') {
+                        window.location.href = 'html/company-dashboard.html';
+                    } else {
+                        window.location.href = 'html/profile.html';
+                    }
+                };
+                
+                // Opción de cerrar sesión
+                const logoutItem = document.createElement('button');
+                logoutItem.className = 'dropdown-item logout';
+                logoutItem.textContent = 'Cerrar Sesión';
+                logoutItem.onclick = () => {
                     fetch('backend/logout.php').then(() => window.location.reload());
                 };
-                navActions.appendChild(logoutBtn);
+                
+                dropdownMenu.appendChild(profileItem);
+                dropdownMenu.appendChild(logoutItem);
+                dropdown.appendChild(dropdownToggle);
+                dropdown.appendChild(dropdownMenu);
+                navActions.appendChild(dropdown);
+                
+                // Funcionalidad del dropdown
+                dropdownToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdownToggle.classList.toggle('active');
+                    dropdownMenu.classList.toggle('show');
+                });
+                
+                // Cerrar dropdown al hacer click fuera
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdownToggle.classList.remove('active');
+                        dropdownMenu.classList.remove('show');
+                    }
+                });
+                
+                // Cerrar dropdown al hacer click en una opción
+                dropdownMenu.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('dropdown-item')) {
+                        dropdownToggle.classList.remove('active');
+                        dropdownMenu.classList.remove('show');
+                    }
+                });
             } else {
                 // Si no está logueado, muestra los botones normales
                 if (loginBtn) {

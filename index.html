@@ -483,6 +483,57 @@
         </div>
     </div>
 
+    <!-- Modal de Aplicación a Empleo -->
+    <div id="application-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>📝 Aplicar al Empleo</h2>
+            <div id="job-application-info" class="mb-3">
+                <h4 id="application-job-title"></h4>
+                <p id="application-job-company"></p>
+                <p id="application-job-location"></p>
+            </div>
+            <form id="job-application-form">
+                <input type="hidden" id="application-job-id" name="job_id">
+                
+                <div class="form-group">
+                    <label for="cover-letter">Carta de Presentación *</label>
+                    <textarea id="cover-letter" name="cover_letter" rows="4" 
+                              placeholder="Cuéntanos por qué eres el candidato ideal para este puesto..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expected-salary">Salario Esperado</label>
+                    <input type="text" id="expected-salary" name="expected_salary" 
+                           placeholder="Ej: $30,000 - $40,000 anual">
+                </div>
+                
+                <div class="form-group">
+                    <label for="availability">Disponibilidad</label>
+                    <select id="availability" name="availability">
+                        <option value="">Selecciona...</option>
+                        <option value="Inmediata">Inmediata</option>
+                        <option value="2 semanas">2 semanas</option>
+                        <option value="1 mes">1 mes</option>
+                        <option value="2 meses">2 meses</option>
+                        <option value="A convenir">A convenir</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="additional-info">Información Adicional</label>
+                    <textarea id="additional-info" name="additional_info" rows="3" 
+                              placeholder="Información adicional que consideres relevante..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal(document.getElementById('application-modal'))">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">📤 Enviar Aplicación</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
     document.getElementById('search-btn').addEventListener('click', function(e) {
