@@ -1,60 +1,140 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Gestión de Postulantes</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/gestionar-postulantes.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Postulantes - WorkFlow</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/gestionar-postulantes.css">
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
-<body style="background: #f8fafc;">
-  <header class="header">
-    <nav class="nav">
-      <div class="nav-container">
-        <div class="nav-brand">
-          <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-            <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-            <span>WORLKFLOW</span>
-          </a>
-        </div>
-        <ul class="nav-menu" id="nav-menu">
-          <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
-          <li><a href="index.html#empleos" class="nav-link">Empleos</a></li>
-          <li><a href="index.html#empresas" class="nav-link">Empresas</a></li>
-          <li><a href="index.html#servicios" class="nav-link">Servicios</a></li>
-          <li><a href="index.html#contacto" class="nav-link">Contacto</a></li>
-        </ul>
-        <div style="margin-left:auto;">
-          <a href="company-dashboard.html" class="btn btn-primary" style="padding: 0.7em 2em; border-radius: 8px; font-weight: 600; text-decoration: none; background: #2563eb; color: #fff; transition: background 0.2s;">Ir a Perfil de Empresa</a>
-        </div>
-      </div>
-    </nav>
-  </header>
-  <div class="postulantes-container">
-    <h1 class="postulantes-title">Gestión de Postulantes</h1>
-    <div class="postulantes-box">
-      <section>
-        <h2 class="postulantes-subtitle">Lista de Postulantes</h2>
-        <div id="lista-postulantes">
-          <table class="tabla-postulantes">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Experiencia</th>
-                <th>Estudios</th>
-                <th>Habilidades</th>
-                <th>Tipo de Test</th>
-                <th>Resultado</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tbody-postulantes"></tbody>
-          </table>
-        </div>
-      </section>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="../img/Logo-WorkFlow.jpg" alt="WorkFlow Logo">
+                </div>
+                <nav class="nav">
+                    <a href="company-dashboard.html" class="nav-link">🏠 Dashboard</a>
+                    <a href="post-job.html" class="nav-link">📝 Publicar Empleo</a>
+                    <a href="gestionar-postulantes.html" class="nav-link active">👥 Gestionar Postulantes</a>
+                    <a href="gestionar-vacantes.html" class="nav-link">📋 Gestionar Vacantes</a>
+                    <a href="profile.html" class="nav-link">⚙️ Configuración</a>
+                    <button onclick="logout()" class="nav-link logout-btn">🚪 Cerrar Sesión</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>👥 Gestionar Postulantes</h1>
+                <p>Selecciona un empleo para ver y gestionar las aplicaciones recibidas</p>
+            </div>
+
+            <!-- Selector de Empleo -->
+            <div class="job-selector-section">
+                <div class="job-selector-box">
+                    <h3>📋 Seleccionar Empleo</h3>
+                    <div class="job-selector-controls">
+                        <select id="job-selector" class="form-control">
+                            <option value="">Cargando empleos...</option>
+                        </select>
+                        <button id="load-applications-btn" class="btn btn-primary" disabled>
+                            Cargar Postulantes
+                        </button>
+                    </div>
+                    
+                    <!-- Información del empleo seleccionado -->
+                    <div id="job-info" class="job-info" style="display: none;">
+                        <h4 id="selected-job-title">Título del Empleo</h4>
+                        <p id="selected-job-details">Detalles del empleo</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de Aplicaciones -->
+            <div id="applications-summary" class="applications-summary" style="display: none;">
+                <div class="summary-card">
+                    <span id="total-applications" class="summary-number">0</span>
+                    <span class="summary-label">Total</span>
+                </div>
+                <div class="summary-card">
+                    <span id="pending-applications" class="summary-number">0</span>
+                    <span class="summary-label">Pendientes</span>
+                </div>
+                <div class="summary-card">
+                    <span id="reviewing-applications" class="summary-number">0</span>
+                    <span class="summary-label">En Revisión</span>
+                </div>
+                <div class="summary-card">
+                    <span id="interview-applications" class="summary-number">0</span>
+                    <span class="summary-label">Entrevista</span>
+                </div>
+            </div>
+
+            <!-- Estado Vacío -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <h4>📋 Selecciona un empleo</h4>
+                <p>Elige un empleo de la lista para ver las aplicaciones recibidas</p>
+            </div>
+
+            <!-- Tabla de Aplicaciones -->
+            <div id="applications-table" class="applications-table" style="display: none;">
+                <div class="applications-header">
+                    <h3>📋 Lista de Postulantes</h3>
+                    <div class="filter-controls">
+                        <select id="status-filter" class="form-control">
+                            <option value="">Todos los estados</option>
+                            <option value="pending">Pendiente</option>
+                            <option value="reviewing">En Revisión</option>
+                            <option value="interview">Entrevista</option>
+                            <option value="accepted">Aceptado</option>
+                            <option value="rejected">Rechazado</option>
+                        </select>
+                        <input type="text" id="search-candidate" class="form-control" placeholder="Buscar candidato...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="applications-table">
+                        <thead>
+                            <tr>
+                                <th>👤 Candidato</th>
+                                <th>📧 Email</th>
+                                <th>📝 Biografía</th>
+                                <th>📍 Ubicación</th>
+                                <th>📞 Teléfono</th>
+                                <th>💼 Carta de Presentación</th>
+                                <th>💰 Salario Esperado</th>
+                                <th>⏰ Disponibilidad</th>
+                                <th>📊 Estado</th>
+                                <th>📅 Fecha</th>
+                                <th>⚙️ Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-postulantes">
+                            <!-- Las aplicaciones se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
-  </div>
-  <script src="../js/gestionar-postulantes.js"></script>
+
+    <script src="../js/gestionar-postulantes.js"></script>
+    <script>
+        function logout() {
+            fetch('../backend/logout.php', { credentials: 'include' })
+                .then(() => {
+                    window.location.href = '../index.html';
+                })
+                .catch(error => {
+                    console.error('Error al cerrar sesión:', error);
+                    window.location.href = '../index.html';
+                });
+        }
+    </script>
 </body>
 </html> 
 
