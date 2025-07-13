@@ -399,9 +399,82 @@ function editTest(testId) {
     window.location.href = `crear-test.html?edit_id=${testId}`;
 }
 
-function reviewAnswers(assignmentId) {
-    // Implementar revisión de respuestas específicas
-    showMessage('Función de revisión de respuestas en desarrollo', 'info');
+async function reviewAnswers(assignmentId) {
+    try {
+        // 1. Obtener respuestas del candidato
+        const response = await fetch(`../backend/get_candidate_answers.php?assignment_id=${assignmentId}`, { credentials: 'include' });
+        const data = await response.json();
+        if (!data.success) {
+            showMessage('Error al cargar respuestas: ' + data.message, 'error');
+            return;
+        }
+        // 2. Construir el modal de revisión
+        let html = `<h5>Revisión de Respuestas</h5>
+            <p><strong>Candidato:</strong> ${data.assignment.user_name} (${data.assignment.user_email})</p>
+            <p><strong>Test:</strong> ${data.assignment.test_title}</p>
+            <form id="review-form">
+        `;
+        data.questions.forEach((q, idx) => {
+            html += `
+                <div class="mb-3 p-2 border rounded">
+                    <h6>Pregunta ${idx + 1} <span class="badge bg-secondary">${q.points} pts</span></h6>
+                    <p>${q.question_text}</p>
+                    <label class="form-label">Respuesta del candidato:</label>
+                    <div class="bg-light p-2 rounded mb-2">${q.answer_text ? q.answer_text : '<em>No respondida</em>'}</div>
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-3">
+                            <label>Puntaje:</label>
+                            <input type="number" class="form-control" name="points_${q.question_id}" min="0" max="${q.points}" step="0.5" value="${q.points_earned !== null ? q.points_earned : ''}" ${q.answer_text ? '' : 'disabled'}>
+                        </div>
+                        <div class="col-md-9">
+                            <label>Comentario:</label>
+                            <input type="text" class="form-control" name="notes_${q.question_id}" value="${q.reviewer_notes ? q.reviewer_notes : ''}" ${q.answer_text ? '' : 'disabled'}>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `<div class="text-end"><button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Revisión</button></div></form>`;
+        // 3. Mostrar modal Bootstrap reutilizando candidateModal
+        const modalBody = document.getElementById('candidateModalBody');
+        modalBody.innerHTML = html;
+        const modal = new bootstrap.Modal(document.getElementById('candidateModal'), {
+            backdrop: false,
+            keyboard: true
+        });
+        modal.show();
+        // 4. Manejar envío del formulario
+        document.getElementById('review-form').onsubmit = async function(e) {
+            e.preventDefault();
+            // Recopilar puntajes y comentarios
+            const reviews = data.questions.filter(q => q.answer_text).map(q => ({
+                question_id: q.question_id,
+                points_earned: parseFloat(this[`points_${q.question_id}`].value),
+                reviewer_notes: this[`notes_${q.question_id}`].value
+            }));
+            // Enviar al backend
+            const saveBtn = this.querySelector('button[type="submit"]');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Guardando...';
+            const res = await fetch('../backend/review_answers.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ assignment_id: assignmentId, reviews })
+            });
+            const result = await res.json();
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save"></i> Guardar Revisión';
+            if (result.success) {
+                showMessage('Revisión guardada correctamente', 'success');
+                modal.hide();
+                refreshData();
+            } else {
+                showMessage('Error al guardar revisión: ' + result.message, 'error');
+            }
+        };
+    } catch (error) {
+        showMessage('Error de red al cargar respuestas', 'error');
+    }
 }
 
 function contactCandidate() {
@@ -412,10 +485,12 @@ function contactCandidate() {
 }
 
 function exportResults() {
-    if (!currentTestResults) return;
-    
-    // Implementar exportación de resultados
-    showMessage('Función de exportación en desarrollo', 'info');
+    if (currentTestResults && currentTestResults.test && currentTestResults.test.id) {
+        const testId = currentTestResults.test.id;
+        window.open(`../backend/export_test_results_pdf.php?test_id=${testId}`, '_blank');
+    } else {
+        showMessage('No hay test seleccionado para exportar', 'error');
+    }
 }
 
 function refreshData() {

@@ -815,8 +815,39 @@ function continueTest(testId, assignmentId) {
 }
 
 function viewTestResults(assignmentId) {
-    // Implementar vista de resultados
-    showMessage('Función de resultados en desarrollo', 'info');
+    // Mostrar resultados revisados del test al usuario
+    fetch(`../backend/get_my_test_results.php?assignment_id=${assignmentId}`, { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                showMessage('Error al cargar resultados: ' + data.message, 'error');
+                return;
+            }
+            let html = `<h5>${data.assignment.test_title}</h5>`;
+            html += `<p class='text-muted'>${data.assignment.test_description || ''}</p>`;
+            html += `<div class='mb-2'><strong>Estado:</strong> <span class='badge bg-${data.assignment.status === 'completed' ? 'success' : data.assignment.status === 'expired' ? 'secondary' : 'info'}'>${data.assignment.status}</span></div>`;
+            html += `<div class='mb-2'><strong>Puntaje total:</strong> ${data.assignment.total_score !== null ? data.assignment.total_score + ' / ' + data.assignment.max_score : 'N/A'}</div>`;
+            if (data.assignment.completed_at) {
+                html += `<div class='mb-2'><strong>Fecha completado:</strong> ${formatDate(data.assignment.completed_at)}</div>`;
+            }
+            html += `<hr><h6>Preguntas y revisión</h6>`;
+            data.questions.forEach((q, idx) => {
+                html += `<div class='mb-3 p-2 border rounded'>`;
+                html += `<strong>Pregunta ${idx + 1}:</strong> ${q.question_text}<br>`;
+                html += `<span class='badge bg-secondary'>${q.points} pts</span><br>`;
+                html += `<strong>Tu respuesta:</strong> <div class='bg-light p-2 rounded mb-2'>${q.answer_text ? q.answer_text : '<em>No respondida</em>'}</div>`;
+                html += `<strong>Puntaje recibido:</strong> ${q.points_earned !== null ? q.points_earned + ' / ' + q.points : 'N/A'}<br>`;
+                html += `<strong>Comentario de la empresa:</strong> <div class='bg-white border p-2 rounded mb-2'>${q.reviewer_notes ? q.reviewer_notes : '<em>Sin comentario</em>'}</div>`;
+                html += `</div>`;
+            });
+            document.getElementById('userTestResultsBody').innerHTML = html;
+            const modal = new bootstrap.Modal(document.getElementById('userTestResultsModal'), {
+                backdrop: false,
+                keyboard: true
+            });
+            modal.show();
+        })
+        .catch(() => showMessage('Error de red al cargar resultados', 'error'));
 }
 
 function refreshTests() {
