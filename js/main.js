@@ -53,6 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize category cards
     initializeCategoryCards();
+
+    // Botón de registro de empresa
+    const companyRegisterBtn = document.getElementById('company-register');
+    const companyRegisterModal = document.getElementById('company-register-modal');
+    if (companyRegisterBtn && companyRegisterModal) {
+        companyRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(companyRegisterModal);
+        });
+    }
 });
 
 // Session Management
@@ -654,7 +664,11 @@ function loadJobs(title = '', location = '', category = '') {
         .then(data => {
             if (data.success) {
                 displayJobs(data.jobs);
-                updatePagination(data.total, data.current_page, data.total_pages);
+                // Si el backend no envía paginación, la calculamos aquí
+                let total = data.total ?? data.jobs.length;
+                let totalPages = data.total_pages ?? Math.ceil(total / jobsPerPage);
+                let current = data.current_page ?? currentPage;
+                updatePagination(total, current, totalPages);
             } else {
                 console.error('Error loading jobs:', data.message);
             }
