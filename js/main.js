@@ -1,809 +1,734 @@
+// Global variables
+let currentUser = null;
+let isLoggedIn = false;
+let currentPage = 1;
+const jobsPerPage = 6;
+
 // DOM Elements
-const navToggle = document.getElementById('nav-toggle');
-const navMenu = document.getElementById('nav-menu');
-const loginBtn = document.getElementById('login-btn');
-const registerBtn = document.getElementById('register-btn');
 const loginModal = document.getElementById('login-modal');
 const registerModal = document.getElementById('register-modal');
-const searchBtn = document.getElementById('search-btn');
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const loginBtn = document.getElementById('login-btn');
+const registerBtn = document.getElementById('register-btn');
+const mobileLoginBtn = document.getElementById('mobile-login-btn');
+const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+const mobileProfileBtn = document.getElementById('mobile-profile-btn');
+const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+const mobileProfileDropdown = document.getElementById('mobile-profile-dropdown');
+const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
 const jobsGrid = document.getElementById('jobs-grid');
-const categoryCards = document.querySelectorAll('.category-card');
-const contactForm = document.getElementById('contact-form');
-const companyRegisterBtn = document.getElementById('company-register');
+const searchBtn = document.getElementById('search-btn');
+const prevPageBtn = document.getElementById('prev-page');
+const nextPageBtn = document.getElementById('next-page');
+const pageInfo = document.getElementById('page-info');
 
-// Authentication State
-let currentUser = null;
-
-let currentJobs = [];
-let currentPage = 1;
-const jobsPerPage = 5;
-
-// Authentication Functions
-async function initializeAuth() { 
-    try {
-        const res = await fetch('backend/session_status.php', { credentials: 'include' });
-        const data = await res.json();
-        
-        if (data.loggedIn && data.user) {
-            currentUser = data.user;
-            console.log('✅ Usuario autenticado:', currentUser);
-        } else {
-            currentUser = null;
-            console.log('❌ No hay usuario autenticado');
-        }
-        
-        updateAuthUI();
-    } catch (error) {
-        console.error('Error verificando autenticación:', error);
-        currentUser = null;
-        updateAuthUI();
-    }
-}
-
-function updateAuthUI() { 
-    // Actualizar botones de login/register en el navbar
-    const loginBtn = document.getElementById('login-btn');
-    const registerBtn = document.getElementById('register-btn');
-    const userMenu = document.getElementById('user-menu');
-    const userDropdown = document.getElementById('user-dropdown');
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing main.js');
     
-    if (currentUser) {
-        // Usuario logueado
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (registerBtn) registerBtn.style.display = 'none';
-        if (userMenu) userMenu.style.display = 'block';
-        if (userDropdown) {
-            const userName = userDropdown.querySelector('.user-name');
-            if (userName) userName.textContent = currentUser.name || currentUser.email;
-        }
-    } else {
-        // Usuario no logueado
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (registerBtn) registerBtn.style.display = 'block';
-        if (userMenu) userMenu.style.display = 'none';
+    // Check session status first
+    checkSessionStatus();
+    
+    // Initialize navigation
+    initializeNavigation();
+    
+    // Initialize auth buttons
+    initializeAuthButtons();
+    
+    // Initialize mobile auth
+    initializeMobileAuth();
+    
+    // Initialize modal switches
+    initializeModalSwitches();
+    
+    // Initialize search functionality
+    initializeSearch();
+    
+    // Load initial jobs
+    loadJobs();
+    
+    // Initialize pagination
+    initializePagination();
+    
+    // Initialize category cards
+    initializeCategoryCards();
+});
+
+// Session Management
+function checkSessionStatus() {
+    fetch('backend/session_status.php')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Session status:', data);
+            if (data.logged_in) {
+                currentUser = data.user;
+                isLoggedIn = true;
+                updateUIForLoggedInUser();
+            } else {
+                updateUIForLoggedOutUser();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking session:', error);
+            updateUIForLoggedOutUser();
+        });
+}
+
+function updateUIForLoggedInUser() {
+    console.log('Updating UI for logged in user:', currentUser);
+    
+    // Hide login/register buttons
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (registerBtn) registerBtn.style.display = 'none';
+    if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
+    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'none';
+    
+    // Show profile dropdown for mobile
+    if (mobileProfileDropdown) mobileProfileDropdown.style.display = 'block';
+    
+    // Update desktop nav to show profile dropdown
+    updateDesktopNavForLoggedInUser();
+    
+    // Update mobile nav to show profile instead of auth buttons
+    updateMobileNavForLoggedInUser();
+}
+
+function updateUIForLoggedOutUser() {
+    console.log('Updating UI for logged out user');
+    
+    // Show login/register buttons
+    if (loginBtn) loginBtn.style.display = 'inline-block';
+    if (registerBtn) registerBtn.style.display = 'inline-block';
+    if (mobileLoginBtn) mobileLoginBtn.style.display = 'flex';
+    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'flex';
+    
+    // Hide profile dropdown
+    if (mobileProfileDropdown) mobileProfileDropdown.style.display = 'none';
+    
+    // Update mobile nav to show auth buttons
+    updateMobileNavForLoggedOutUser();
+}
+
+function updateDesktopNavForLoggedInUser() {
+    const navActions = document.getElementById('nav-actions');
+    if (navActions && currentUser) {
+        // Determine the correct profile link based on user type
+        const profileLink = currentUser.userType === 'empresa' ? 'html/company-dashboard.html' : 'html/profile.html';
+        const profileText = currentUser.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
+        
+        navActions.innerHTML = `
+            <div class="user-menu">
+                <span class="user-greeting">Hola, ${currentUser.name}</span>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" id="desktop-profile-btn">
+                        <i class="bi bi-person-circle"></i>
+                        <span>${profileText}</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="desktop-dropdown-menu">
+                        <a href="${profileLink}" class="dropdown-item">
+                            <i class="bi bi-person"></i>
+                            <span>${profileText}</span>
+                        </a>
+                        <button class="dropdown-item logout" id="desktop-logout-btn">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Initialize desktop dropdown functionality
+        setTimeout(() => {
+            initializeDesktopDropdown();
+        }, 100);
+    }
+}
+
+function updateMobileNavForLoggedInUser() {
+    const mobileAuthContainer = document.querySelector('.mobile-auth-container');
+    if (mobileAuthContainer && currentUser) {
+        // Determine the correct profile link based on user type
+        const profileLink = currentUser.userType === 'empresa' ? 'html/company-dashboard.html' : 'html/profile.html';
+        const profileText = currentUser.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
+        
+        mobileAuthContainer.innerHTML = `
+            <div class="mobile-profile-dropdown" id="mobile-profile-dropdown">
+                <button class="mobile-auth-btn mobile-profile-btn" id="mobile-profile-btn">
+                    <i class="bi bi-person-circle"></i>
+                    <span>${profileText}</span>
+                </button>
+                <div class="mobile-dropdown-menu" id="mobile-dropdown-menu">
+                    <a href="${profileLink}" class="mobile-dropdown-item">
+                        <i class="bi bi-person"></i>
+                        <span>${profileText}</span>
+                    </a>
+                    <button class="mobile-dropdown-item mobile-logout-btn" id="mobile-logout-btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Re-initialize mobile auth after DOM update
+        setTimeout(() => {
+            initializeMobileAuth();
+        }, 100);
+    }
+}
+
+function updateMobileNavForLoggedOutUser() {
+    const mobileAuthContainer = document.querySelector('.mobile-auth-container');
+    if (mobileAuthContainer) {
+        mobileAuthContainer.innerHTML = `
+            <button class="mobile-auth-btn mobile-login-btn" id="mobile-login-btn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Login</span>
+            </button>
+            <button class="mobile-auth-btn mobile-register-btn" id="mobile-register-btn">
+                <i class="bi bi-person-plus"></i>
+                <span>Registro</span>
+            </button>
+        `;
+        
+        // Re-initialize mobile auth after DOM update
+        setTimeout(() => {
+            initializeMobileAuth();
+        }, 100);
+    }
+}
+
+// Navigation Functions
+function initializeNavigation() {
+    // Mobile navigation items
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all items
+            mobileNavItems.forEach(navItem => navItem.classList.remove('active'));
+            
+            // Add active class to clicked item
+            this.classList.add('active');
+            
+            // Smooth scroll to section
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+}
+
+// Auth Button Functions
+function initializeAuthButtons() {
+    // Desktop auth buttons
+    if (loginBtn) {
+        loginBtn.addEventListener('click', handleDesktopLogin);
+    }
+    if (registerBtn) {
+        registerBtn.addEventListener('click', handleDesktopRegister);
+    }
+}
+
+// Desktop event handlers
+function handleDesktopLogin(e) {
+    e.preventDefault();
+    console.log('Desktop login clicked');
+    openModal(loginModal);
+}
+
+function handleDesktopRegister(e) {
+    e.preventDefault();
+    console.log('Desktop register clicked');
+    openModal(registerModal);
+}
+
+// Desktop Dropdown Functions
+function initializeDesktopDropdown() {
+    const desktopProfileBtn = document.getElementById('desktop-profile-btn');
+    const desktopDropdownMenu = document.getElementById('desktop-dropdown-menu');
+    const desktopLogoutBtn = document.getElementById('desktop-logout-btn');
+
+    // Desktop profile button
+    if (desktopProfileBtn) {
+        desktopProfileBtn.addEventListener('click', handleDesktopProfile);
+    }
+
+    // Desktop logout button
+    if (desktopLogoutBtn) {
+        desktopLogoutBtn.addEventListener('click', handleDesktopLogout);
+    }
+
+    // Close desktop dropdown when clicking outside
+    document.addEventListener('click', handleDesktopOutsideClick);
+}
+
+// Desktop event handlers
+function handleDesktopProfile(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Desktop profile clicked');
+    toggleDesktopDropdown();
+}
+
+function handleDesktopLogout(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Desktop logout clicked');
+    handleLogout();
+}
+
+function toggleDesktopDropdown() {
+    const desktopDropdownMenu = document.getElementById('desktop-dropdown-menu');
+    if (desktopDropdownMenu) {
+        desktopDropdownMenu.classList.toggle('show');
+    }
+}
+
+function handleDesktopOutsideClick(e) {
+    const desktopProfileBtn = document.getElementById('desktop-profile-btn');
+    const desktopDropdownMenu = document.getElementById('desktop-dropdown-menu');
+    
+    if (desktopProfileBtn && desktopDropdownMenu && !desktopProfileBtn.contains(e.target)) {
+        desktopDropdownMenu.classList.remove('show');
+    }
+}
+
+// Mobile Auth Functions
+function initializeMobileAuth() {
+    // Get fresh references after DOM updates
+    const mobileLoginBtn = document.getElementById('mobile-login-btn');
+    const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    const mobileProfileDropdown = document.getElementById('mobile-profile-dropdown');
+    const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
+
+    // Mobile login button
+    if (mobileLoginBtn) {
+        mobileLoginBtn.addEventListener('click', handleMobileLogin);
+    }
+
+    // Mobile register button
+    if (mobileRegisterBtn) {
+        mobileRegisterBtn.addEventListener('click', handleMobileRegister);
+    }
+
+    // Mobile profile button
+    if (mobileProfileBtn) {
+        mobileProfileBtn.addEventListener('click', handleMobileProfile);
+    }
+
+    // Mobile logout button
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', handleMobileLogout);
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', handleOutsideClick);
+}
+
+// Mobile event handlers
+function handleMobileLogin(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Mobile login clicked');
+    openModal(loginModal);
+}
+
+function handleMobileRegister(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Mobile register clicked');
+    openModal(registerModal);
+}
+
+function handleMobileProfile(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Mobile profile clicked');
+    toggleMobileDropdown();
+}
+
+function handleMobileLogout(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Mobile logout clicked');
+    handleLogout();
+}
+
+function handleOutsideClick(e) {
+    const mobileProfileDropdown = document.getElementById('mobile-profile-dropdown');
+    const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
+    
+    if (mobileProfileDropdown && mobileDropdownMenu && !mobileProfileDropdown.contains(e.target)) {
+        closeMobileDropdown();
+    }
+}
+
+// Modal Switch Functions
+function initializeModalSwitches() {
+    // Switch from login to register
+    const switchToRegister = document.getElementById('switch-to-register');
+    if (switchToRegister) {
+        switchToRegister.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal(loginModal);
+            openModal(registerModal);
+        });
     }
     
-    // Re-renderizar empleos para actualizar botones de aplicar
-    if (currentJobs.length > 0) {
-        renderJobs(currentJobs);
+    // Switch from register to login
+    const switchToLogin = document.getElementById('switch-to-login');
+    if (switchToLogin) {
+        switchToLogin.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal(registerModal);
+            openModal(loginModal);
+        });
+    }
+    
+    // Switch to company register
+    const switchToCompanyLogin = document.getElementById('switch-to-company-login');
+    if (switchToCompanyLogin) {
+        switchToCompanyLogin.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeModal(document.getElementById('company-register-modal'));
+            openModal(loginModal);
+        });
     }
 }
 
-function registerUser(userData) { 
-    // Register new user
+// Mobile Dropdown Functions
+function toggleMobileDropdown() {
+    const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
+    if (mobileDropdownMenu) {
+        mobileDropdownMenu.classList.toggle('show');
+    }
 }
 
-function loginUser(email, password) { 
-    // Login user
-}
-
-function logout() { 
-    // Logout user
+function closeMobileDropdown() {
+    const mobileDropdownMenu = document.getElementById('mobile-dropdown-menu');
+    if (mobileDropdownMenu) {
+        mobileDropdownMenu.classList.remove('show');
+    }
 }
 
 // Modal Functions
 function openModal(modal) {
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+    }
 }
 
 function closeModal(modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
 }
 
-// Modal Event Listeners
-companyRegisterBtn.addEventListener('click', () => {
-    const companyRegisterModal = document.getElementById('company-register-modal');
-    openModal(companyRegisterModal);
-});
-
-// Agregar listeners para los botones de login y registro del navbar
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => openModal(loginModal));
-}
-if (registerBtn) {
-    registerBtn.addEventListener('click', () => openModal(registerModal));
-}
-
-// Close modals when clicking outside or on close button
-window.addEventListener('click', (e) => {
-    if (e.target === loginModal) {
-        closeModal(loginModal);
-    }
-    if (e.target === registerModal) {
-        closeModal(registerModal);
-    }
-    const companyRegisterModal = document.getElementById('company-register-modal');
-    if (companyRegisterModal && e.target === companyRegisterModal) {
-        closeModal(companyRegisterModal);
-    }
-    const applicationModal = document.getElementById('application-modal');
-    if (applicationModal && e.target === applicationModal) {
-        closeModal(applicationModal);
+// Close modals when clicking outside
+window.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        closeModal(e.target);
     }
 });
 
+// Close modals with X button
 document.querySelectorAll('.close').forEach(closeBtn => {
-    closeBtn.addEventListener('click', (e) => {
-        const modal = e.target.closest('.modal');
+    closeBtn.addEventListener('click', function() {
+        const modal = this.closest('.modal');
         closeModal(modal);
     });
 });
 
-// Nueva función para cargar empleos desde la base de datos
-async function loadJobsFromBackend() {
-    try {
-        const res = await fetch('backend/get_jobs.php');
-        const data = await res.json();
+// Form Submissions
+if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+}
+
+if (registerForm) {
+    registerForm.addEventListener('submit', handleRegister);
+}
+
+// Company register form
+const companyRegisterForm = document.getElementById('company-register-form');
+if (companyRegisterForm) {
+    companyRegisterForm.addEventListener('submit', handleCompanyRegister);
+}
+
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(loginForm);
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const userType = formData.get('userType');
+    
+    // Determinar el endpoint según el tipo de usuario
+    const endpoint = userType === 'empresa' ? 'backend/login_company.php' : 'backend/login.php';
+    
+    // Preparar los datos según el tipo de usuario
+    const bodyData = userType === 'empresa' 
+        ? `company_email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        : `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+    
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: bodyData
+    })
+    .then(response => response.json())
+    .then(data => {
         if (data.success) {
-            currentJobs = data.jobs;
-            renderJobs(currentJobs);
+            showMessage('Inicio de sesión exitoso', 'success');
+            currentUser = data;
+            isLoggedIn = true;
+            closeModal(loginModal);
+            updateUIForLoggedInUser();
         } else {
-            jobsGrid.innerHTML = '<p class="text-center">No se pudieron cargar los empleos.</p>';
+            showMessage(data.message || 'Error en el inicio de sesión', 'error');
         }
-    } catch (err) {
-        jobsGrid.innerHTML = '<p class="text-center">Error de conexión al cargar empleos.</p>';
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+        showMessage('Error en el inicio de sesión', 'error');
+    });
+}
+
+function handleRegister(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(registerForm);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirm_password');
+    
+    if (password !== confirmPassword) {
+        showMessage('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    fetch('backend/register.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Registro exitoso', 'success');
+            currentUser = data.user;
+            isLoggedIn = true;
+            closeModal(registerModal);
+            updateUIForLoggedInUser();
+        } else {
+            showMessage(data.message || 'Error en el registro', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Register error:', error);
+        showMessage('Error en el registro', 'error');
+    });
+}
+
+function handleCompanyRegister(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(companyRegisterForm);
+    const companyName = formData.get('company_name');
+    const companyEmail = formData.get('company_email');
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirm_password');
+    const ruc = formData.get('ruc');
+    const website = formData.get('website');
+    const phone = formData.get('phone');
+    const location = formData.get('location');
+    const description = formData.get('description');
+    
+    if (password !== confirmPassword) {
+        showMessage('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    fetch('backend/register_company.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `company_name=${encodeURIComponent(companyName)}&company_email=${encodeURIComponent(companyEmail)}&password=${encodeURIComponent(password)}&ruc=${encodeURIComponent(ruc)}&website=${encodeURIComponent(website)}&phone=${encodeURIComponent(phone)}&location=${encodeURIComponent(location)}&description=${encodeURIComponent(description)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('Registro de empresa exitoso', 'success');
+            currentUser = data.user;
+            isLoggedIn = true;
+            closeModal(document.getElementById('company-register-modal'));
+            updateUIForLoggedInUser();
+        } else {
+            showMessage(data.message || 'Error en el registro de empresa', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Company register error:', error);
+        showMessage('Error en el registro de empresa', 'error');
+    });
+}
+
+function handleLogout() {
+    fetch('backend/logout.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showMessage('Sesión cerrada exitosamente', 'success');
+                currentUser = null;
+                isLoggedIn = false;
+                updateUIForLoggedOutUser();
+            } else {
+                showMessage('Error al cerrar sesión', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            showMessage('Error al cerrar sesión', 'error');
+        });
+}
+
+// Message Display
+function showMessage(message, type = 'info') {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message message-${type}`;
+    messageDiv.textContent = message;
+    
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
+}
+
+// Search Functions
+function initializeSearch() {
+    if (searchBtn) {
+        searchBtn.addEventListener('click', performSearch);
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Inicializar autenticación primero
-    await initializeAuth();
+function performSearch() {
+    const jobTitle = document.getElementById('job-title').value;
+    const jobLocation = document.getElementById('job-location').value;
+    const jobCategory = document.getElementById('job-category').value;
     
-    // Luego cargar empleos
-    loadJobsFromBackend();
+    currentPage = 1;
+    loadJobs(jobTitle, jobLocation, jobCategory);
+}
+
+// Job Loading Functions
+function loadJobs(title = '', location = '', category = '') {
+    const params = new URLSearchParams({
+        page: currentPage,
+        limit: jobsPerPage,
+        title: title,
+        location: location,
+        category: category
+    });
     
-    // Event listener para el formulario de aplicación
-    const applicationForm = document.getElementById('job-application-form');
-    if (applicationForm) {
-        applicationForm.addEventListener('submit', handleApplicationSubmit);
-    }
-});
+    fetch(`backend/get_jobs.php?${params}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayJobs(data.jobs);
+                updatePagination(data.total, data.current_page, data.total_pages);
+            } else {
+                console.error('Error loading jobs:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading jobs:', error);
+        });
+}
 
-// Modifica renderJobs para usar los campos del backend
-function renderJobs(jobs) {
-    const startIndex = (currentPage - 1) * jobsPerPage;
-    const endIndex = startIndex + jobsPerPage;
-    const jobsToShow = jobs.slice(startIndex, endIndex);
-
+function displayJobs(jobs) {
+    if (!jobsGrid) return;
+    
     jobsGrid.innerHTML = '';
-
-    if (jobsToShow.length === 0) {
-        jobsGrid.innerHTML = '<p class="text-center">No se encontraron empleos que coincidan con tu búsqueda.</p>';
-        return;
-    }
-
-    jobsToShow.forEach(job => {
+    
+    jobs.forEach(job => {
         const jobCard = document.createElement('div');
-        jobCard.className = 'job-card fade-in-up';
-        
-        // Determinar el texto y acción del botón según el estado de autenticación
-        let buttonText, buttonAction;
-        
-        if (currentUser) {
-            // Usuario logueado - mostrar botón de aplicar
-            buttonText = '📝 Aplicar Ahora';
-            buttonAction = 'apply';
-        } else {
-            // Usuario no logueado - mostrar botón de login
-            buttonText = '🔐 Inicia sesión para aplicar';
-            buttonAction = 'login';
-        }
-        
+        jobCard.className = 'job-card';
         jobCard.innerHTML = `
             <div class="job-info">
                 <h3 class="job-title">${job.title}</h3>
-                <div class="job-company">${job.company_name || ''}</div>
-                <div class="job-location">📍 ${job.location || ''}</div>
-                <div class="job-posted">${job.created_at ? new Date(job.created_at).toLocaleDateString() : ''}</div>
+                <p class="job-company">${job.company}</p>
+                <p class="job-location">📍 ${job.location}</p>
+                <p class="job-posted">📅 ${job.posted_date}</p>
             </div>
             <div class="job-meta">
-                <div class="job-salary">${job.salary_min && job.salary_max ? `${job.currency || ''} ${job.salary_min} - ${job.salary_max}` : ''}</div>
-                <div class="job-type">${job.type || ''}</div>
-                <button class="btn btn-primary apply-btn" data-jobid="${job.id}" data-action="${buttonAction}">${buttonText}</button>
+                <span class="job-salary">💰 ${job.salary}</span>
+                <span class="job-type">${job.type}</span>
             </div>
         `;
         jobsGrid.appendChild(jobCard);
     });
-
-    // Asignar evento a los botones de aplicar
-    document.querySelectorAll('.apply-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const action = this.getAttribute('data-action');
-            const jobId = this.getAttribute('data-jobid');
-            
-            if (action === 'login') {
-                // Usuario no logueado - abrir modal de login
-                openModal(loginModal);
-            } else if (action === 'apply') {
-                // Usuario logueado - procesar aplicación
-                handleJobApplication(jobId);
-            }
-        });
-    });
-
-    updatePagination(jobs.length);
 }
 
-// Función para manejar la aplicación a un empleo
-function handleJobApplication(jobId) {
-    if (!currentUser) {
-        openModal(loginModal);
-        return;
-    }
-    
-    console.log(`📝 Usuario ${currentUser.name} aplicando al empleo ${jobId}`);
-    
-    // Buscar la información del empleo
-    const job = currentJobs.find(j => j.id == jobId);
-    if (!job) {
-        showMessage('Error: No se encontró información del empleo', 'error');
-        return;
-    }
-    
-    // Llenar la información del empleo en el modal
-    document.getElementById('application-job-title').textContent = job.title;
-    document.getElementById('application-job-company').textContent = job.company_name || 'Empresa no especificada';
-    document.getElementById('application-job-location').textContent = `📍 ${job.location || 'Ubicación no especificada'}`;
-    document.getElementById('application-job-id').value = jobId;
-    
-    // Limpiar el formulario
-    document.getElementById('job-application-form').reset();
-    
-    // Abrir el modal de aplicación
-    openModal(document.getElementById('application-modal'));
-}
-
-// Función para manejar el envío del formulario de aplicación
-async function handleApplicationSubmit(e) {
-    e.preventDefault();
-    
-    if (!currentUser) {
-        showMessage('Debes iniciar sesión para aplicar', 'error');
-        return;
-    }
-    
-    const formData = new FormData(e.target);
-    const applicationData = {
-        job_id: formData.get('job_id'),
-        cover_letter: formData.get('cover_letter'),
-        expected_salary: formData.get('expected_salary'),
-        availability: formData.get('availability'),
-        additional_info: formData.get('additional_info')
-    };
-    
-    // Validar campos obligatorios
-    if (!applicationData.cover_letter.trim()) {
-        showMessage('La carta de presentación es obligatoria', 'error');
-        return;
-    }
-    
-    try {
-        console.log('📤 Enviando aplicación:', applicationData);
-        
-        const response = await fetch('backend/apply_job.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(applicationData),
-            credentials: 'include'
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showMessage(data.message, 'success');
-            closeModal(document.getElementById('application-modal'));
-            
-            // Opcional: actualizar la UI para mostrar que ya aplicó
-            const applyBtn = document.querySelector(`[data-jobid="${applicationData.job_id}"]`);
-            if (applyBtn) {
-                applyBtn.textContent = '✅ Ya Aplicaste';
-                applyBtn.disabled = true;
-                applyBtn.style.backgroundColor = '#059669';
+// Pagination Functions
+function initializePagination() {
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadJobs();
             }
-        } else {
-            showMessage(data.message, 'error');
-        }
-        
-    } catch (error) {
-        console.error('Error enviando aplicación:', error);
-        showMessage('Error al enviar la aplicación. Intenta nuevamente.', 'error');
+        });
+    }
+    
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            currentPage++;
+            loadJobs();
+        });
     }
 }
 
-function updatePagination(totalJobs) {
-    const totalPages = Math.ceil(totalJobs / jobsPerPage);
-    const pageInfo = document.getElementById('page-info');
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
-
-    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+function updatePagination(total, current, totalPages) {
+    if (pageInfo) {
+        pageInfo.textContent = `Página ${current} de ${totalPages}`;
+    }
     
-    prevBtn.disabled = currentPage === 1;
-    nextBtn.disabled = currentPage === totalPages;
+    if (prevPageBtn) {
+        prevPageBtn.disabled = current <= 1;
+    }
     
-    prevBtn.style.opacity = currentPage === 1 ? '0.5' : '1';
-    nextBtn.style.opacity = currentPage === totalPages ? '0.5' : '1';
-}
-
-// Search Jobs
-searchBtn.addEventListener('click', () => {
-    const jobTitle = document.getElementById('job-title').value.toLowerCase();
-    const jobLocation = document.getElementById('job-location').value.toLowerCase();
-    const jobCategory = document.getElementById('job-category').value;
-
-    let filteredJobs = currentJobs.filter(job => {
-        const titleMatch = !jobTitle || job.title.toLowerCase().includes(jobTitle);
-        const locationMatch = !jobLocation || job.location.toLowerCase().includes(jobLocation);
-        const categoryMatch = !jobCategory || job.category === jobCategory;
-        
-        return titleMatch && locationMatch && categoryMatch;
-    });
-
-    currentJobs = filteredJobs;
-    currentPage = 1;
-    renderJobs(currentJobs);
-    
-    // Scroll to results
-    document.getElementById('empleos').scrollIntoView({ behavior: 'smooth' });
-});
-
-// Category Filter
-categoryCards.forEach(card => {
-    card.addEventListener('click', () => {
-        const category = card.dataset.category;
-        document.getElementById('job-category').value = category;
-        
-        const filteredJobs = currentJobs.filter(job => job.category === category);
-        currentJobs = filteredJobs;
-        currentPage = 1;
-        renderJobs(currentJobs);
-        
-        // Scroll to results
-        document.getElementById('empleos').scrollIntoView({ behavior: 'smooth' });
-    });
-});
-
-// Pagination
-document.getElementById('prev-page').addEventListener('click', () => {
-    if (currentPage > 1) {
-        currentPage--;
-        renderJobs(currentJobs);
-        document.querySelector('.job-listings').scrollIntoView({ behavior: 'smooth' });
-    }
-});
-
-document.getElementById('next-page').addEventListener('click', () => {
-    const totalPages = Math.ceil(currentJobs.length / jobsPerPage);
-    if (currentPage < totalPages) {
-        currentPage++;
-        renderJobs(currentJobs);
-        document.querySelector('.job-listings').scrollIntoView({ behavior: 'smooth' });
-    }
-});
-
-// Contact Form
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const subject = formData.get('subject');
-    
-    // Simulate form submission
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    
-    submitBtn.innerHTML = '<div class="loading"></div> Enviando...';
-    submitBtn.disabled = true;
-    
-    setTimeout(() => {
-        showMessage(`¡Gracias ${name}! Hemos recibido tu mensaje y te contactaremos pronto.`, 'success');
-        contactForm.reset();
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    }, 2000);
-});
-
-// Form Submissions
-document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(loginForm);
-            const userType = formData.get('userType');
-            let endpoint = '';
-            if (userType === 'empresa') {
-                endpoint = 'backend/login_company.php';
-            } else {
-                endpoint = 'backend/login.php';
-            }
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-                const data = await res.json();
-                if (data.success) {
-                    closeModal(loginModal);
-                    showMessage('¡Bienvenido! Has iniciado sesión.', 'success');
-                    // Redirigir según tipo
-                    if (data.userType === 'empresa') {
-                        window.location.href = 'html/company-dashboard.html';
-                    } else {
-                        window.location.href = 'html/profile.html';
-                    }
-                } else {
-                    showMessage(data.message || 'Error al iniciar sesión', 'danger');
-                }
-            } catch (err) {
-                showMessage('Error de conexión con el servidor', 'danger');
-            }
-        });
-    }
-
-    // --- REGISTRO ---
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(registerForm);
-            const userType = formData.get('userType');
-            let endpoint = '';
-            if (userType === 'empresa') {
-                endpoint = 'backend/register_company.php';
-            } else {
-                endpoint = 'backend/register.php';
-            }
-            try {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showMessage('Registro exitoso. Ahora puedes iniciar sesión.', 'success');
-                    // Cerrar modal de registro y abrir login
-                    document.getElementById('register-modal').style.display = 'none';
-                    document.getElementById('login-modal').style.display = 'block';
-                } else {
-                    showMessage(data.message || 'Error al registrarse', 'danger');
-                }
-            } catch (err) {
-                showMessage('Error de conexión con el servidor', 'danger');
-            }
-        });
-    }
-
-    // --- REGISTRO DE EMPRESA ---
-    const companyRegisterForm = document.getElementById('company-register-form');
-    if (companyRegisterForm) {
-        companyRegisterForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(companyRegisterForm);
-            try {
-                const res = await fetch('backend/register_company.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await res.json();
-                if (data.success) {
-                    showMessage('Registro de empresa exitoso. Ahora puedes iniciar sesión.', 'success');
-                    // Cerrar modal de registro de empresa y abrir login
-                    document.getElementById('company-register-modal').style.display = 'none';
-                    document.getElementById('login-modal').style.display = 'block';
-                } else {
-                    showMessage(data.message || 'Error al registrar empresa', 'danger');
-                }
-            } catch (err) {
-                showMessage('Error de conexión con el servidor', 'danger');
-            }
-        });
-    }
-});
-
-// Smooth Scrolling for Navigation Links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-        
-        // Close mobile menu if open
-        navMenu.classList.remove('active');
-    });
-});
-
-// Scroll to Top on Logo Click
-document.querySelector('.nav-brand').addEventListener('click', () => {
-    // If we're not on the main page, go to it
-    if (window.location.pathname !== '/' && !window.location.pathname.endsWith('index.html')) {
-        window.location.href = 'index.html';
-    } else {
-        // If we're on the main page, scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-});
-
-// Add scroll effect to header
-window.addEventListener('scroll', () => {
-    const header = document.querySelector('.header');
-    if (window.scrollY > 100) {
-        header.style.background = 'rgba(255, 255, 255, 0.95)';
-        header.style.backdropFilter = 'blur(10px)';
-    } else {
-        header.style.background = '#fff';
-        header.style.backdropFilter = 'none';
-    }
-});
-
-// Intersection Observer for Animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
-        }
-    });
-}, observerOptions);
-
-// Observe elements for animation
-document.addEventListener('DOMContentLoaded', () => {
-    const elementsToAnimate = document.querySelectorAll('.category-card, .service-card, .testimonial-card');
-    elementsToAnimate.forEach(el => observer.observe(el));
-    
-    // Initial render of jobs
-    renderJobs(currentJobs);
-});
-
-// Counter Animation for Hero Stats
-function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    
-    counters.forEach(counter => {
-        const target = parseInt(counter.textContent.replace(/[^0-9]/g, ''));
-        const increment = target / 100;
-        let current = 0;
-        
-        const updateCounter = () => {
-            if (current < target) {
-                current += increment;
-                counter.textContent = Math.floor(current).toLocaleString() + '+';
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target.toLocaleString() + '+';
-            }
-        };
-        
-        updateCounter();
-    });
-}
-
-// Trigger counter animation when hero section is visible
-const heroObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            animateCounters();
-            heroObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-document.addEventListener('DOMContentLoaded', () => {
-    const heroSection = document.querySelector('.hero-stats');
-    if (heroSection) {
-        heroObserver.observe(heroSection);
-    }
-});
-
-// Search on Enter Key
-document.getElementById('job-title').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        searchBtn.click();
-    }
-});
-
-document.getElementById('job-location').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        searchBtn.click();
-    }
-});
-
-// Dynamic Job Type Colors
-function getJobTypeColor(type) {
-    switch(type.toLowerCase()) {
-        case 'tiempo completo':
-            return { bg: '#dcfce7', color: '#166534' };
-        case 'medio tiempo':
-            return { bg: '#fef3c7', color: '#92400e' };
-        case 'freelance':
-            return { bg: '#e0f2fe', color: '#0277bd' };
-        case 'remoto':
-            return { bg: '#f3e8ff', color: '#7c3aed' };
-        default:
-            return { bg: '#e0f2fe', color: '#0277bd' };
+    if (nextPageBtn) {
+        nextPageBtn.disabled = current >= totalPages;
     }
 }
 
-// Enhanced Job Card Styling
-function enhanceJobCards() {
-    const jobCards = document.querySelectorAll('.job-card');
-    jobCards.forEach(card => {
-        const jobType = card.querySelector('.job-type');
-        if (jobType) {
-            const colors = getJobTypeColor(jobType.textContent);
-            jobType.style.backgroundColor = colors.bg;
-            jobType.style.color = colors.color;
-        }
+// Category Cards
+function initializeCategoryCards() {
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            document.getElementById('job-category').value = category;
+            performSearch();
+        });
     });
 }
-
-// Call enhance function after rendering jobs
-const originalRenderJobs = renderJobs;
-renderJobs = function(jobs) {
-    originalRenderJobs(jobs);
-    setTimeout(enhanceJobCards, 100);
-};
-
-// Función para mostrar mensajes flotantes
-function showMessage(message, type = 'info') {
-    const messageEl = document.createElement('div');
-    messageEl.className = `message message-${type}`;
-    messageEl.innerHTML = message;
-    messageEl.style.position = 'fixed';
-    messageEl.style.top = '30px';
-    messageEl.style.left = '50%';
-    messageEl.style.transform = 'translateX(-50%)';
-    messageEl.style.zIndex = '9999';
-    messageEl.style.padding = '12px 24px';
-    messageEl.style.borderRadius = '8px';
-    messageEl.style.background = type === 'success' ? '#22c55e' : type === 'danger' ? '#ef4444' : '#2563eb';
-    messageEl.style.color = '#fff';
-    messageEl.style.fontWeight = 'bold';
-    messageEl.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
-    messageEl.style.animation = 'slideIn 0.3s ease';
-    document.body.appendChild(messageEl);
-    setTimeout(() => {
-        messageEl.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            messageEl.remove();
-        }, 300);
-    }, 3000);
-}
-
-// --- Menú hamburguesa responsivo universal ---
-document.addEventListener('DOMContentLoaded', function() {
-    const navToggle = document.getElementById('nav-toggle');
-    const navMenu = document.getElementById('nav-menu');
-
-    if (navToggle && navMenu) {
-        navToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            navMenu.classList.toggle('active');
-            navToggle.classList.toggle('active');
-        });
-        // Cerrar menú al hacer click en un enlace
-        navMenu.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                }
-            });
-        });
-        // Cerrar menú al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768 && navMenu.classList.contains('active')) {
-                if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                }
-            }
-        });
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetch('backend/session_status.php')
-        .then(res => res.json())
-        .then(data => {
-            const loginBtn = document.getElementById('login-btn');
-            const registerBtn = document.getElementById('register-btn');
-            const navActions = document.getElementById('nav-actions');
-            if (!navActions) return;
-
-            // Limpia acciones previas
-            navActions.innerHTML = '';
-
-            if (data.loggedIn && data.user) {
-                // Oculta botones de login y registro
-                if (loginBtn) loginBtn.style.display = 'none';
-                if (registerBtn) registerBtn.style.display = 'none';
-
-                // Crea el menú desplegable
-                const dropdown = document.createElement('div');
-                dropdown.className = 'dropdown';
-                
-                const dropdownToggle = document.createElement('button');
-                dropdownToggle.className = 'dropdown-toggle';
-                dropdownToggle.textContent = data.user.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
-                
-                const dropdownMenu = document.createElement('div');
-                dropdownMenu.className = 'dropdown-menu';
-                
-                // Opción de perfil/panel
-                const profileItem = document.createElement('button');
-                profileItem.className = 'dropdown-item';
-                profileItem.textContent = data.user.userType === 'empresa' ? 'Mi Panel' : 'Mi Perfil';
-                profileItem.onclick = () => {
-                    if (data.user.userType === 'empresa') {
-                        window.location.href = 'html/company-dashboard.html';
-                    } else {
-                        window.location.href = 'html/profile.html';
-                    }
-                };
-                
-                // Opción de cerrar sesión
-                const logoutItem = document.createElement('button');
-                logoutItem.className = 'dropdown-item logout';
-                logoutItem.textContent = 'Cerrar Sesión';
-                logoutItem.onclick = () => {
-                    fetch('backend/logout.php').then(() => window.location.reload());
-                };
-                
-                dropdownMenu.appendChild(profileItem);
-                dropdownMenu.appendChild(logoutItem);
-                dropdown.appendChild(dropdownToggle);
-                dropdown.appendChild(dropdownMenu);
-                navActions.appendChild(dropdown);
-                
-                // Funcionalidad del dropdown
-                dropdownToggle.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    dropdownToggle.classList.toggle('active');
-                    dropdownMenu.classList.toggle('show');
-                });
-                
-                // Cerrar dropdown al hacer click fuera
-                document.addEventListener('click', (e) => {
-                    if (!dropdown.contains(e.target)) {
-                        dropdownToggle.classList.remove('active');
-                        dropdownMenu.classList.remove('show');
-                    }
-                });
-                
-                // Cerrar dropdown al hacer click en una opción
-                dropdownMenu.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('dropdown-item')) {
-                        dropdownToggle.classList.remove('active');
-                        dropdownMenu.classList.remove('show');
-                    }
-                });
-            } else {
-                // Si no está logueado, muestra los botones normales
-                if (loginBtn) {
-                    loginBtn.style.display = '';
-                    navActions.appendChild(loginBtn);
-                }
-                if (registerBtn) {
-                    registerBtn.style.display = '';
-                    navActions.appendChild(registerBtn);
-                }
-            }
-        });
-});

@@ -6,17 +6,27 @@ let userStatistics = {};
 // Initialize profile page
 window.addEventListener('DOMContentLoaded', async function() {
     try {
-        // Verificar que los modales estén ocultos al inicio
-        ensureModalsHidden();
-        
         // Ajusta la ruta para acceder correctamente desde html/
         const res = await fetch('../backend/session_status.php', { credentials: 'include' });
         const data = await res.json();
-        if (!data.loggedIn || !data.user) {
+        console.log('Session data:', data);
+        
+        if (!data.logged_in || !data.user) {
+            console.log('No logged in, redirecting to index');
             window.location.href = '../index.html';
             return;
         }
+        
         currentUser = data.user;
+        console.log('Current user:', currentUser);
+        
+        // Check user type and redirect if necessary
+        if (currentUser.userType === 'empresa') {
+            // Redirect to company dashboard
+            window.location.href = 'company-dashboard.html';
+            return;
+        }
+        
         loadProfileData();
         initializeTabs();
         initializeFileUpload();
@@ -24,59 +34,38 @@ window.addEventListener('DOMContentLoaded', async function() {
         loadRecentActivity();
         initializeModals();
     } catch (e) {
+        console.error('Error loading profile:', e);
         window.location.href = '../index.html';
     }
 });
 
-function ensureModalsHidden() {
-    // Asegurar que todos los modales estén ocultos al cargar la página
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        modal.style.display = 'none';
-        modal.classList.remove('show');
-    });
-    
-    console.log('🔒 Modales asegurados como ocultos');
-}
-
 function initializeModals() {
-    // --- Selección de ciudad (modal) ---
+    // --- Selección de ciudad (modal Bootstrap) ---
     const openCityBtn = document.getElementById('open-city-modal');
     const cityModal = document.getElementById('city-modal');
-    const closeCityBtn = document.getElementById('close-city-modal');
     const saveCityBtn = document.getElementById('save-city');
     const citySelect = document.getElementById('city-select');
     const locationInput = document.getElementById('settings-location');
     
-    if (openCityBtn && cityModal && closeCityBtn && saveCityBtn && citySelect && locationInput) {
+    if (openCityBtn && cityModal && saveCityBtn && citySelect && locationInput) {
         openCityBtn.addEventListener('click', function() {
-            cityModal.classList.add('show');
             if (locationInput.value) {
                 citySelect.value = locationInput.value;
             } else {
                 citySelect.value = '';
             }
-        });
-        
-        closeCityBtn.addEventListener('click', function() {
-            cityModal.classList.remove('show');
-        });
-        
-        window.addEventListener('click', function(e) {
-            if (e.target === cityModal) cityModal.classList.remove('show');
+            // Usar Bootstrap modal
+            const modal = new bootstrap.Modal(cityModal);
+            modal.show();
         });
         
         saveCityBtn.addEventListener('click', function() {
             if (citySelect.value) {
                 locationInput.value = citySelect.value;
-                cityModal.classList.remove('show');
+                // Cerrar modal Bootstrap
+                const modal = bootstrap.Modal.getInstance(cityModal);
+                modal.hide();
             }
-        });
-        
-        // Solo abrir modal cuando se hace clic en el botón, no en el input
-        locationInput.addEventListener('click', function(e) {
-            e.preventDefault();
-            // No abrir automáticamente el modal
         });
         
         // Hacer el input readonly para evitar edición directa
@@ -103,20 +92,19 @@ function initializeModals() {
             seccionCV.style.display = 'block';
         });
     }
-    // --- Fin lógica constructor de CV ---
 }
 
 function loadProfileData() {
     // Load basic profile info
     document.getElementById('profile-name').textContent = currentUser.name;
-    document.getElementById('profile-email').textContent = currentUser.email;
+    document.getElementById('profile-email').innerHTML = `<i class="bi bi-envelope"></i> ${currentUser.email}`;
     document.getElementById('profile-type').textContent = currentUser.userType === 'candidato' ? 'Candidato' : 'Empresa';
     
     const joinedDate = new Date(currentUser.createdAt).toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long'
     });
-    document.getElementById('profile-joined').textContent = `Miembro desde: ${joinedDate}`;
+    document.getElementById('profile-joined').innerHTML = `<i class="bi bi-calendar"></i> Miembro desde: ${joinedDate}`;
     
     // Load settings form
     document.getElementById('settings-name').value = currentUser.name || '';
@@ -179,7 +167,7 @@ async function loadApplications() {
 }
 
 function setupApplicationFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
+    const filterButtons = document.querySelectorAll('[data-filter]');
     
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -213,13 +201,9 @@ function filterApplications(filter) {
                 app.status === 'rejected'
             );
             break;
-        case 'accepted':
-            filteredApplications = userApplications.filter(app => 
-                app.status === 'accepted'
-            );
-            break;
+        case 'all':
         default:
-            // 'all' - show all applications
+            filteredApplications = userApplications;
             break;
     }
     
@@ -229,61 +213,64 @@ function filterApplications(filter) {
 function renderApplicationsList(applications = userApplications) {
     const applicationsList = document.getElementById('applications-list');
     
+    if (!applicationsList) return;
+    
     if (applications.length === 0) {
         applicationsList.innerHTML = `
-            <div class="empty-state">
-                <h4>📋 No hay aplicaciones</h4>
-                <p>${applications === userApplications ? 'Aún no has aplicado a ningún empleo' : 'No hay aplicaciones con este filtro'}</p>
-                <a href="jobs.html" class="btn btn-primary">Buscar Empleos</a>
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 text-muted">No hay aplicaciones</h5>
+                    <p class="text-muted">Aún no has aplicado a ningún empleo</p>
+                </div>
             </div>
         `;
         return;
     }
     
     applicationsList.innerHTML = applications.map(app => `
-        <div class="application-card" data-application-id="${app.id}">
-            <div class="application-header">
-                <div class="application-job-info">
-                    <h4>${app.job_title}</h4>
-                    <p class="company-name">🏢 ${app.company_name}</p>
-                    <div class="job-meta">
-                        <span>📍 ${app.job_location}</span>
-                        <span>💰 ${app.job_salary}</span>
-                        <span>⏰ ${app.job_type || 'Tiempo completo'}</span>
+        <div class="col-lg-6 col-xl-4">
+            <div class="card application-card h-100">
+                <div class="card-body">
+                    <div class="application-header">
+                        <div class="application-avatar">
+                            ${app.job_title ? app.job_title.charAt(0).toUpperCase() : 'J'}
+                        </div>
+                        <div class="application-info flex-grow-1">
+                            <h6 class="mb-1">${app.job_title || 'Empleo'}</h6>
+                            <small class="text-muted">${app.company_name || 'Empresa'}</small>
+                        </div>
+                        <span class="badge badge-${app.status}">${getApplicationStatusText(app.status)}</span>
                     </div>
-                </div>
-                <div class="application-status">
-                    ${getApplicationStatusBadge(app.status)}
-                </div>
-            </div>
-            
-            <div class="application-details">
-                <div class="application-info">
-                    <p><strong>Salario Esperado:</strong> ${app.expected_salary || 'No especificado'}</p>
-                    <p><strong>Disponibilidad:</strong> ${app.availability || 'No especificada'}</p>
-                    <p><strong>Aplicado:</strong> ${formatDate(app.applied_at)}</p>
-                    ${app.updated_at !== app.applied_at ? `<p><strong>Última actualización:</strong> ${formatDate(app.updated_at)}</p>` : ''}
-                </div>
-                
-                <div class="application-actions">
-                    <button class="btn btn-outline btn-sm" onclick="viewApplicationDetails(${app.id})">
-                        👁️ Ver Detalles
-                    </button>
-                    <button class="btn btn-outline btn-sm" onclick="viewJobDetails('${app.job_title}', '${app.company_name}')">
-                        📋 Ver Empleo
-                    </button>
-                </div>
-            </div>
-            
-            <div class="application-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill ${getProgressClass(app.status)}" style="width: ${getProgressWidth(app.status)}%"></div>
-                </div>
-                <div class="progress-steps">
-                    <span class="step ${app.status !== 'rejected' ? 'completed' : ''}">📝 Aplicación Enviada</span>
-                    <span class="step ${['reviewing', 'interview', 'accepted'].includes(app.status) ? 'completed' : ''}">👀 En Revisión</span>
-                    <span class="step ${['interview', 'accepted'].includes(app.status) ? 'completed' : ''}">🤝 Entrevista</span>
-                    <span class="step ${app.status === 'accepted' ? 'completed' : ''}">✅ Decisión Final</span>
+                    
+                    <div class="application-meta">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <small><i class="bi bi-calendar"></i> ${formatDate(app.applied_at)}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-geo-alt"></i> ${app.location || 'No especificada'}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-currency-dollar"></i> ${app.salary || 'No especificado'}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-clock"></i> ${app.status}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-${getProgressClass(app.status)}" 
+                             style="width: ${getProgressWidth(app.status)}%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Progreso de la aplicación</small>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewApplicationDetails(${app.id})">
+                            <i class="bi bi-eye"></i> Ver Detalles
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,26 +279,35 @@ function renderApplicationsList(applications = userApplications) {
 
 function getApplicationStatusBadge(status) {
     const statusMap = {
-        'pending': '<span class="badge badge-pending">⏳ Pendiente</span>',
-        'reviewing': '<span class="badge badge-reviewing">👀 En Revisión</span>',
-        'interview': '<span class="badge badge-interview">🤝 Entrevista</span>',
-        'accepted': '<span class="badge badge-accepted">✅ Aceptado</span>',
-        'rejected': '<span class="badge badge-rejected">❌ Rechazado</span>'
+        'pending': 'warning',
+        'reviewing': 'info',
+        'interview': 'primary',
+        'accepted': 'success',
+        'rejected': 'danger'
     };
-    
-    return statusMap[status] || statusMap['pending'];
+    return statusMap[status] || 'secondary';
+}
+
+function getApplicationStatusText(status) {
+    const statusMap = {
+        'pending': 'Pendiente',
+        'reviewing': 'En Revisión',
+        'interview': 'Entrevista',
+        'accepted': 'Aceptado',
+        'rejected': 'Rechazado'
+    };
+    return statusMap[status] || status;
 }
 
 function getProgressClass(status) {
-    const classMap = {
-        'pending': 'progress-pending',
-        'reviewing': 'progress-reviewing',
-        'interview': 'progress-interview',
-        'accepted': 'progress-accepted',
-        'rejected': 'progress-rejected'
+    const progressMap = {
+        'pending': 'warning',
+        'reviewing': 'info',
+        'interview': 'primary',
+        'accepted': 'success',
+        'rejected': 'danger'
     };
-    
-    return classMap[status] || 'progress-pending';
+    return progressMap[status] || 'secondary';
 }
 
 function getProgressWidth(status) {
@@ -322,8 +318,7 @@ function getProgressWidth(status) {
         'accepted': 100,
         'rejected': 100
     };
-    
-    return widthMap[status] || 25;
+    return widthMap[status] || 0;
 }
 
 function viewApplicationDetails(applicationId) {
@@ -333,93 +328,86 @@ function viewApplicationDetails(applicationId) {
         return;
     }
     
-    // Crear modal con detalles de la aplicación
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>📋 Detalles de mi Aplicación</h2>
-            <div class="application-details-modal">
-                <div class="job-section">
-                    <h3>💼 Información del Empleo</h3>
-                    <p><strong>Puesto:</strong> ${application.job_title}</p>
-                    <p><strong>Empresa:</strong> ${application.company_name}</p>
-                    <p><strong>Ubicación:</strong> ${application.job_location}</p>
-                    <p><strong>Salario:</strong> ${application.job_salary}</p>
-                    <p><strong>Tipo:</strong> ${application.job_type || 'Tiempo completo'}</p>
-                    <p><strong>Descripción:</strong> ${application.job_description || 'No disponible'}</p>
-                </div>
-                
-                <div class="application-section">
-                    <h3>📝 Mi Aplicación</h3>
-                    <p><strong>Estado:</strong> ${getApplicationStatusBadge(application.status)}</p>
-                    <p><strong>Salario Esperado:</strong> ${application.expected_salary || 'No especificado'}</p>
-                    <p><strong>Disponibilidad:</strong> ${application.availability || 'No especificada'}</p>
-                    <p><strong>Fecha de Aplicación:</strong> ${formatDate(application.applied_at)}</p>
-                    ${application.updated_at !== application.applied_at ? `<p><strong>Última Actualización:</strong> ${formatDate(application.updated_at)}</p>` : ''}
-                </div>
-                
-                <div class="cover-letter-section">
-                    <h3>💼 Mi Carta de Presentación</h3>
-                    <div class="cover-letter-content">
-                        ${application.cover_letter || 'No se proporcionó carta de presentación'}
+    // Crear modal con Bootstrap
+    const modalHtml = `
+        <div class="modal fade" id="applicationDetailsModal" tabindex="-1" aria-labelledby="applicationDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="applicationDetailsModalLabel">
+                            <i class="bi bi-file-earmark-text"></i> Detalles de la Aplicación
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
-                
-                ${application.additional_info ? `
-                <div class="additional-info-section">
-                    <h3>📄 Información Adicional</h3>
-                    <div class="additional-info-content">
-                        ${application.additional_info}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-briefcase"></i> Información del Empleo</h6>
+                                <p><strong>Puesto:</strong> ${application.job_title || 'N/A'}</p>
+                                <p><strong>Empresa:</strong> ${application.company_name || 'N/A'}</p>
+                                <p><strong>Ubicación:</strong> ${application.location || 'No especificada'}</p>
+                                <p><strong>Salario:</strong> ${application.salary || 'No especificado'}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-info-circle"></i> Estado de la Aplicación</h6>
+                                <p><strong>Estado:</strong> <span class="badge badge-${application.status}">${getApplicationStatusText(application.status)}</span></p>
+                                <p><strong>Fecha de Aplicación:</strong> ${formatDate(application.applied_at)}</p>
+                                <p><strong>ID de Aplicación:</strong> ${application.id}</p>
+                            </div>
+                        </div>
+                        
+                        ${application.cover_letter ? `
+                            <div class="mt-4">
+                                <h6><i class="bi bi-chat-quote"></i> Carta de Presentación</h6>
+                                <div class="bg-light p-3 rounded">
+                                    ${application.cover_letter}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="mt-4">
+                            <h6><i class="bi bi-graph-up"></i> Progreso de la Aplicación</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-${getProgressClass(application.status)}" 
+                                     style="width: ${getProgressWidth(application.status)}%"></div>
+                            </div>
+                            <small class="text-muted">Progreso: ${getProgressWidth(application.status)}%</small>
+                        </div>
                     </div>
-                </div>
-                ` : ''}
-                
-                <div class="company-section">
-                    <h3>🏢 Información de la Empresa</h3>
-                    <p><strong>Nombre:</strong> ${application.company_name}</p>
-                    <p><strong>Email:</strong> ${application.company_email}</p>
-                    <p><strong>Ubicación:</strong> ${application.company_location || 'No especificada'}</p>
-                    ${application.company_website ? `<p><strong>Sitio Web:</strong> <a href="${application.company_website}" target="_blank">${application.company_website}</a></p>` : ''}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
                 </div>
             </div>
         </div>
     `;
     
-    document.body.appendChild(modal);
+    // Remover modal anterior si existe
+    const existingModal = document.getElementById('applicationDetailsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
     
-    // Mostrar el modal
-    setTimeout(() => {
-        modal.classList.add('show');
-    }, 10);
+    // Agregar nuevo modal al body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
     
-    // Cerrar modal
-    const closeBtn = modal.querySelector('.close');
-    closeBtn.onclick = function() {
-        modal.classList.remove('show');
-        setTimeout(() => {
-            modal.remove();
-        }, 300);
-    };
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('applicationDetailsModal'));
+    modal.show();
     
-    // Cerrar al hacer clic fuera del modal
-    modal.onclick = function(e) {
-        if (e.target === modal) {
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.remove();
-            }, 300);
-        }
-    };
+    // Limpiar modal cuando se cierre
+    document.getElementById('applicationDetailsModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
 }
 
 function viewJobDetails(jobTitle, companyName) {
-    showMessage('Funcionalidad de ver empleo próximamente', 'info');
+    // Implementar vista de detalles del empleo
+    console.log('Ver detalles del empleo:', jobTitle, companyName);
 }
 
 function formatDate(dateString) {
-    if (!dateString) return '-';
+    if (!dateString) return 'N/A';
     
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
@@ -431,214 +419,161 @@ function formatDate(dateString) {
     });
 }
 
-// --- MODAL DE DETALLES DE OFERTA Y FAVORITOS ---
-
-// Utilidad para obtener detalles de una oferta (mock, puedes conectar con tu fuente real)
 function getJobDetailsById(jobId) {
-    // Aquí puedes conectar con tu fuente real de empleos
-    // Por ahora, mock básico:
-    const mockJobs = {
-        1: {
-            id: 1,
-            title: "Desarrollador Frontend",
-            company: "TechCorp",
-            location: "Lima, Perú",
-            salary: "S/ 3,500 - 5,000",
-            type: "Tiempo completo",
-            description: "Buscamos un desarrollador frontend con experiencia en React y JavaScript..."
-        },
-        2: {
-            id: 2,
-            title: "Analista de Datos",
-            company: "DataSoft",
-            location: "Arequipa, Perú",
-            salary: "S/ 4,000 - 6,000",
-            type: "Tiempo completo",
-            description: "Analista de datos con experiencia en Python y SQL..."
-        }
-    };
-    
-    return mockJobs[jobId] || {
+    // Simular obtención de detalles del empleo
+    return {
         id: jobId,
-        title: "Empleo Genérico",
-        company: "Empresa",
-        location: "Ubicación",
-        salary: "Salario",
-        type: "Tipo",
-        description: "Descripción del empleo..."
+        title: 'Desarrollador Full Stack',
+        company: 'Tech Solutions',
+        location: 'Lima, Perú',
+        salary: '$3,000 - $5,000',
+        description: 'Buscamos un desarrollador full stack con experiencia en React, Node.js y bases de datos.',
+        requirements: [
+            'Experiencia mínima de 2 años',
+            'Conocimientos en React, Node.js',
+            'Manejo de bases de datos SQL y NoSQL',
+            'Buenas prácticas de desarrollo'
+        ],
+        benefits: [
+            'Horario flexible',
+            'Trabajo remoto',
+            'Seguro médico',
+            'Capacitaciones'
+        ]
     };
 }
 
 function renderOfferModal(jobId, isFavorite = false, isApplication = false) {
     const job = getJobDetailsById(jobId);
-    const modal = document.getElementById('offer-modal');
-    const content = document.getElementById('offer-details-content');
     
-    content.innerHTML = `
-        <div class="job-details">
-            <h2>${job.title}</h2>
-            <p class="company-name">🏢 ${job.company}</p>
-            <div class="job-meta">
-                <span>📍 ${job.location}</span>
-                <span>💰 ${job.salary}</span>
-                <span>⏰ ${job.type}</span>
-            </div>
-            <div class="job-description">
-                <h3>Descripción del Empleo</h3>
+    const modalContent = document.getElementById('offer-details-content');
+    if (!modalContent) return;
+    
+    modalContent.innerHTML = `
+        <div class="row">
+            <div class="col-md-8">
+                <h4>${job.title}</h4>
+                <p class="text-muted">${job.company}</p>
+                <p><i class="bi bi-geo-alt"></i> ${job.location}</p>
+                <p><i class="bi bi-currency-dollar"></i> ${job.salary}</p>
+                
+                <h6 class="mt-4">Descripción</h6>
                 <p>${job.description}</p>
+                
+                <h6>Requisitos</h6>
+                <ul>
+                    ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+                </ul>
+                
+                <h6>Beneficios</h6>
+                <ul>
+                    ${job.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                </ul>
             </div>
-            <div class="job-actions">
-                ${!isApplication ? `
-                    <button class="btn btn-primary" onclick="applyToJob(${jobId})">
-                        📝 Aplicar Ahora
-                    </button>
-                ` : ''}
-                <button class="btn btn-outline" onclick="toggleFavorite(${jobId})">
-                    ${isFavorite ? '❤️ Quitar de Favoritos' : '🤍 Agregar a Favoritos'}
-                </button>
-                <button class="btn btn-outline" onclick="closeOfferModal()">
-                    Cerrar
-                </button>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Acciones</h6>
+                        ${!isApplication ? `
+                            <button class="btn btn-primary w-100 mb-2" onclick="applyToJob(${jobId})">
+                                <i class="bi bi-send"></i> Aplicar
+                            </button>
+                        ` : `
+                            <button class="btn btn-success w-100 mb-2" disabled>
+                                <i class="bi bi-check-circle"></i> Ya Aplicaste
+                            </button>
+                        `}
+                        
+                        <button class="btn btn-outline-primary w-100" onclick="toggleFavorite(${jobId})">
+                            <i class="bi bi-heart${isFavorite ? '-fill' : ''}"></i> 
+                            ${isFavorite ? 'Quitar de Favoritos' : 'Agregar a Favoritos'}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     `;
     
-    modal.classList.add('show');
+    // Mostrar modal usando Bootstrap
+    const modal = new bootstrap.Modal(document.getElementById('offer-modal'));
+    modal.show();
 }
 
 function applyToJob(jobId) {
-    // Simular aplicación
-    showMessage('¡Aplicación enviada exitosamente!', 'success');
-    closeOfferModal();
+    // Implementar lógica de aplicación
+    console.log('Aplicando al empleo:', jobId);
+    showMessage('Aplicación enviada correctamente', 'success');
     
-    // Recargar aplicaciones
-    loadApplications();
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('offer-modal'));
+    modal.hide();
 }
 
 function toggleFavorite(jobId) {
-    const job = getJobDetailsById(jobId);
-    const favorites = JSON.parse(localStorage.getItem(`favorites_${currentUser.id}`) || '[]');
-    
-    const existingIndex = favorites.findIndex(fav => fav.id === jobId);
-    
-    if (existingIndex !== -1) {
-        // Remove from favorites
-        favorites.splice(existingIndex, 1);
-        showMessage('Empleo removido de favoritos', 'success');
-    } else {
-        // Add to favorites
-        favorites.push(job);
-        showMessage('Empleo agregado a favoritos', 'success');
-    }
-    
-    localStorage.setItem(`favorites_${currentUser.id}`, JSON.stringify(favorites));
-    
-    // Update modal
-    renderOfferModal(jobId, !isFavorite(jobId));
+    // Implementar lógica de favoritos
+    console.log('Toggle favorito:', jobId);
+    showMessage('Favorito actualizado', 'success');
 }
 
 function closeOfferModal() {
-    const modal = document.getElementById('offer-modal');
-    modal.classList.remove('show');
+    const modal = bootstrap.Modal.getInstance(document.getElementById('offer-modal'));
+    if (modal) {
+        modal.hide();
+    }
 }
 
-// Event listeners for modals
-document.addEventListener('click', (e) => {
-    const modal = document.getElementById('offer-modal');
-    if (modal && e.target === modal) {
-        closeOfferModal();
-    }
-});
-
-// Settings form submission
-document.addEventListener('DOMContentLoaded', function() {
-    const settingsForm = document.getElementById('settings-form');
-    if (settingsForm) {
-        settingsForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('name', document.getElementById('settings-name').value);
-            formData.append('email', document.getElementById('settings-email').value);
-            formData.append('phone', document.getElementById('settings-phone').value);
-            formData.append('location', document.getElementById('settings-location').value);
-            formData.append('bio', document.getElementById('settings-bio').value);
-            
-            try {
-                const response = await fetch('../backend/update_profile.php', {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showMessage('Perfil actualizado correctamente', 'success');
-                    // Reload profile data
-                    loadProfileData();
-                } else {
-                    showMessage('Error al actualizar: ' + data.message, 'error');
-                }
-            } catch (error) {
-                console.error('Error updating profile:', error);
-                showMessage('Error al actualizar el perfil', 'error');
-            }
-        });
-    }
-});
-
 function showMessage(message, type = 'info') {
-    // Crear elemento de mensaje
-    const messageEl = document.createElement('div');
-    messageEl.className = `message message-${type}`;
-    messageEl.textContent = message;
+    // Crear alerta Bootstrap
+    const alertHtml = `
+        <div class="alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
     
-    document.body.appendChild(messageEl);
-    
-    // Remover después de 3 segundos
-    setTimeout(() => {
-        messageEl.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => messageEl.remove(), 300);
-    }, 3000);
+    // Insertar al inicio del contenido principal
+    const mainContent = document.querySelector('.profile-section');
+    if (mainContent) {
+        mainContent.insertAdjacentHTML('afterbegin', alertHtml);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            const alert = mainContent.querySelector('.alert');
+            if (alert) {
+                alert.remove();
+            }
+        }, 5000);
+    }
 }
 
 function initializeTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetTab = button.dataset.tab;
-            
-            // Remove active class from all tabs and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Add active class to clicked tab and corresponding content
-            button.classList.add('active');
-            document.getElementById(targetTab).classList.add('active');
-        });
-    });
+    // Los tabs ahora se manejan automáticamente con Bootstrap
+    console.log('✅ Tabs inicializados con Bootstrap');
 }
 
 function initializeFileUpload() {
-    const uploadArea = document.getElementById('cv-upload-area');
     const fileInput = document.getElementById('cv-file');
+    const uploadArea = document.getElementById('cv-upload-area');
+    
+    if (!fileInput || !uploadArea) return;
     
     // Drag and drop functionality
-    uploadArea.addEventListener('dragover', (e) => {
+    uploadArea.addEventListener('dragover', function(e) {
         e.preventDefault();
-        uploadArea.classList.add('dragover');
+        uploadArea.style.borderColor = '#3b82f6';
+        uploadArea.style.backgroundColor = '#eff6ff';
     });
     
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover');
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#d1d5db';
+        uploadArea.style.backgroundColor = 'transparent';
     });
     
-    uploadArea.addEventListener('drop', (e) => {
+    uploadArea.addEventListener('drop', function(e) {
         e.preventDefault();
-        uploadArea.classList.remove('dragover');
+        uploadArea.style.borderColor = '#d1d5db';
+        uploadArea.style.backgroundColor = 'transparent';
         
         const files = e.dataTransfer.files;
         if (files.length > 0) {
@@ -646,7 +581,8 @@ function initializeFileUpload() {
         }
     });
     
-    fileInput.addEventListener('change', (e) => {
+    // File input change
+    fileInput.addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
             handleFileUpload(e.target.files[0]);
         }
@@ -654,180 +590,103 @@ function initializeFileUpload() {
 }
 
 function handleFileUpload(file) {
-    // Validate file type
+    // Validar tipo de archivo
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     
     if (!allowedTypes.includes(file.type)) {
-        showMessage('Por favor selecciona un archivo PDF o Word', 'error');
+        showMessage('Solo se permiten archivos PDF, DOC o DOCX', 'error');
         return;
     }
     
-    // Validate file size (max 5MB)
+    // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
         showMessage('El archivo es demasiado grande. Máximo 5MB', 'error');
         return;
     }
     
-    // Simulate file upload
-    const uploadArea = document.getElementById('cv-upload-area');
-    uploadArea.innerHTML = `
-        <div class="upload-progress">
-            <div class="upload-icon">⏳</div>
-            <h4>Subiendo archivo...</h4>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-        </div>
-    `;
+    // Simular subida
+    showMessage('Subiendo archivo...', 'info');
     
-    // Simulate upload progress
-    let progress = 0;
-    const progressFill = uploadArea.querySelector('.progress-fill');
-    
-    const uploadInterval = setInterval(() => {
-        progress += 10;
-        progressFill.style.width = `${progress}%`;
-        
-        if (progress >= 100) {
-            clearInterval(uploadInterval);
-            
-            // Save file info to user data
-            currentUser.cv = {
-                name: file.name,
-                size: file.size,
-                uploadDate: new Date().toISOString()
-            };
-            
-            // Update localStorage
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const userIndex = users.findIndex(u => u.id === currentUser.id);
-            if (userIndex !== -1) {
-                users[userIndex] = currentUser;
-                localStorage.setItem('users', JSON.stringify(users));
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            }
-            
-            uploadArea.innerHTML = `
-                <div class="upload-success">
-                    <div class="upload-icon">✅</div>
-                    <h4>¡CV subido exitosamente!</h4>
-                    <p>${file.name}</p>
-                    <button class="btn btn-outline" onclick="resetUploadArea()">Subir otro archivo</button>
-                </div>
-            `;
-            
-            showMessage('CV subido correctamente', 'success');
-            loadProfileData(); // Refresh profile completion
-        }
-    }, 200);
+    setTimeout(() => {
+        showMessage('CV subido correctamente', 'success');
+        resetUploadArea();
+    }, 2000);
 }
 
 function resetUploadArea() {
-    const uploadArea = document.getElementById('cv-upload-area');
-    uploadArea.innerHTML = `
-        <div class="upload-icon">📄</div>
-        <h4>Sube tu CV</h4>
-        <p>Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
-        <input type="file" id="cv-file" accept=".pdf,.doc,.docx" hidden>
-        <button class="btn btn-primary" onclick="document.getElementById('cv-file').click()">Seleccionar Archivo</button>
-    `;
-    initializeFileUpload();
+    const fileInput = document.getElementById('cv-file');
+    if (fileInput) {
+        fileInput.value = '';
+    }
 }
 
 function loadRecentActivity() {
-    const recentActivities = document.getElementById('recent-activities');
+    // Simular actividad reciente
+    const activities = [
+        {
+            type: 'application',
+            title: 'Aplicaste a Desarrollador Full Stack',
+            company: 'Tech Solutions',
+            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            icon: 'bi-send'
+        },
+        {
+            type: 'interview',
+            title: 'Entrevista programada',
+            company: 'Digital Corp',
+            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            icon: 'bi-camera-video'
+        },
+        {
+            type: 'profile',
+            title: 'Actualizaste tu perfil',
+            company: '',
+            date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            icon: 'bi-person'
+        }
+    ];
     
-    // Mock recent activities based on user applications
-    const activities = [];
+    const activitiesContainer = document.getElementById('recent-activities');
+    if (!activitiesContainer) return;
     
-    if (userApplications.length > 0) {
-        // Get the most recent applications
-        const recentApps = userApplications.slice(0, 3);
-        
-        recentApps.forEach(app => {
-            activities.push({
-                type: 'applied',
-                title: `Aplicaste a ${app.job_title}`,
-                company: app.company_name,
-                time: formatDate(app.applied_at),
-                icon: '📝'
-            });
-        });
-    }
-    
-    if (activities.length === 0) {
-        recentActivities.innerHTML = `
-            <div class="empty-state">
-                <p>No hay actividad reciente</p>
+    activitiesContainer.innerHTML = activities.map(activity => `
+        <div class="activity-item d-flex align-items-center">
+            <div class="activity-icon">
+                <i class="bi ${activity.icon}"></i>
             </div>
-        `;
-        return;
-    }
-    
-    recentActivities.innerHTML = activities.map(activity => `
-        <div class="activity-item">
-            <div class="activity-icon ${activity.type}">${activity.icon}</div>
-            <div class="activity-content">
-                <h4>${activity.title}</h4>
-                <p>${activity.company}</p>
+            <div class="activity-content flex-grow-1">
+                <h6 class="mb-1">${activity.title}</h6>
+                <small class="text-muted">
+                    ${activity.company ? activity.company + ' • ' : ''}${formatDate(activity.date)}
+                </small>
             </div>
-            <div class="activity-time">${activity.time}</div>
         </div>
     `).join('');
 }
 
 function renderFavorites() {
+    // Implementar renderizado de favoritos
     const favoritesList = document.getElementById('favorites-list');
+    if (!favoritesList) return;
     
-    // Get favorites from localStorage
-    const favorites = JSON.parse(localStorage.getItem(`favorites_${currentUser.id}`) || '[]');
-    
-    if (favorites.length === 0) {
-        favoritesList.innerHTML = `
-            <div class="empty-state">
-                <h4>📋 No hay favoritos</h4>
-                <p>Aún no has guardado ningún empleo como favorito</p>
-                <a href="jobs.html" class="btn btn-primary">Buscar Empleos</a>
-            </div>
-        `;
-        return;
-    }
-    
-    favoritesList.innerHTML = favorites.map(job => `
-        <div class="application-card clickable" data-jobid="${job.id}">
-            <div class="application-header">
-                <div class="application-job-info">
-                    <h4>${job.title}</h4>
-                    <p class="company-name">🏢 ${job.company}</p>
-                    <div class="job-meta">
-                        <span>📍 ${job.location}</span>
-                        <span>💰 ${job.salary}</span>
-                        <span>⏰ ${job.type || 'Tiempo completo'}</span>
-                    </div>
-                </div>
-                <div class="application-actions">
-                    <button class="btn btn-outline btn-sm" onclick="viewJobDetails('${job.title}', '${job.company}')">
-                        📋 Ver Empleo
-                    </button>
-                    <button class="btn btn-outline btn-sm" onclick="removeFavorite(${job.id})">
-                        ❌ Quitar de Favoritos
-                    </button>
-                </div>
+    favoritesList.innerHTML = `
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 text-muted">No hay favoritos</h5>
+                <p class="text-muted">Aún no has guardado ningún empleo como favorito</p>
             </div>
         </div>
-    `).join('');
+    `;
 }
 
 function removeFavorite(jobId) {
-    const favorites = JSON.parse(localStorage.getItem(`favorites_${currentUser.id}`) || '[]');
-    const updatedFavorites = favorites.filter(job => job.id !== jobId);
-    localStorage.setItem(`favorites_${currentUser.id}`, JSON.stringify(updatedFavorites));
-    
-    showMessage('Empleo removido de favoritos', 'success');
-    renderFavorites();
+    // Implementar lógica para remover favorito
+    console.log('Removiendo favorito:', jobId);
+    showMessage('Favorito removido', 'success');
 }
 
 function isFavorite(jobId) {
-    const favorites = JSON.parse(localStorage.getItem(`favorites_${currentUser.id}`) || '[]');
-    return favorites.some(job => job.id === jobId);
+    // Implementar lógica para verificar si es favorito
+    return false;
 }

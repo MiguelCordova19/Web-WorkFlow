@@ -17,7 +17,7 @@ header('Content-Type: application/json');
 
 if (isset($_SESSION['user_id'])) {
     echo json_encode([
-        'loggedIn' => true,
+        'logged_in' => true,
         'user' => [
             'id' => $_SESSION['user_id'],
             'name' => $_SESSION['user_name'],
@@ -30,7 +30,7 @@ if (isset($_SESSION['user_id'])) {
     ]);
 } else if (isset($_SESSION['company_id'])) {
     echo json_encode([
-        'loggedIn' => true,
+        'logged_in' => true,
         'user' => [
             'id' => $_SESSION['company_id'],
             'name' => $_SESSION['company_name'],
@@ -43,5 +43,5 @@ if (isset($_SESSION['user_id'])) {
         ]
     ]);
 } else {
-    echo json_encode(['loggedIn' => false]);
+    echo json_encode(['logged_in' => false]);
 } 

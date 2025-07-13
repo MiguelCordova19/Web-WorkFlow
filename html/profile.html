@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - Workflow</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/profile.css">
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
@@ -38,196 +39,311 @@
 
     <!-- Profile Section -->
     <section class="profile-section">
-        <div class="container">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <img id="profile-image" src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150" alt="Foto de perfil">
-                    <button class="btn btn-outline change-photo-btn" id="change-photo">Cambiar foto</button>
-                </div>
-                <div class="profile-info">
-                    <h1 id="profile-name">Nombre del Usuario</h1>
-                    <p id="profile-email">email@ejemplo.com</p>
-                    <span id="profile-type" class="profile-badge">Candidato</span>
-                    <p id="profile-joined">Miembro desde: Enero 2024</p>
-                </div>
-                <div class="profile-actions">
-                    <button class="btn btn-primary" id="edit-profile">Editar Perfil</button>
-                    <button class="btn btn-outline" id="download-cv">Descargar CV</button>
+        <div class="container-fluid">
+            <!-- Profile Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <div class="position-relative d-inline-block">
+                                        <img id="profile-image" src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150" 
+                                             alt="Foto de perfil" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                        <button class="btn btn-sm btn-outline-primary position-absolute bottom-0 end-0" id="change-photo">
+                                            <i class="bi bi-camera"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h2 id="profile-name" class="mb-2">Nombre del Usuario</h2>
+                                    <p id="profile-email" class="text-muted mb-2">
+                                        <i class="bi bi-envelope"></i> email@ejemplo.com
+                                    </p>
+                                    <span id="profile-type" class="badge bg-primary mb-2">Candidato</span>
+                                    <p id="profile-joined" class="text-muted mb-0">
+                                        <i class="bi bi-calendar"></i> Miembro desde: Enero 2024
+                                    </p>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button class="btn btn-primary mb-2" id="edit-profile">
+                                        <i class="bi bi-pencil"></i> Editar Perfil
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="download-cv">
+                                        <i class="bi bi-download"></i> Descargar CV
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="profile-content">
-                <div class="profile-tabs">
-                    <button class="tab-btn active" data-tab="overview">Resumen</button>
-                    <button class="tab-btn" data-tab="applications">Mis Aplicaciones</button>
-                    <button class="tab-btn" data-tab="favorites">Favoritos</button>
-                    <button class="tab-btn" data-tab="cv">Mi CV</button>
-                    <button class="tab-btn" data-tab="settings">Configuración</button>
-                </div>
+            <!-- Profile Content -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Navigation Tabs -->
+                            <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                                        <i class="bi bi-house"></i> Resumen
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="applications-tab" data-bs-toggle="tab" data-bs-target="#applications" type="button" role="tab">
+                                        <i class="bi bi-file-earmark-text"></i> Mis Aplicaciones
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab">
+                                        <i class="bi bi-heart"></i> Favoritos
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="cv-tab" data-bs-toggle="tab" data-bs-target="#cv" type="button" role="tab">
+                                        <i class="bi bi-file-earmark-person"></i> Mi CV
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                                        <i class="bi bi-gear"></i> Configuración
+                                    </button>
+                                </li>
+                            </ul>
 
-                <!-- Overview Tab -->
-                <div class="tab-content active" id="overview">
-                    <div class="overview-grid">
-                        <div class="overview-card">
-                            <h3>Aplicaciones Enviadas</h3>
-                            <div class="stat-number" id="total-applications">0</div>
-                            <p>Total de postulaciones</p>
-                        </div>
-                        <div class="overview-card">
-                            <h3>En Proceso</h3>
-                            <div class="stat-number" id="pending-applications">0</div>
-                            <p>Aplicaciones en revisión</p>
-                        </div>
-                        <div class="overview-card">
-                            <h3>Entrevistas</h3>
-                            <div class="stat-number" id="interviews">0</div>
-                            <p>Entrevistas programadas</p>
-                        </div>
-                        <div class="overview-card">
-                            <h3>Perfil Completado</h3>
-                            <div class="stat-number" id="profile-completion">60%</div>
-                            <p>Completa tu perfil</p>
-                        </div>
-                    </div>
+                            <!-- Tab Content -->
+                            <div class="tab-content" id="profileTabsContent">
+                                <!-- Overview Tab -->
+                                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                                    <div class="row mt-4">
+                                        <!-- Statistics Cards -->
+                                        <div class="col-md-3 col-sm-6 mb-3">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <i class="bi bi-file-earmark-text text-primary" style="font-size: 2rem;"></i>
+                                                    <h4 class="mt-2" id="total-applications">0</h4>
+                                                    <p class="text-muted mb-0">Aplicaciones Enviadas</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 mb-3">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <i class="bi bi-clock text-warning" style="font-size: 2rem;"></i>
+                                                    <h4 class="mt-2" id="pending-applications">0</h4>
+                                                    <p class="text-muted mb-0">En Proceso</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 mb-3">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <i class="bi bi-camera-video text-info" style="font-size: 2rem;"></i>
+                                                    <h4 class="mt-2" id="interviews">0</h4>
+                                                    <p class="text-muted mb-0">Entrevistas</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 mb-3">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body">
+                                                    <i class="bi bi-person-check text-success" style="font-size: 2rem;"></i>
+                                                    <h4 class="mt-2" id="profile-completion">60%</h4>
+                                                    <p class="text-muted mb-0">Perfil Completado</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    <div class="recent-activity">
-                        <h3>Actividad Reciente</h3>
-                        <div id="recent-activities">
-                            <!-- Will be populated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Applications Tab -->
-                <div class="tab-content" id="applications">
-                    <div class="applications-header">
-                        <h3>Mis Aplicaciones</h3>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">Todas</button>
-                            <button class="filter-btn" data-filter="pending">En Proceso</button>
-                            <button class="filter-btn" data-filter="interview">Entrevista</button>
-                            <button class="filter-btn" data-filter="rejected">Rechazadas</button>
-                        </div>
-                    </div>
-                    <div id="applications-list">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Favoritos Tab -->
-                <div class="tab-content" id="favorites">
-                    <div class="applications-header">
-                        <h3>Favoritos</h3>
-                    </div>
-                    <div id="favorites-list">
-                        <!-- Will be populated by JavaScript -->
-                    </div>
-                </div>
-
-                <!-- CV Tab -->
-                <div class="tab-content" id="cv">
-                    <div class="cv-section">
-                        <h3>Mi Currículum Vitae</h3>
-                        <div class="cv-upload">
-                            <div class="upload-area" id="cv-upload-area">
-                                <div class="upload-icon"></div>
-                                <h4>Sube tu CV</h4>
-                                <p>Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
-                                <input type="file" id="cv-file" accept=".pdf,.doc,.docx" hidden>
-                                <button class="btn btn-primary" onclick="document.getElementById('cv-file').click()">Seleccionar Archivo</button>
-                            </div>
-                        </div>
-                        <div class="cv-builder">
-                            <h4>Crear CV</h4>
-                            <p>¿No tienes un CV? Usa nuestro constructor gratuito</p>
-                            <button class="btn btn-outline" id="cv-builder-btn">Crear CV</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Constructor de CV (secciÃ³n oculta) -->
-                <div class="tab-content" id="constructor-cv" style="display:none;">
-                    <div class="cv-constructor-section">
-                        <h3>Constructor de CV</h3>
-                        <form id="cv-constructor-form" class="mb-4">
-                            <div class="form-group">
-                                <label for="cv-nombre">Nombre Completo</label>
-                                <input type="text" class="form-control" id="cv-nombre" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="cv-email">Email</label>
-                                <input type="email" class="form-control" id="cv-email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="cv-experiencia">Experiencia Laboral</label>
-                                <textarea class="form-control" id="cv-experiencia" rows="3" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="cv-educacion">Educación</label>
-                                <textarea class="form-control" id="cv-educacion" rows="2" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="cv-habilidades">Habilidades</label>
-                                <input type="text" class="form-control" id="cv-habilidades" placeholder="Ej: JavaScript, Liderazgo" required>
-                            </div>
-                            <button type="submit" class="btn btn-success mt-3">Guardar CV</button>
-                            <button type="button" class="btn btn-secondary mt-3 ms-2" id="volver-cv">Volver</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Settings Tab -->
-                <div class="tab-content" id="settings">
-                    <div class="settings-section">
-                        <h3>Configuración de la Cuenta</h3>
-                        <form id="settings-form">
-                            <div class="form-group">
-                                <label>Nombre Completo</label>
-                                <input type="text" id="settings-name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="settings-email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Teléfono</label>
-                                <input type="tel" id="settings-phone" name="phone">
-                            </div>
-                            <div class="form-group">
-                                <label>Ubicación</label>
-                                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="text" id="settings-location" name="location" placeholder="Ciudad, País" readonly style="flex:1; cursor:pointer; background:#f8fafc;">
-                                    <button type="button" class="btn btn-outline" id="open-city-modal">Seleccionar ciudad</button>
+                                    <!-- Recent Activity -->
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <h5><i class="bi bi-activity"></i> Actividad Reciente</h5>
+                                            <div id="recent-activities">
+                                                <!-- Will be populated by JavaScript -->
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Biografía</label>
-                                <textarea id="settings-bio" name="bio" rows="4" placeholder="Cuéntanos sobre ti..."></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </form>
-                    </div>
 
-                    <div class="notification-settings">
-                        <h3>Notificaciones</h3>
-                        <div class="notification-item">
-                            <label class="switch">
-                                <input type="checkbox" id="email-notifications" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <div>
-                                <h4>Notificaciones por Email</h4>
-                                <p>Recibe actualizaciones sobre tus aplicaciones</p>
-                            </div>
-                        </div>
-                        <div class="notification-item">
-                            <label class="switch">
-                                <input type="checkbox" id="job-alerts" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <div>
-                                <h4>Alertas de Empleos</h4>
-                                <p>Notificaciones de nuevos empleos que coincidan con tu perfil</p>
+                                <!-- Applications Tab -->
+                                <div class="tab-pane fade" id="applications" role="tabpanel">
+                                    <div class="mt-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5><i class="bi bi-file-earmark-text"></i> Mis Aplicaciones</h5>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-outline-primary active" data-filter="all">Todas</button>
+                                                <button class="btn btn-outline-primary" data-filter="pending">En Proceso</button>
+                                                <button class="btn btn-outline-primary" data-filter="interview">Entrevista</button>
+                                                <button class="btn btn-outline-primary" data-filter="rejected">Rechazadas</button>
+                                            </div>
+                                        </div>
+                                        <div id="applications-list" class="row g-3">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Favorites Tab -->
+                                <div class="tab-pane fade" id="favorites" role="tabpanel">
+                                    <div class="mt-4">
+                                        <h5><i class="bi bi-heart"></i> Favoritos</h5>
+                                        <div id="favorites-list" class="row g-3">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CV Tab -->
+                                <div class="tab-pane fade" id="cv" role="tabpanel">
+                                    <div class="mt-4">
+                                        <h5><i class="bi bi-file-earmark-person"></i> Mi Currículum Vitae</h5>
+                                        
+                                        <!-- CV Upload Section -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <i class="bi bi-cloud-upload text-primary" style="font-size: 3rem;"></i>
+                                                        <h6 class="mt-3">Sube tu CV</h6>
+                                                        <p class="text-muted">Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
+                                                        <input type="file" id="cv-file" accept=".pdf,.doc,.docx" hidden>
+                                                        <button class="btn btn-primary" onclick="document.getElementById('cv-file').click()">
+                                                            <i class="bi bi-upload"></i> Seleccionar Archivo
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <div class="card-body text-center">
+                                                        <i class="bi bi-pencil-square text-success" style="font-size: 3rem;"></i>
+                                                        <h6 class="mt-3">Crear CV</h6>
+                                                        <p class="text-muted">¿No tienes un CV? Usa nuestro constructor gratuito</p>
+                                                        <button class="btn btn-outline-success" id="cv-builder-btn">
+                                                            <i class="bi bi-plus-circle"></i> Crear CV
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- CV Constructor (hidden by default) -->
+                                        <div id="constructor-cv" class="mt-4" style="display:none;">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6><i class="bi bi-pencil-square"></i> Constructor de CV</h6>
+                                                    <form id="cv-constructor-form">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="cv-nombre" class="form-label">Nombre Completo</label>
+                                                                <input type="text" class="form-control" id="cv-nombre" required>
+                                                            </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label for="cv-email" class="form-label">Email</label>
+                                                                <input type="email" class="form-control" id="cv-email" required>
+                                                            </div>
+                                                            <div class="col-12 mb-3">
+                                                                <label for="cv-experiencia" class="form-label">Experiencia Laboral</label>
+                                                                <textarea class="form-control" id="cv-experiencia" rows="3" required></textarea>
+                                                            </div>
+                                                            <div class="col-12 mb-3">
+                                                                <label for="cv-educacion" class="form-label">Educación</label>
+                                                                <textarea class="form-control" id="cv-educacion" rows="2" required></textarea>
+                                                            </div>
+                                                            <div class="col-12 mb-3">
+                                                                <label for="cv-habilidades" class="form-label">Habilidades</label>
+                                                                <input type="text" class="form-control" id="cv-habilidades" placeholder="Ej: JavaScript, Liderazgo" required>
+                                                            </div>
+                                                            <div class="col-12">
+                                                                <button type="submit" class="btn btn-success">
+                                                                    <i class="bi bi-check-circle"></i> Guardar CV
+                                                                </button>
+                                                                <button type="button" class="btn btn-secondary ms-2" id="volver-cv">
+                                                                    <i class="bi bi-arrow-left"></i> Volver
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Settings Tab -->
+                                <div class="tab-pane fade" id="settings" role="tabpanel">
+                                    <div class="mt-4">
+                                        <h5><i class="bi bi-gear"></i> Configuración de la Cuenta</h5>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form id="settings-form">
+                                                            <div class="row">
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="settings-name" class="form-label">Nombre Completo</label>
+                                                                    <input type="text" class="form-control" id="settings-name" name="name" required>
+                                                                </div>
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="settings-email" class="form-label">Email</label>
+                                                                    <input type="email" class="form-control" id="settings-email" name="email" required>
+                                                                </div>
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="settings-phone" class="form-label">Teléfono</label>
+                                                                    <input type="tel" class="form-control" id="settings-phone" name="phone">
+                                                                </div>
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="settings-location" class="form-label">Ubicación</label>
+                                                                    <div class="input-group">
+                                                                        <input type="text" class="form-control" id="settings-location" name="location" placeholder="Ciudad, País" readonly>
+                                                                        <button type="button" class="btn btn-outline-secondary" id="open-city-modal">
+                                                                            <i class="bi bi-geo-alt"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 mb-3">
+                                                                    <label for="settings-bio" class="form-label">Biografía</label>
+                                                                    <textarea class="form-control" id="settings-bio" name="bio" rows="4" placeholder="Cuéntanos sobre ti..."></textarea>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        <i class="bi bi-check-circle"></i> Guardar Cambios
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h6><i class="bi bi-bell"></i> Notificaciones</h6>
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="email-notifications" checked>
+                                                            <label class="form-check-label" for="email-notifications">
+                                                                <strong>Notificaciones por Email</strong>
+                                                                <br><small class="text-muted">Recibe actualizaciones sobre tus aplicaciones</small>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="job-alerts" checked>
+                                                            <label class="form-check-label" for="job-alerts">
+                                                                <strong>Alertas de Empleos</strong>
+                                                                <br><small class="text-muted">Notificaciones de nuevos empleos que coincidan con tu perfil</small>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -236,43 +352,63 @@
         </div>
     </section>
 
-    <!-- Modal SelecciÃ³n de Ciudad -->
-    <div id="city-modal" class="modal">
-        <div class="modal-content" style="max-width:400px;">
-            <span class="close" id="close-city-modal">&times;</span>
-            <h2>Selecciona tu ciudad</h2>
-            <select id="city-select" class="form-control" style="width:100%;margin:1.5rem 0;">
-                <option value="">Elige una ciudad</option>
-                <option value="Lima">Lima</option>
-                <option value="Arequipa">Arequipa</option>
-                <option value="Trujillo">Trujillo</option>
-                <option value="Cusco">Cusco</option>
-                <option value="Piura">Piura</option>
-                <option value="Chiclayo">Chiclayo</option>
-                <option value="Iquitos">Iquitos</option>
-                <option value="Tacna">Tacna</option>
-                <option value="Huancayo">Huancayo</option>
-                <option value="Puno">Puno</option>
-                <option value="Chimbote">Chimbote</option>
-                <option value="Juliaca">Juliaca</option>
-                <option value="Sullana">Sullana</option>
-                <option value="Ica">Ica</option>
-                <option value="Ayacucho">Ayacucho</option>
-            </select>
-            <button class="btn btn-primary" id="save-city">Guardar ciudad</button>
-        </div>
-    </div>
-
-    <!-- Modal Detalles de Oferta -->
-    <div id="offer-modal" class="modal">
-        <div class="modal-content" style="max-width:600px;">
-            <span class="close" id="close-offer-modal">&times;</span>
-            <div id="offer-details-content">
-                <!-- Detalles de la oferta -->
+    <!-- Modal Selección de Ciudad -->
+    <div class="modal fade" id="city-modal" tabindex="-1" aria-labelledby="cityModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cityModalLabel">
+                        <i class="bi bi-geo-alt"></i> Selecciona tu ciudad
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select id="city-select" class="form-select">
+                        <option value="">Elige una ciudad</option>
+                        <option value="Lima">Lima</option>
+                        <option value="Arequipa">Arequipa</option>
+                        <option value="Trujillo">Trujillo</option>
+                        <option value="Cusco">Cusco</option>
+                        <option value="Piura">Piura</option>
+                        <option value="Chiclayo">Chiclayo</option>
+                        <option value="Iquitos">Iquitos</option>
+                        <option value="Tacna">Tacna</option>
+                        <option value="Huancayo">Huancayo</option>
+                        <option value="Puno">Puno</option>
+                        <option value="Chimbote">Chimbote</option>
+                        <option value="Juliaca">Juliaca</option>
+                        <option value="Sullana">Sullana</option>
+                        <option value="Ica">Ica</option>
+                        <option value="Ayacucho">Ayacucho</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="save-city">
+                        <i class="bi bi-check-circle"></i> Guardar ciudad
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Detalles de Oferta -->
+    <div class="modal fade" id="offer-modal" tabindex="-1" aria-labelledby="offerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="offerModalLabel">Detalles de la Oferta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="offer-details-content">
+                    <!-- Detalles de la oferta -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/profile.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

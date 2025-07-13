@@ -11,8 +11,8 @@ const selectedJobTitle = document.getElementById('selected-job-title');
 const selectedJobDetails = document.getElementById('selected-job-details');
 const applicationsSummary = document.getElementById('applications-summary');
 const emptyState = document.getElementById('empty-state');
-const applicationsTable = document.getElementById('applications-table');
-const tbodyPostulantes = document.getElementById('tbody-postulantes');
+const applicationsFilters = document.getElementById('applications-filters');
+const applicationsList = document.getElementById('applications-list');
 const statusFilter = document.getElementById('status-filter');
 const searchCandidate = document.getElementById('search-candidate');
 
@@ -21,6 +21,8 @@ const totalApplicationsEl = document.getElementById('total-applications');
 const pendingApplicationsEl = document.getElementById('pending-applications');
 const reviewingApplicationsEl = document.getElementById('reviewing-applications');
 const interviewApplicationsEl = document.getElementById('interview-applications');
+const acceptedApplicationsEl = document.getElementById('accepted-applications');
+const rejectedApplicationsEl = document.getElementById('rejected-applications');
 
 // Inicializar la página
 document.addEventListener('DOMContentLoaded', function() {
@@ -41,7 +43,7 @@ async function checkAuthentication() {
         const response = await fetch('../backend/session_status.php', { credentials: 'include' });
         const data = await response.json();
         
-        if (!data.loggedIn || data.user.userType !== 'empresa') {
+        if (!data.logged_in || data.user.userType !== 'empresa') {
             console.log('❌ No autenticado como empresa, redirigiendo...');
             window.location.href = '../index.html';
             return;
@@ -168,51 +170,78 @@ function displayApplications(applications, statistics) {
         return;
     }
     
-    // Ocultar estado vacío y mostrar tabla
+    // Ocultar estado vacío y mostrar lista
     emptyState.style.display = 'none';
-    applicationsTable.style.display = 'table';
+    applicationsFilters.style.display = 'block';
+    applicationsList.style.display = 'block';
     
-    // Renderizar aplicaciones
-    tbodyPostulantes.innerHTML = applications.map(app => `
-        <tr data-application-id="${app.id}">
-            <td>
-                <div class="candidate-info">
-                    <strong>${app.name}</strong>
-                    <br>
-                    <small>${app.email}</small>
+    // Renderizar aplicaciones como tarjetas
+    applicationsList.innerHTML = applications.map(app => `
+        <div class="col-lg-6 col-xl-4">
+            <div class="card application-card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="candidate-avatar me-3">
+                            ${app.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="candidate-info flex-grow-1">
+                            <h6 class="mb-1">${app.name}</h6>
+                            <small class="text-muted">${app.email}</small>
+                        </div>
+                        <div class="application-actions">
+                            <select class="form-select form-select-sm status-selector" onchange="updateApplicationStatus(${app.id}, this.value)">
+                                <option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Pendiente</option>
+                                <option value="reviewing" ${app.status === 'reviewing' ? 'selected' : ''}>En Revisión</option>
+                                <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Entrevista</option>
+                                <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Aceptado</option>
+                                <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rechazado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="application-meta mb-3">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <small><i class="bi bi-geo-alt"></i> ${app.location || 'No especificada'}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-telephone"></i> ${app.phone || 'No especificado'}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-currency-dollar"></i> ${app.expected_salary || 'No especificado'}</small>
+                            </div>
+                            <div class="col-6">
+                                <small><i class="bi bi-calendar"></i> ${formatDate(app.applied_at)}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${app.bio ? `
+                        <div class="mb-3">
+                            <small class="text-muted">📝 Biografía:</small>
+                            <p class="mb-0 small">${app.bio.length > 100 ? app.bio.substring(0, 100) + '...' : app.bio}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${app.cover_letter ? `
+                        <div class="mb-3">
+                            <small class="text-muted">💼 Carta de Presentación:</small>
+                            <div class="cover-letter-preview">${app.cover_letter.length > 150 ? app.cover_letter.substring(0, 150) + '...' : app.cover_letter}</div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge badge-${app.status}">${getStatusText(app.status)}</span>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewApplicationDetails(${app.id})">
+                            👁️ Ver Detalles
+                        </button>
+                    </div>
                 </div>
-            </td>
-            <td>${app.email}</td>
-            <td>${app.bio ? app.bio.substring(0, 50) + '...' : '-'}</td>
-            <td>${app.location || '-'}</td>
-            <td>${app.phone || '-'}</td>
-            <td>
-                <div class="cover-letter-preview">
-                    ${app.cover_letter ? app.cover_letter.substring(0, 100) + '...' : '-'}
-                </div>
-            </td>
-            <td>${app.expected_salary || '-'}</td>
-            <td>${app.availability || '-'}</td>
-            <td>${getStatusBadge(app.status)}</td>
-            <td>${formatDate(app.applied_at)}</td>
-            <td>
-                <div class="application-actions">
-                    <button class="btn btn-sm btn-outline" onclick="viewApplicationDetails(${app.id})">
-                        👁️ Ver
-                    </button>
-                    <select class="status-selector" onchange="updateApplicationStatus(${app.id}, this.value)">
-                        <option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Pendiente</option>
-                        <option value="reviewing" ${app.status === 'reviewing' ? 'selected' : ''}>En Revisión</option>
-                        <option value="interview" ${app.status === 'interview' ? 'selected' : ''}>Entrevista</option>
-                        <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Aceptado</option>
-                        <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rechazado</option>
-                    </select>
-                </div>
-            </td>
-        </tr>
+            </div>
+        </div>
     `).join('');
     
-    console.log('✅ Aplicaciones renderizadas:', applications.length);
+    console.log('✅ Aplicaciones renderizadas como tarjetas:', applications.length);
 }
 
 function showApplicationsSummary(statistics) {
@@ -220,17 +249,24 @@ function showApplicationsSummary(statistics) {
     pendingApplicationsEl.textContent = statistics.pending;
     reviewingApplicationsEl.textContent = statistics.reviewing;
     interviewApplicationsEl.textContent = statistics.interview;
+    acceptedApplicationsEl.textContent = statistics.accepted || 0;
+    rejectedApplicationsEl.textContent = statistics.rejected || 0;
     
     applicationsSummary.style.display = 'flex';
 }
 
 function showEmptyState(message) {
     emptyState.innerHTML = `
-        <h4>📋 ${message}</h4>
-        <p>No hay postulantes que coincidan con los criterios seleccionados</p>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="text-muted">📋 ${message}</h4>
+                <p class="text-muted">No hay postulantes que coincidan con los criterios seleccionados</p>
+            </div>
+        </div>
     `;
     emptyState.style.display = 'block';
-    applicationsTable.style.display = 'none';
+    applicationsFilters.style.display = 'none';
+    applicationsList.style.display = 'none';
     applicationsSummary.style.display = 'none';
 }
 
@@ -250,50 +286,52 @@ function filterApplications() {
         filteredApplications = filteredApplications.filter(app => 
             app.name.toLowerCase().includes(searchValue) ||
             app.email.toLowerCase().includes(searchValue) ||
-            (app.bio && app.bio.toLowerCase().includes(searchValue))
+            (app.location && app.location.toLowerCase().includes(searchValue))
         );
     }
     
-    // Recalcular estadísticas para aplicaciones filtradas
-    const filteredStats = {
-        total: filteredApplications.length,
-        pending: filteredApplications.filter(app => app.status === 'pending').length,
-        reviewing: filteredApplications.filter(app => app.status === 'reviewing').length,
-        interview: filteredApplications.filter(app => app.status === 'interview').length,
-        accepted: filteredApplications.filter(app => app.status === 'accepted').length,
-        rejected: filteredApplications.filter(app => app.status === 'rejected').length
-    };
-    
-    displayApplications(filteredApplications, filteredStats);
+    // Mostrar resultados filtrados
+    if (filteredApplications.length === 0) {
+        showEmptyState('No hay aplicaciones que coincidan con los filtros');
+    } else {
+        displayApplications(filteredApplications, {
+            total: filteredApplications.length,
+            pending: filteredApplications.filter(app => app.status === 'pending').length,
+            reviewing: filteredApplications.filter(app => app.status === 'reviewing').length,
+            interview: filteredApplications.filter(app => app.status === 'interview').length,
+            accepted: filteredApplications.filter(app => app.status === 'accepted').length,
+            rejected: filteredApplications.filter(app => app.status === 'rejected').length
+        });
+    }
 }
 
 async function updateApplicationStatus(applicationId, newStatus) {
     try {
-        console.log('🔄 Actualizando estado de aplicación:', applicationId, 'a', newStatus);
+        console.log('🔄 Actualizando estado de aplicación:', applicationId, '->', newStatus);
         
         const response = await fetch('../backend/update_application_status.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 application_id: applicationId,
                 status: newStatus
-            }),
-            credentials: 'include'
+            })
         });
         
         const data = await response.json();
         
         if (data.success) {
             console.log('✅ Estado actualizado correctamente');
-            showMessage('Estado actualizado correctamente', 'success');
+            showMessage('Estado de aplicación actualizado correctamente', 'success');
             
             // Actualizar la aplicación en el array local
             const appIndex = allApplications.findIndex(app => app.id === applicationId);
             if (appIndex !== -1) {
                 allApplications[appIndex].status = newStatus;
-                currentApplications = [...allApplications];
+                currentApplications[appIndex].status = newStatus;
             }
             
             // Recargar aplicaciones para actualizar estadísticas
@@ -317,80 +355,74 @@ function viewApplicationDetails(applicationId) {
         return;
     }
     
-    // Crear modal con detalles de la aplicación
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>📋 Detalles de la Aplicación</h2>
-            <div class="application-details">
-                <div class="candidate-section">
-                    <h3>👤 Información del Candidato</h3>
+    const modalBody = document.getElementById('applicationModalBody');
+    modalBody.innerHTML = `
+        <div class="candidate-section">
+            <h3>👤 Información del Candidato</h3>
+            <div class="row">
+                <div class="col-md-6">
                     <p><strong>Nombre:</strong> ${application.name}</p>
                     <p><strong>Email:</strong> ${application.email}</p>
-                    <p><strong>Teléfono:</strong> ${application.phone || 'No proporcionado'}</p>
-                    <p><strong>Ubicación:</strong> ${application.location || 'No especificada'}</p>
-                    <p><strong>Biografía:</strong> ${application.bio || 'No especificada'}</p>
+                    <p><strong>Teléfono:</strong> ${application.phone || 'No especificado'}</p>
                 </div>
-                
-                <div class="application-section">
-                    <h3>📝 Información de la Aplicación</h3>
+                <div class="col-md-6">
+                    <p><strong>Ubicación:</strong> ${application.location || 'No especificada'}</p>
                     <p><strong>Salario Esperado:</strong> ${application.expected_salary || 'No especificado'}</p>
                     <p><strong>Disponibilidad:</strong> ${application.availability || 'No especificada'}</p>
-                    <p><strong>Estado:</strong> ${getStatusBadge(application.status)}</p>
+                </div>
+            </div>
+            ${application.bio ? `
+                <div class="mt-3">
+                    <strong>Biografía:</strong>
+                    <div class="application-details">${application.bio}</div>
+                </div>
+            ` : ''}
+        </div>
+        
+        ${application.cover_letter ? `
+            <div class="application-section">
+                <h3>💼 Carta de Presentación</h3>
+                <div class="cover-letter-content">${application.cover_letter}</div>
+            </div>
+        ` : ''}
+        
+        <div class="application-section">
+            <h3>📊 Información de la Aplicación</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Estado Actual:</strong> <span class="badge badge-${application.status}">${getStatusText(application.status)}</span></p>
                     <p><strong>Fecha de Aplicación:</strong> ${formatDate(application.applied_at)}</p>
                 </div>
-                
-                <div class="cover-letter-section">
-                    <h3>💼 Carta de Presentación</h3>
-                    <div class="cover-letter-content">
-                        ${application.cover_letter || 'No se proporcionó carta de presentación'}
-                    </div>
+                <div class="col-md-6">
+                    <p><strong>ID de Aplicación:</strong> ${application.id}</p>
+                    <p><strong>Empleo:</strong> ${currentJob ? currentJob.title : 'N/A'}</p>
                 </div>
-                
-                ${application.additional_info ? `
-                <div class="additional-info-section">
-                    <h3>📄 Información Adicional</h3>
-                    <div class="additional-info-content">
-                        ${application.additional_info}
-                    </div>
-                </div>
-                ` : ''}
             </div>
         </div>
     `;
     
-    document.body.appendChild(modal);
-    
-    // Cerrar modal
-    const closeBtn = modal.querySelector('.close');
-    closeBtn.onclick = function() {
-        modal.remove();
-    };
-    
-    // Cerrar al hacer clic fuera del modal
-    modal.onclick = function(e) {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    };
+    // Mostrar modal usando Bootstrap
+    const modal = new bootstrap.Modal(document.getElementById('applicationModal'));
+    modal.show();
 }
 
 function getStatusBadge(status) {
+    return `<span class="badge badge-${status}">${getStatusText(status)}</span>`;
+}
+
+function getStatusText(status) {
     const statusMap = {
-        'pending': '<span class="badge badge-pending">Pendiente</span>',
-        'reviewing': '<span class="badge badge-reviewing">En Revisión</span>',
-        'interview': '<span class="badge badge-interview">Entrevista</span>',
-        'accepted': '<span class="badge badge-accepted">Aceptado</span>',
-        'rejected': '<span class="badge badge-rejected">Rechazado</span>'
+        'pending': 'Pendiente',
+        'reviewing': 'En Revisión',
+        'interview': 'Entrevista',
+        'accepted': 'Aceptado',
+        'rejected': 'Rechazado'
     };
-    
-    return statusMap[status] || '<span class="badge badge-pending">Pendiente</span>';
+    return statusMap[status] || status;
 }
 
 function formatDate(dateString) {
-    if (!dateString) return '-';
+    if (!dateString) return 'N/A';
     
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
@@ -405,255 +437,20 @@ function formatDate(dateString) {
 function showMessage(message, type = 'info') {
     // Crear elemento de mensaje
     const messageEl = document.createElement('div');
-    messageEl.className = `message message-${type}`;
-    messageEl.textContent = message;
-    messageEl.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 600;
-        z-index: 1000;
-        animation: slideIn 0.3s ease;
+    messageEl.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} alert-dismissible fade show`;
+    messageEl.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
     
-    // Colores según tipo
-    const colors = {
-        'success': '#10b981',
-        'error': '#ef4444',
-        'warning': '#f59e0b',
-        'info': '#3b82f6'
-    };
+    // Insertar al inicio del main content
+    const mainContent = document.querySelector('.main-content');
+    mainContent.insertBefore(messageEl, mainContent.firstChild);
     
-    messageEl.style.backgroundColor = colors[type] || colors.info;
-    
-    document.body.appendChild(messageEl);
-    
-    // Remover después de 3 segundos
+    // Auto-remover después de 5 segundos
     setTimeout(() => {
-        messageEl.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => messageEl.remove(), 300);
-    }, 3000);
-}
-
-// Estilos CSS para animaciones
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
-    
-    .modal-content {
-        background: white;
-        padding: 2rem;
-        border-radius: 10px;
-        max-width: 800px;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-    }
-    
-    .close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #666;
-    }
-    
-    .application-details {
-        margin-top: 1rem;
-    }
-    
-    .candidate-section, .application-section, .cover-letter-section, .additional-info-section {
-        margin-bottom: 2rem;
-        padding: 1rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-    }
-    
-    .cover-letter-content, .additional-info-content {
-        background: #f9fafb;
-        padding: 1rem;
-        border-radius: 5px;
-        margin-top: 0.5rem;
-        white-space: pre-wrap;
-    }
-    
-    .badge {
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-    
-    .badge-pending { background: #fef3c7; color: #92400e; }
-    .badge-reviewing { background: #dbeafe; color: #1e40af; }
-    .badge-interview { background: #f0f9ff; color: #0369a1; }
-    .badge-accepted { background: #dcfce7; color: #166534; }
-    .badge-rejected { background: #fee2e2; color: #991b1b; }
-    
-    .candidate-info strong {
-        color: #1f2937;
-    }
-    
-    .candidate-info small {
-        color: #6b7280;
-    }
-    
-    .cover-letter-preview {
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    .application-actions {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-    }
-    
-    .status-selector {
-        padding: 0.25rem 0.5rem;
-        border: 1px solid #d1d5db;
-        border-radius: 4px;
-        font-size: 0.8rem;
-    }
-    
-    .job-selector-section {
-        margin-bottom: 2rem;
-    }
-    
-    .job-selector-box {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .job-selector-controls {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .job-info {
-        background: #f0f9ff;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #3b82f6;
-    }
-    
-    .applications-summary {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        flex-wrap: wrap;
-    }
-    
-    .summary-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        text-align: center;
-        min-width: 140px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .summary-number {
-        display: block;
-        font-size: 2rem;
-        font-weight: bold;
-        color: #1f2937;
-        margin-bottom: 0.5rem;
-    }
-    
-    .summary-label {
-        font-size: 0.8rem;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    
-    .applications-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .filter-controls {
-        display: flex;
-        gap: 1rem;
-    }
-    
-    .form-control {
-        padding: 0.5rem;
-        border: 1px solid #d1d5db;
-        border-radius: 4px;
-        font-size: 0.9rem;
-    }
-    
-    .btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: background-color 0.2s;
-    }
-    
-    .btn-primary {
-        background: #3b82f6;
-        color: white;
-    }
-    
-    .btn-primary:hover {
-        background: #2563eb;
-    }
-    
-    .btn-primary:disabled {
-        background: #9ca3af;
-        cursor: not-allowed;
-    }
-    
-    .btn-outline {
-        background: transparent;
-        border: 1px solid #d1d5db;
-        color: #374151;
-    }
-    
-    .btn-outline:hover {
-        background: #f9fafb;
-    }
-    
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-    }
-`;
-document.head.appendChild(style); 
+        if (messageEl.parentNode) {
+            messageEl.remove();
+        }
+    }, 5000);
+} 

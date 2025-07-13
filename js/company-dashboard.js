@@ -14,7 +14,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         const data = await res.json();
         console.log('📊 Datos de sesión:', data);
         
-        if (!data.loggedIn || !data.user || data.user.userType !== 'empresa') {
+        if (!data.logged_in || !data.user || data.user.userType !== 'empresa') {
             console.log('❌ No autenticado como empresa, redirigiendo...');
             window.location.href = '../index.html';
             return;

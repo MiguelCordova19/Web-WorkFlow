@@ -34,7 +34,7 @@ try {
     $job = $jobResult->fetch_assoc();
     $jobStmt->close();
     
-    // Obtener las aplicaciones para este empleo
+    // Obtener las aplicaciones para este empleo (solo usuarios registrados y activos)
     $applicationsStmt = $conn->prepare("
         SELECT 
             a.id,
@@ -52,7 +52,10 @@ try {
             u.bio
         FROM applications a
         JOIN users u ON a.user_id = u.id
-        WHERE a.job_id = ?
+        WHERE a.job_id = ? 
+        AND u.id IS NOT NULL 
+        AND u.name IS NOT NULL 
+        AND u.email IS NOT NULL
         ORDER BY a.applied_at DESC
     ");
     

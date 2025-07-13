@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Postulantes - WorkFlow</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/gestionar-postulantes.css">
     <link rel="icon" href="../favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <header class="header">
             <div class="header-content">
                 <div class="logo">
@@ -34,94 +37,144 @@
 
             <!-- Selector de Empleo -->
             <div class="job-selector-section">
-                <div class="job-selector-box">
-                    <h3>📋 Seleccionar Empleo</h3>
-                    <div class="job-selector-controls">
-                        <select id="job-selector" class="form-control">
-                            <option value="">Cargando empleos...</option>
-                        </select>
-                        <button id="load-applications-btn" class="btn btn-primary" disabled>
-                            Cargar Postulantes
-                        </button>
-                    </div>
-                    
-                    <!-- Información del empleo seleccionado -->
-                    <div id="job-info" class="job-info" style="display: none;">
-                        <h4 id="selected-job-title">Título del Empleo</h4>
-                        <p id="selected-job-details">Detalles del empleo</p>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">📋 Seleccionar Empleo</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-8">
+                                <label for="job-selector" class="form-label">Empleo</label>
+                                <select id="job-selector" class="form-select">
+                                    <option value="">Cargando empleos...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button id="load-applications-btn" class="btn btn-primary w-100" disabled>
+                                    Cargar Postulantes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Información del empleo seleccionado -->
+                        <div id="job-info" class="alert alert-info mt-3" style="display: none;">
+                            <h6 id="selected-job-title" class="alert-heading">Título del Empleo</h6>
+                            <p id="selected-job-details" class="mb-0">Detalles del empleo</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Resumen de Aplicaciones -->
-            <div id="applications-summary" class="applications-summary" style="display: none;">
-                <div class="summary-card">
-                    <span id="total-applications" class="summary-number">0</span>
-                    <span class="summary-label">Total</span>
+            <div id="applications-summary" class="row g-3 mb-4" style="display: none;">
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="total-applications" class="text-primary mb-0">0</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-card">
-                    <span id="pending-applications" class="summary-number">0</span>
-                    <span class="summary-label">Pendientes</span>
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="pending-applications" class="text-warning mb-0">0</h4>
+                            <small class="text-muted">Pendientes</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-card">
-                    <span id="reviewing-applications" class="summary-number">0</span>
-                    <span class="summary-label">En Revisión</span>
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="reviewing-applications" class="text-info mb-0">0</h4>
+                            <small class="text-muted">En Revisión</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-card">
-                    <span id="interview-applications" class="summary-number">0</span>
-                    <span class="summary-label">Entrevista</span>
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="interview-applications" class="text-primary mb-0">0</h4>
+                            <small class="text-muted">Entrevista</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="accepted-applications" class="text-success mb-0">0</h4>
+                            <small class="text-muted">Aceptados</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 id="rejected-applications" class="text-danger mb-0">0</h4>
+                            <small class="text-muted">Rechazados</small>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Estado Vacío -->
-            <div id="empty-state" class="empty-state" style="display: none;">
-                <h4>📋 Selecciona un empleo</h4>
-                <p>Elige un empleo de la lista para ver las aplicaciones recibidas</p>
-            </div>
-
-            <!-- Tabla de Aplicaciones -->
-            <div id="applications-table" class="applications-table" style="display: none;">
-                <div class="applications-header">
-                    <h3>📋 Lista de Postulantes</h3>
-                    <div class="filter-controls">
-                        <select id="status-filter" class="form-control">
-                            <option value="">Todos los estados</option>
-                            <option value="pending">Pendiente</option>
-                            <option value="reviewing">En Revisión</option>
-                            <option value="interview">Entrevista</option>
-                            <option value="accepted">Aceptado</option>
-                            <option value="rejected">Rechazado</option>
-                        </select>
-                        <input type="text" id="search-candidate" class="form-control" placeholder="Buscar candidato...">
+            <div id="empty-state" class="text-center py-5" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="text-muted">📋 Selecciona un empleo</h4>
+                        <p class="text-muted">Elige un empleo de la lista para ver las aplicaciones recibidas</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="table-container">
-                    <table class="applications-table">
-                        <thead>
-                            <tr>
-                                <th>👤 Candidato</th>
-                                <th>📧 Email</th>
-                                <th>📝 Biografía</th>
-                                <th>📍 Ubicación</th>
-                                <th>📞 Teléfono</th>
-                                <th>💼 Carta de Presentación</th>
-                                <th>💰 Salario Esperado</th>
-                                <th>⏰ Disponibilidad</th>
-                                <th>📊 Estado</th>
-                                <th>📅 Fecha</th>
-                                <th>⚙️ Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-postulantes">
-                            <!-- Las aplicaciones se cargarán aquí dinámicamente -->
-                        </tbody>
-                    </table>
+            <!-- Filtros -->
+            <div id="applications-filters" class="card mb-4" style="display: none;">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="status-filter" class="form-label">Estado</label>
+                            <select id="status-filter" class="form-select">
+                                <option value="">Todos los estados</option>
+                                <option value="pending">Pendiente</option>
+                                <option value="reviewing">En Revisión</option>
+                                <option value="interview">Entrevista</option>
+                                <option value="accepted">Aceptado</option>
+                                <option value="rejected">Rechazado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="search-candidate" class="form-label">Buscar candidato</label>
+                            <input type="text" id="search-candidate" class="form-control" placeholder="Buscar por nombre, email o ubicación...">
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Lista de Aplicaciones -->
+            <div id="applications-list" class="row g-3" style="display: none;">
+                <!-- Las aplicaciones se cargarán aquí dinámicamente -->
             </div>
         </main>
     </div>
 
+    <!-- Modal para detalles de aplicación -->
+    <div class="modal fade" id="applicationModal" tabindex="-1" aria-labelledby="applicationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="applicationModalLabel">Detalles de la Aplicación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="applicationModalBody">
+                    <!-- Contenido del modal -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/gestionar-postulantes.js"></script>
     <script>
         function logout() {
