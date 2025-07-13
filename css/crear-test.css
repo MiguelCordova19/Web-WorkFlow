@@ -1,0 +1,337 @@
+/* Estilos para la página de crear tests */
+
+.test-preview {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.question-preview {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    margin-bottom: 15px;
+}
+
+.answer-preview textarea {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/* Estilos para las plantillas */
+.template-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.template-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.template-card .card-body {
+    padding: 1.5rem;
+}
+
+.template-card .badge {
+    font-size: 0.75rem;
+}
+
+/* Estilos para la lista de preguntas */
+.questions-list .card {
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s;
+}
+
+.questions-list .card:hover {
+    border-color: #007bff;
+}
+
+.questions-list .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Estilos para el formulario */
+.form-control:focus,
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para las pestañas */
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    color: #007bff;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom-color: #007bff;
+    color: #007bff;
+    background: transparent;
+}
+
+/* Estilos para los tests creados */
+.my-tests .card {
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+.my-tests .card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.my-tests .badge {
+    font-size: 0.75rem;
+    margin-right: 0.5rem;
+}
+
+/* Estilos para el modal de preguntas */
+.modal-lg {
+    max-width: 800px;
+}
+
+.question-form .form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.question-form .form-control,
+.question-form .form-select {
+    border-radius: 8px;
+}
+
+/* Estilos para la vista previa */
+.preview-modal .modal-xl {
+    max-width: 1200px;
+}
+
+.test-preview h3 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.question-preview h5 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+/* Estilos para el progreso */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+}
+
+/* Estilos para los botones de navegación */
+.question-nav-btn {
+    transition: all 0.3s ease;
+}
+
+.question-nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.question-nav-btn.answered {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+.question-nav-btn.current {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para el timer */
+.timer {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+    50% {
+        box-shadow: 0 2px 12px rgba(220, 53, 69, 0.5);
+    }
+    100% {
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+}
+
+/* Estilos para el contenedor de progreso */
+.progress-container {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.progress-container h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Estilos para las respuestas */
+.answer-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.answer-textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para los modales */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+/* Estilos para los resultados */
+.results-content .card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.results-content .h4 {
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .progress-container,
+    .timer {
+        position: static !important;
+        margin-bottom: 15px;
+    }
+    
+    .question-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .question-nav-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+    }
+    
+    .modal-xl {
+        max-width: 95vw;
+    }
+    
+    .template-card .card-body {
+        padding: 1rem;
+    }
+    
+    .my-tests .btn-group {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .my-tests .btn-group .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .question-container {
+        padding: 15px;
+    }
+    
+    .answer-textarea {
+        min-height: 100px;
+    }
+}
+
+/* Estilos para los estados de los tests */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.status-assigned {
+    background: #ffc107;
+    color: #212529;
+}
+
+.status-in-progress {
+    background: #17a2b8;
+    color: white;
+}
+
+.status-completed {
+    background: #28a745;
+    color: white;
+}
+
+.status-expired {
+    background: #6c757d;
+    color: white;
+}
+
+/* Estilos para las estadísticas */
+.stats-card {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.stats-card .number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stats-card .label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+} 

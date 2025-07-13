@@ -690,3 +690,146 @@ function isFavorite(jobId) {
     // Implementar lógica para verificar si es favorito
     return false;
 }
+
+// Tests functionality
+async function loadUserTests() {
+    try {
+        console.log('🔄 Cargando tests del usuario...');
+        
+        const response = await fetch('../backend/get_user_tests.php', {
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('✅ Tests cargados:', data.tests.length);
+            renderUserTests(data.tests);
+        } else {
+            console.error('❌ Error cargando tests:', data.message);
+            showMessage('Error cargando tests: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('❌ Error de conexión:', error);
+        showMessage('Error de conexión al cargar tests', 'error');
+    }
+}
+
+function renderUserTests(tests) {
+    const testsList = document.getElementById('user-tests-list');
+    
+    if (!testsList) return;
+    
+    if (tests.length === 0) {
+        testsList.innerHTML = `
+            <div class="text-center py-5">
+                <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
+                <h6 class="text-muted mt-3">No tienes tests asignados</h6>
+                <p class="text-muted">Los tests aparecerán aquí cuando las empresas te los asignen</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    tests.forEach(test => {
+        const statusBadge = getTestStatusBadge(test.status);
+        const dueDateText = test.due_date ? 
+            `Fecha límite: ${formatDate(test.due_date)}` : 
+            'Sin fecha límite';
+        
+        html += `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="card-title">${test.test_title}</h6>
+                            <p class="card-text text-muted">${test.test_description || 'Sin descripción'}</p>
+                            <div class="d-flex gap-2 mb-2">
+                                ${statusBadge}
+                                <span class="badge bg-info">${test.questions_count} preguntas</span>
+                                <span class="badge bg-secondary">${test.time_limit} minutos</span>
+                            </div>
+                            <small class="text-muted">${dueDateText}</small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            ${getTestActionButton(test)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    testsList.innerHTML = html;
+}
+
+function getTestStatusBadge(status) {
+    const badges = {
+        'assigned': '<span class="badge bg-warning">Asignado</span>',
+        'in_progress': '<span class="badge bg-info">En Progreso</span>',
+        'completed': '<span class="badge bg-success">Completado</span>',
+        'expired': '<span class="badge bg-secondary">Expirado</span>'
+    };
+    
+    return badges[status] || '<span class="badge bg-secondary">Desconocido</span>';
+}
+
+function getTestActionButton(test) {
+    switch (test.status) {
+        case 'assigned':
+            return `
+                <button class="btn btn-primary btn-sm" onclick="startTest(${test.test_id}, ${test.assignment_id})">
+                    <i class="bi bi-play-circle"></i> Iniciar Test
+                </button>
+            `;
+        case 'in_progress':
+            return `
+                <button class="btn btn-info btn-sm" onclick="continueTest(${test.test_id}, ${test.assignment_id})">
+                    <i class="bi bi-arrow-right-circle"></i> Continuar
+                </button>
+            `;
+        case 'completed':
+            return `
+                <button class="btn btn-success btn-sm" onclick="viewTestResults(${test.assignment_id})">
+                    <i class="bi bi-eye"></i> Ver Resultados
+                </button>
+            `;
+        case 'expired':
+            return `
+                <button class="btn btn-secondary btn-sm" disabled>
+                    <i class="bi bi-clock"></i> Expirado
+                </button>
+            `;
+        default:
+            return '';
+    }
+}
+
+function startTest(testId, assignmentId) {
+    window.location.href = `realizar-test-habilidades.html?test_id=${testId}&assignment_id=${assignmentId}`;
+}
+
+function continueTest(testId, assignmentId) {
+    window.location.href = `realizar-test-habilidades.html?test_id=${testId}&assignment_id=${assignmentId}`;
+}
+
+function viewTestResults(assignmentId) {
+    // Implementar vista de resultados
+    showMessage('Función de resultados en desarrollo', 'info');
+}
+
+function refreshTests() {
+    loadUserTests();
+    showMessage('Tests actualizados', 'success');
+}
+
+// Load tests when tests tab is shown
+document.addEventListener('DOMContentLoaded', function() {
+    const testsTab = document.getElementById('tests-tab');
+    if (testsTab) {
+        testsTab.addEventListener('shown.bs.tab', function() {
+            loadUserTests();
+        });
+    }
+});

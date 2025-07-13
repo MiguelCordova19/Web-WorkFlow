@@ -4,6 +4,7 @@ let companyJobs = [];
 let selectedJobId = null;
 let jobStatistics = {};
 let statisticsUpdateInterval = null;
+let jobActionsModalInstance = null;
 
 window.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Inicializando dashboard de empresa...');
@@ -671,7 +672,8 @@ function openJobActions(jobId) {
     selectedJobId = jobId;
     const modal = document.getElementById('job-actions-modal');
     if (modal) {
-        modal.style.display = 'block';
+        jobActionsModalInstance = new bootstrap.Modal(modal);
+        jobActionsModalInstance.show();
     }
 }
 
@@ -791,7 +793,8 @@ if (closeBtn) {
 function closeModal() {
     const modal = document.getElementById('job-actions-modal');
     if (modal) {
-        modal.style.display = 'none';
+        const instance = bootstrap.Modal.getInstance(modal);
+        if (instance) instance.hide();
     }
 }
 

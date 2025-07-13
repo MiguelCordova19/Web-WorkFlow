@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (password_verify($password, $passwordHash)) {
             $_SESSION['user_id'] = $id;
             $_SESSION['user_name'] = $name;
-            $_SESSION['user_type'] = 'candidato';
+            $_SESSION['user_type'] = 'usuario';
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
             $_SESSION['user_location'] = $location;

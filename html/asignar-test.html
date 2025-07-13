@@ -1,52 +1,218 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Asignar Test</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/asignar-test.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Tests - Workflow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
 </head>
-<body style="background: #f8fafc;">
-  <header class="header">
-    <nav class="nav">
-      <div class="nav-container">
-        <div class="nav-brand">
-          <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-            <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
-            <span>WORLKFLOW</span>
-          </a>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>Consultoría de RRHH</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="company-dashboard.html" class="nav-link">Mi Panel</a></li>
+                    <li><a href="post-job.html" class="nav-link">Publicar Empleo</a></li>
+                    <li><a href="crear-test.html" class="nav-link">Crear Test</a></li>
+                    <li><a href="asignar-test.html" class="nav-link active">Asignar Test</a></li>
+                </ul>
+                <div class="nav-actions" id="nav-actions">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container-fluid" style="padding-top: 100px;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="bi bi-send"></i> Asignar Tests de Habilidades</h2>
+                        <p class="text-muted">Selecciona candidatos y asígnales tests para evaluar sus habilidades</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Panel izquierdo: Selección de test y candidatos -->
+                            <div class="col-md-8">
+                                <!-- Selección de Test -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-clipboard-check"></i> Seleccionar Test</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="test-select" class="form-label">Test a asignar *</label>
+                                                <select class="form-select" id="test-select" required>
+                                                    <option value="">Seleccionar test...</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="job-select" class="form-label">Empleo (opcional)</label>
+                                                <select class="form-select" id="job-select">
+                                                    <option value="">Sin empleo específico</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6">
+                                                <label for="due-date" class="form-label">Fecha límite</label>
+                                                <input type="datetime-local" class="form-control" id="due-date">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Información del test</label>
+                                                <div id="test-info" class="text-muted">
+                                                    Selecciona un test para ver su información
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Selección de Candidatos -->
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-people"></i> Seleccionar Candidatos</h5>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="selectAllCandidates()">
+                                                <i class="bi bi-check-all"></i> Seleccionar Todos
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="deselectAllCandidates()">
+                                                <i class="bi bi-x-circle"></i> Deseleccionar Todos
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control" id="candidate-search" 
+                                                       placeholder="Buscar candidatos...">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <select class="form-select" id="candidate-filter">
+                                                    <option value="">Todos los candidatos</option>
+                                                    <option value="recent">Aplicaciones recientes</option>
+                                                    <option value="pending">Pendientes de revisión</option>
+                                                    <option value="shortlisted">Preseleccionados</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div id="candidates-list" class="row g-3">
+                                            <!-- Candidatos se cargarán aquí -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel derecho: Resumen y acciones -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-list-check"></i> Resumen de Asignación</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <h6>Test seleccionado:</h6>
+                                            <p id="selected-test-info" class="text-muted">Ninguno</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h6>Candidatos seleccionados:</h6>
+                                            <p id="selected-candidates-count" class="text-muted">0 candidatos</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h6>Empleo asociado:</h6>
+                                            <p id="selected-job-info" class="text-muted">Ninguno</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <h6>Fecha límite:</h6>
+                                            <p id="selected-due-date" class="text-muted">Sin fecha límite</p>
+                                        </div>
+                                        
+                                        <hr>
+                                        
+                                        <button class="btn btn-primary w-100 mb-2" onclick="assignTest()" id="assign-btn" disabled>
+                                            <i class="bi bi-send"></i> Asignar Test
+                                        </button>
+                                        
+                                        <button class="btn btn-outline-secondary w-100" onclick="previewAssignment()">
+                                            <i class="bi bi-eye"></i> Vista Previa
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tests recientes -->
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h6><i class="bi bi-clock-history"></i> Tests Recientes</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recent-tests">
+                                            <!-- Tests recientes se cargarán aquí -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <ul class="nav-menu" id="nav-menu">
-          <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
-          <li><a href="index.html#empleos" class="nav-link">Empleos</a></li>
-          <li><a href="index.html#empresas" class="nav-link">Empresas</a></li>
-          <li><a href="index.html#servicios" class="nav-link">Servicios</a></li>
-          <li><a href="index.html#contacto" class="nav-link">Contacto</a></li>
-        </ul>
-        <div style="margin-left:auto;">
-          <a href="company-dashboard.html" class="btn btn-primary" style="padding: 0.7em 2em; border-radius: 8px; font-weight: 600; text-decoration: none; background: #2563eb; color: #fff; transition: background 0.2s;">Ir a Perfil de Empresa</a>
-        </div>
-      </div>
-    </nav>
-  </header>
-  <div class="asignar-container">
-    <h1 class="asignar-title">Asignar Test a Candidato</h1>
-    <div class="asignar-box">
-      <form id="form-asignar-test">
-        <label>Nombre del Candidato:<input type="text" name="candidato" required></label><br>
-        <label>Categoría *
-          <select name="tipo_test" id="tipo_test" required>
-            <option value="" disabled selected>Selecciona una categoría</option>
-            <option value="logica">Lógica</option>
-            <option value="programacion">Programación</option>
-            <option value="matematicas">Matemáticas</option>
-          </select>
-        </label><br>
-        <button type="submit">Asignar Test</button>
-      </form>
     </div>
-  </div>
-  <script src="../js/asignar-test.js"></script>
+
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Asignación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="assignment-summary">
+                        <!-- Resumen de la asignación -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmAssignment()">
+                        <i class="bi bi-send"></i> Confirmar Asignación
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de vista previa -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vista Previa de la Asignación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="preview-content">
+                    <!-- Contenido de la vista previa -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/asignar-test.js"></script>
 </body>
 </html> 
 

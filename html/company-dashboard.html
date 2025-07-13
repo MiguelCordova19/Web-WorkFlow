@@ -53,10 +53,13 @@
                     <button class="btn btn-outline-primary" id="edit-company">
                         <i class="bi bi-pencil"></i> Editar Perfil
                     </button>
-                    <button class="btn btn-info" onclick="window.location.href='asignar-test.html'">
-                        <i class="bi bi-clipboard-check"></i> Asignar Test
+                    <button class="btn btn-info" onclick="window.location.href='crear-test.html'">
+                        <i class="bi bi-clipboard-check"></i> Crear Test
                     </button>
-                    <button class="btn btn-success" onclick="window.location.href='resultados-tests.html'">
+                    <button class="btn btn-success" onclick="window.location.href='asignar-test.html'">
+                        <i class="bi bi-send"></i> Asignar Test
+                    </button>
+                    <button class="btn btn-warning" onclick="window.location.href='resultados-tests.html'">
                         <i class="bi bi-graph-up"></i> Ver Resultados
                     </button>
                     <button class="btn btn-secondary" onclick="reloadCompanyData()">
@@ -282,18 +285,24 @@
         </div>
     </section>
 
-    <!-- Job Actions Modal -->
-    <div id="job-actions-modal" class="modal">
+    <!-- Job Actions Modal (Bootstrap) -->
+    <div class="modal fade" id="job-actions-modal" tabindex="-1" aria-labelledby="jobActionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Acciones del Empleo</h2>
-            <div class="job-actions">
-                <button class="btn btn-outline" id="edit-job">Editar Empleo</button>
-                <button class="btn btn-outline" id="view-applications">Ver Aplicaciones</button>
-                <button class="btn btn-outline" id="pause-job">Pausar Empleo</button>
-                <button class="btn btn-danger" id="delete-job">Eliminar Empleo</button>
+          <div class="modal-header">
+            <h5 class="modal-title" id="jobActionsModalLabel">Acciones del Empleo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div class="job-actions d-flex flex-column gap-2">
+              <button class="btn btn-outline" id="edit-job">Editar Empleo</button>
+              <button class="btn btn-outline" id="view-applications">Ver Aplicaciones</button>
+              <button class="btn btn-outline" id="pause-job">Pausar Empleo</button>
+              <button class="btn btn-danger" id="delete-job">Eliminar Empleo</button>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="../js/auth.js"></script>

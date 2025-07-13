@@ -1,39 +1,174 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Resultados de Tests</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/resultados-tests.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Tests - Workflow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
 </head>
-<body style="background: #f8fafc;">
-  <div class="resultados-container">
-    <h1 class="resultados-title">Resultados de Tests</h1>
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="logica">Lógica</button>
-      <button class="tab-btn" data-tab="programacion">Programación</button>
-      <button class="tab-btn" data-tab="matematicas">Matemáticas</button>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="../img/Logo-WorkFlow.jpg" alt="Workflow Logo" class="nav-logo">
+                    <span>Consultoría de RRHH</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="../index.html" class="nav-link">Inicio</a></li>
+                    <li><a href="company-dashboard.html" class="nav-link">Mi Panel</a></li>
+                    <li><a href="post-job.html" class="nav-link">Publicar Empleo</a></li>
+                    <li><a href="crear-test.html" class="nav-link">Crear Test</a></li>
+                    <li><a href="resultados-tests.html" class="nav-link active">Resultados</a></li>
+                </ul>
+                <div class="nav-actions" id="nav-actions">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container-fluid" style="padding-top: 100px;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="bi bi-graph-up"></i> Resultados de Tests de Habilidades</h2>
+                        <p class="text-muted">Revisa y analiza los resultados de los tests asignados a tus candidatos</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filtros -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <label for="test-filter" class="form-label">Filtrar por Test</label>
+                                <select class="form-select" id="test-filter">
+                                    <option value="">Todos los tests</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="status-filter" class="form-label">Filtrar por Estado</label>
+                                <select class="form-select" id="status-filter">
+                                    <option value="">Todos los estados</option>
+                                    <option value="completed">Completados</option>
+                                    <option value="in_progress">En progreso</option>
+                                    <option value="assigned">Asignados</option>
+                                    <option value="expired">Expirados</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="date-filter" class="form-label">Filtrar por Fecha</label>
+                                <select class="form-select" id="date-filter">
+                                    <option value="">Todas las fechas</option>
+                                    <option value="today">Hoy</option>
+                                    <option value="week">Esta semana</option>
+                                    <option value="month">Este mes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-primary w-100" onclick="applyFilters()">
+                                    <i class="bi bi-funnel"></i> Aplicar Filtros
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Estadísticas -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <div class="number" id="total-assignments">0</div>
+                                    <div class="label">Total Asignaciones</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <div class="number" id="completed-tests">0</div>
+                                    <div class="label">Tests Completados</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <div class="number" id="average-score">0%</div>
+                                    <div class="label">Puntuación Promedio</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card">
+                                    <div class="number" id="active-tests">0</div>
+                                    <div class="label">Tests Activos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Tests -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4><i class="bi bi-list-check"></i> Tests Creados</h4>
+                                    <button class="btn btn-outline-secondary" onclick="refreshData()">
+                                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                    </button>
+                                </div>
+                                <div id="tests-list">
+                                    <!-- Tests se cargarán aquí -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="tab-content" id="tab-logica">
-      <table>
-        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
-        <tbody id="tabla-logica"></tbody>
-      </table>
+
+    <!-- Modal de Resultados Detallados -->
+    <div class="modal fade" id="resultsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultsModalTitle">Resultados del Test</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resultsModalBody">
+                    <!-- Contenido de resultados se cargará aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="exportResults()">
+                        <i class="bi bi-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="tab-content" id="tab-programacion" style="display:none;">
-      <table>
-        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
-        <tbody id="tabla-programacion"></tbody>
-      </table>
+
+    <!-- Modal de Detalles de Candidato -->
+    <div class="modal fade" id="candidateModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles del Candidato</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="candidateModalBody">
+                    <!-- Detalles del candidato se cargarán aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="contactCandidate()">
+                        <i class="bi bi-envelope"></i> Contactar
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="tab-content" id="tab-matematicas" style="display:none;">
-      <table>
-        <thead><tr><th>Nombre</th><th>Puntaje</th><th>Fecha</th></tr></thead>
-        <tbody id="tabla-matematicas"></tbody>
-      </table>
-    </div>
-  </div>
-  <script src="../js/resultados-tests.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/resultados-tests.js"></script>
 </body>
 </html> 
 
