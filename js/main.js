@@ -638,6 +638,15 @@ function initializeSearch() {
     if (searchBtn) {
         searchBtn.addEventListener('click', performSearch);
     }
+    // Combo box: búsqueda automática al cambiar
+    const jobLocation = document.getElementById('job-location');
+    const jobCategory = document.getElementById('job-category');
+    if (jobLocation) {
+        jobLocation.addEventListener('change', performSearch);
+    }
+    if (jobCategory) {
+        jobCategory.addEventListener('change', performSearch);
+    }
 }
 
 function performSearch() {

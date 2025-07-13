@@ -42,73 +42,67 @@
         </nav>
     </header>
     
-    <main class="search-main">
-        <!-- Barra de bÃºsqueda superior -->
-        <section class="search-bar-section">
-            <div class="container">
-                <div class="search-bar">
-                    <div class="search-inputs">
-                        <input type="text" id="job-title" placeholder="¿Qué trabajo buscas?" value="">
-                        <select id="job-location" class="selectpicker" data-live-search="true" title="¿Dónde?">
-                            <option value="">Todas las ubicaciones</option>
-                            <option value="Lima">Lima</option>
-                            <option value="Arequipa">Arequipa</option>
-                            <option value="Trujillo">Trujillo</option>
-                            <option value="Cusco">Cusco</option>
-                            <option value="Piura">Piura</option>
-                            <option value="Chiclayo">Chiclayo</option>
-                            <option value="Iquitos">Iquitos</option>
-                            <option value="Tacna">Tacna</option>
-                            <option value="Huancayo">Huancayo</option>
-                            <option value="Puno">Puno</option>
-                            <option value="Chimbote">Chimbote</option>
-                            <option value="Juliaca">Juliaca</option>
-                            <option value="Sullana">Sullana</option>
-                            <option value="Ica">Ica</option>
-                            <option value="Ayacucho">Ayacucho</option>
-                        </select>
-                        <select id="job-category">
-                            <option value="">Todas las categorías</option>
-                            <option value="tecnologia">Tecnología</option>
-                            <option value="marketing">Marketing</option>
-                            <option value="ventas">Ventas</option>
-                            <option value="finanzas">Finanzas</option>
-                            <option value="rrhh">Recursos Humanos</option>
-                            <option value="administracion">Administración</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary search-btn" id="search-btn">Buscar Empleos</button>
+    <main class="container py-4">
+        <!-- Barra de búsqueda superior -->
+        <section class="mb-4">
+            <form class="row g-2 align-items-center justify-content-center">
+                <div class="col-12 col-md-4">
+                    <input type="text" id="job-title" class="form-control" placeholder="¿Qué trabajo buscas?">
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="job-location" class="form-select selectpicker" data-live-search="true" title="¿Dónde?">
+                        <option value="">Todas las ubicaciones</option>
+                        <option value="Lima">Lima</option>
+                        <option value="Arequipa">Arequipa</option>
+                        <option value="Trujillo">Trujillo</option>
+                        <option value="Cusco">Cusco</option>
+                        <option value="Piura">Piura</option>
+                        <option value="Chiclayo">Chiclayo</option>
+                        <option value="Iquitos">Iquitos</option>
+                        <option value="Tacna">Tacna</option>
+                        <option value="Huancayo">Huancayo</option>
+                        <option value="Puno">Puno</option>
+                        <option value="Chimbote">Chimbote</option>
+                        <option value="Juliaca">Juliaca</option>
+                        <option value="Sullana">Sullana</option>
+                        <option value="Ica">Ica</option>
+                        <option value="Ayacucho">Ayacucho</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="job-category" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="tecnologia">Tecnología</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="ventas">Ventas</option>
+                        <option value="finanzas">Finanzas</option>
+                        <option value="rrhh">Recursos Humanos</option>
+                        <option value="administracion">Administración</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-2 d-grid">
+                    <button type="button" class="btn btn-primary w-100" id="search-btn">Buscar Empleos</button>
+                </div>
+            </form>
+        </section>
+        <!-- Resultados y detalles -->
+        <section class="row g-4">
+            <div class="col-12 col-lg-7">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0">Resultados de Búsqueda</h2>
+                    <span id="results-count" class="text-muted small">0 empleos encontrados</span>
+                </div>
+                <div id="search-results" class="jobs-list"></div>
+                <div id="no-results" class="alert alert-warning mt-3 d-none">
+                    No se encontraron empleos con los criterios seleccionados.
                 </div>
             </div>
-        </section>
-
-        <!-- Contenido principal con dos columnas -->
-        <section class="search-content">
-            <div class="container">
-                <div class="search-layout">
-                    <!-- Columna izquierda: Lista de trabajos -->
-                    <div class="jobs-column">
-                        <div class="jobs-header">
-                            <h2>Resultados de Búsqueda</h2>
-                            <span id="results-count">0 empleos encontrados</span>
-                        </div>
-                        <div id="search-results" class="jobs-list">
-                            <!-- AquÃ­ se mostrarÃ¡n los resultados -->
-                        </div>
-                        <div id="no-results" class="message message-warning hidden">
-                            No se encontraron empleos con los criterios seleccionados.
-                        </div>
-                    </div>
-
-                    <!-- Columna derecha: Detalles del trabajo -->
-                    <div class="job-details-column">
-                        <div id="job-details" class="job-details">
-                            <div class="job-details-placeholder">
-                                <div class="placeholder-icon">👀</div>
-                                <h3>Selecciona un empleo</h3>
-                                <p>Haz clic en cualquier empleo de la lista para ver los detalles completos y postular.</p>
-                            </div>
-                        </div>
+            <div class="col-12 col-lg-5">
+                <div id="job-details" class="job-details card p-3 shadow-sm">
+                    <div class="job-details-placeholder text-center text-muted">
+                        <div class="display-1">👀</div>
+                        <h3 class="h6 mt-3">Selecciona un empleo</h3>
+                        <p>Haz clic en cualquier empleo de la lista para ver los detalles completos y postular.</p>
                     </div>
                 </div>
             </div>

@@ -580,14 +580,28 @@
 
     <script src="js/main.js"></script>
     <script>
-    document.getElementById('search-btn').addEventListener('click', function(e) {
+function goToSearchPage() {
+    const title = document.getElementById('job-title').value;
+    const location = document.getElementById('job-location').value;
+    const category = document.getElementById('job-category').value;
+    const params = new URLSearchParams();
+    if (title) params.append('title', title);
+    if (location) params.append('location', location);
+    if (category) params.append('category', category);
+    window.location.href = '/html/search.html' + (params.toString() ? '?' + params.toString() : '');
+}
+
+document.getElementById('search-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    goToSearchPage();
+});
+
+document.getElementById('job-title').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
         e.preventDefault();
-        const title = document.getElementById('job-title').value;
-        const location = document.getElementById('job-location').value;
-        const category = document.getElementById('job-category').value;
-        const params = new URLSearchParams({ title, location, category });
-        window.location.href = `search.html?${params.toString()}`;
-    });
+        goToSearchPage();
+    }
+});
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

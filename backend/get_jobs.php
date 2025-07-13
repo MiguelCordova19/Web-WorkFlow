@@ -9,7 +9,6 @@ header('Content-Type: application/json');
 $sql = "SELECT jobs.*, companies.company_name, companies.company_email, companies.website, companies.location AS company_location
         FROM jobs
         JOIN companies ON jobs.company_id = companies.id
-        WHERE jobs.status = 'active'
         ORDER BY jobs.created_at DESC";
 
 $result = $conn->query($sql);
